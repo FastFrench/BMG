@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AIBase.cs" />
+    <Compile Include="Common\BuildingAI.cs" />
+    <Compile Include="Common\TroopAI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

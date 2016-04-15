@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BMG_GameData
+namespace BMG_IA.Common
 {
-    public class Class1
-    {
-    }
+	public class BuildingAI : AIBase
+	{
+	}
 }

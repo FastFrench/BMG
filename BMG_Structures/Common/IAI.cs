@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BMG_Structures.Common
 {
 	/// <summary>
-	/// This interface is designed to manipulate AIBase objects without any reference to BMG_IA
+	/// This interface is designed to manipulate AIBase objects without any reference to BMG_AI
 	/// Any AI implements this interface
 	/// </summary>
 	public interface IAI

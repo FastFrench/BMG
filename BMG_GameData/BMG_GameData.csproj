@@ -39,8 +39,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Building\Building.cs" />
+    <Compile Include="Building\BuildingEnum.cs" />
+    <Compile Include="Building\BuildingFactory.cs" />
+    <Compile Include="Building\BuildingTemplate.cs" />
+    <Compile Include="Building\House.cs" />
+    <Compile Include="DataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Troop\TroopFactory.cs" />
+    <Compile Include="Troop\Troop.cs" />
+    <Compile Include="Troop\TroopEnum.cs" />
+    <Compile Include="Troop\TroopTemplate.cs" />
+    <Compile Include="Troop\Warrior.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BMG_IA\BMG_AI.csproj">
