@@ -16,6 +16,7 @@ namespace BMG_Structures
 		public int Victories { get; set; }
 		public int Defeats { get; set; }
 		public int Level { get; set; }
+		public bool Valid { get; set; }
 
 		public int TeamId
 		{
@@ -28,10 +29,17 @@ namespace BMG_Structures
 
 		public TeamBase Team { get; set; }
 
-		PlayerBase(string name, TeamBase team)
+		public PlayerBase(string login, string password, TeamBase team)
 		{
-			Name = name;
+			Login = login;
+			Password = password;
+			Valid = RetreivePlayer(login, password);
 			Team = team;
+		}
+
+		protected virtual bool RetreivePlayer(string login, string password)
+		{
+			return true;
 		}
 
 	}
