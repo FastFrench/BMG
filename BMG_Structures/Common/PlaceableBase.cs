@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace BMG_Structures.Common
 {
-	public abstract class PlaceableBase
+	public class PlaceableBase
 	{
-
+		virtual public Point CurrentPosition { get; protected set; }
+		virtual public AltitudeEnum Altitude { get; protected set; } 
 	}
 }

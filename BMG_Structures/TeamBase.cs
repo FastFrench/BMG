@@ -28,6 +28,17 @@ namespace BMG_Structures
 			return true;
 		}
 
+		public virtual bool MoveExistingPlayerIntoThisTeam(PlayerBase player)
+		{
+			if (player == null || player.Team == this) return false;
+			if (player.Team != null)
+				player.Team.RemovePlayer(player);
+			player.Team = this;
+			Players.Add(player);
+			return true;
+		}
+
+
 		public virtual bool RemovePlayer(PlayerBase player)
 		{
 			if (player.Team != this) return false;

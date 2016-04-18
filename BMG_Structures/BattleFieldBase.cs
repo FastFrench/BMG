@@ -10,22 +10,24 @@ namespace BMG_Structures
 {
 	public class BattleFieldBase
 	{
-		public int Width { get; set; }
-		public int Height { get; set; }
+		public int Width { get; private set; }
+		public int Height { get; private set; }
 
 		public TeamBase[] Teams { get; set; }
 		public CellBase[,] Cells { get; set; }
 
 
-		virtual bool Initialize()
+		public virtual bool Initialize(int width, int height)
 		{
+			Width = width;
+			Height = height;
 			if (Width < 2 || Height < 2) return false;
 			Cells = new CellBase[Width,Height];
 			return true;
 		}
 
 		// Reasonnably fast method that returns all points at range
-		IEnumerable<Point> CellsAtRange(Point point, int maxRange, int minRange = 0)
+		public IEnumerable<Point> CellsAtRange(Point point, int maxRange, int minRange = 0)
 		{
 			int minRange2 = minRange * minRange;
 			int maxRange2 = maxRange * maxRange;
@@ -40,7 +42,7 @@ namespace BMG_Structures
 						}
 		}
 
-		void UpdateCells()
+		public void UpdateCells()
 		{
 			// Reset troop content
 			foreach (CellBase cell in Cells)
@@ -48,6 +50,14 @@ namespace BMG_Structures
 					
 			for (int teamIndex = 0; teamIndex < Teams.Length; teamIndex++)
 			{
+				TeamBase team = Teams[teamIndex];
+				foreach(PlayerBase player in team.Players)
+				{
+					ArmyBase army = player.Army;
+					foreach (TroopBase troop in army.Troops)
+						if (troop.CurrentPosition != Point.InDeck)
+							Cells[troop.CurrentPosition.X, troop.CurrentPosition.Y].Content |= (CellBase.CellContent) ((int)CellBase.CellContent.TroopT1 << teamIndex);
+				}
 				//Teams[teamIndex].
 				//Array.ForEach(Cells, cellRange => Array.ForEach(cellRange, cell => cell.Content &= Cell.CellContent.AllExceptTroops));
 			}

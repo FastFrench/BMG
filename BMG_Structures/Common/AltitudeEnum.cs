@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace BMG_Structures.Common
 {
+	[Flags]
 	public enum AltitudeEnum
 	{
-		Ground,
-		Fly,
-		Underground
+		Ground = 1,
+		Fly = 2 ,
+		Underground = 4
 	}
 }

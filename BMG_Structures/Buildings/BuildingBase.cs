@@ -7,11 +7,25 @@ using BMG_Structures.Common;
 
 namespace BMG_Structures.Buildings
 {
-	public class BuildingBase
+	public class BuildingBase : PlaceableBase
 	{
 		public int CurrentHP { get; set; }
-		public Point CurrentLocation { get; set; }
-		public IAI CurrentAI { get; set; }		
+		public Point CurrentPosition { get; set; }
+		public AIBase CurrentAI { get; set; }
 		public BuildingTemplateBase Template { get; protected set; }
+		public PlayerBase Player { get; protected set; }
+
+		public BuildingBase()
+		{
+			CurrentPosition = Point.InDeck;
+		}
+
+		public BuildingBase(BuildingTemplateBase template, PlayerBase player)
+			: this()
+		{
+			Template = template;
+			CurrentHP = template.MaxHP;
+			Player = player;
+		}
 	}
 }

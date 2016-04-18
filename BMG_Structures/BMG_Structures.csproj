@@ -39,13 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Army.cs" />
+    <Compile Include="ArmyBase.cs" />
     <Compile Include="BattleFieldBase.cs" />
     <Compile Include="Buildings\BuildingBase.cs" />
     <Compile Include="Buildings\BuildingTemplateBase.cs" />
-    <Compile Include="Cell.cs" />
+    <Compile Include="CellBase.cs" />
     <Compile Include="Common\DataProviderBase.cs" />
-    <Compile Include="Common\IAI.cs" />
+    <Compile Include="Common\AIBase.cs" />
     <Compile Include="Common\IDataProviderBase.cs" />
     <Compile Include="Common\PlaceableBase.cs" />
     <Compile Include="Common\Point.cs" />
@@ -56,6 +56,7 @@
     <Compile Include="TeamBase.cs" />
     <Compile Include="Troops\TroopBase.cs" />
     <Compile Include="Troops\TroopTemplateBase.cs" />
+    <Compile Include="VillageBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMG_Structures.Buildings;
 
 namespace BMG_Structures
 {
@@ -17,6 +18,9 @@ namespace BMG_Structures
 		public int Defeats { get; set; }
 		public int Level { get; set; }
 		public bool Valid { get; set; }
+
+		public ArmyBase Army {get; set;}
+		public List<BuildingBase> OwnBuildings { get; private set; }
 
 		public int TeamId
 		{
@@ -33,11 +37,11 @@ namespace BMG_Structures
 		{
 			Login = login;
 			Password = password;
-			Valid = RetreivePlayer(login, password);
+			Valid = RetrievePlayer(login, password);
 			Team = team;
 		}
 
-		protected virtual bool RetreivePlayer(string login, string password)
+		protected virtual bool RetrievePlayer(string login, string password)
 		{
 			return true;
 		}
