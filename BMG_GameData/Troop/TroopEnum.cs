@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BMG_Structures
+namespace BMG_GameData.Troop
 {
-	public class Team
+	public enum TroopEnum
 	{
+		Warrior = 5000
 	}
 }

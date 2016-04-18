@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BMG_Structures
+namespace BMG_GameData.Building
 {
-    public class Game
-    {
-			
-    }
+	public enum BuildingEnum
+	{
+		House = 1000
+	}
 }

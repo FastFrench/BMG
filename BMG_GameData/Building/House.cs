@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMG_Structures.Buildings;
 
-namespace BMG_Structures.Buildings
+namespace BMG_GameData.Building
 {
-	public enum BuildingEnum
+	public class House : BuildingBase
 	{
-		Wall,
-		Tower
 	}
 }

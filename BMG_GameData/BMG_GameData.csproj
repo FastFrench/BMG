@@ -46,6 +46,7 @@
     <Compile Include="Building\House.cs" />
     <Compile Include="DataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestData\RunTests.cs" />
     <Compile Include="Troop\TroopFactory.cs" />
     <Compile Include="Troop\Troop.cs" />
     <Compile Include="Troop\TroopEnum.cs" />

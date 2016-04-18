@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BMG_Structures.Troops
+namespace BMG_IA.Common
 {
-	enum TroopEnum
+	public class TroopAI : AIBase
 	{
-		Archer,
-		Warrior,
 	}
 }

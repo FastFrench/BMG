@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BMG_Structures
+namespace BMG_Structures.Common
 {
-	public class Player
+	public abstract class PlaceableBase
 	{
+
 	}
 }
