@@ -8,5 +8,6 @@ namespace BMG_IA.Common
 {
 	public class TroopAI : AIBase
 	{
+		abstract public PlaceableBase FindTarget(PlaceableBase attacker, BattleFieldBase battleField);
 	}
 }

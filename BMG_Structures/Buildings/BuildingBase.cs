@@ -9,12 +9,8 @@ namespace BMG_Structures.Buildings
 {
 	public class BuildingBase : PlaceableBase
 	{
-		public int CurrentHP { get; set; }
-		public Point CurrentPosition { get; set; }
-		public AIBase CurrentAI { get; set; }
 		public BuildingTemplateBase Template { get; protected set; }
-		public PlayerBase Player { get; protected set; }
-
+		
 		public BuildingBase()
 		{
 			CurrentPosition = Point.InDeck;
