@@ -16,8 +16,8 @@ namespace BMG_Structures.Common
 		public enum MoveEnum { ClosestTroop, ClosestBuilding, ClosestAny, WeakestBuildingAtRange, WeakestTroopAtRange, WeakestAnyAtRange, StayAtRange }
 		public enum TargetFocus { ClosestTroop, ClosestBuilding, ClosestAny, WeakestBuilding, WeakestTroop, WeakestAny, MostWoundedBuilding, MostWoundedTroop, MostWoundedAny }
 
-		bool IgnoreTroops { get; set; }
-		bool IgnoreBuildings { get; set; }
+		virtual bool IgnoreTroops { get; set; }
+		virtual bool IgnoreBuildings { get; set; }
 		
 		abstract public Point MoveTo(BattleFieldBase battleField, PlayerBase player, TroopBase attacker);
 		abstract public PlaceableBase Target(BattleFieldBase battleField, PlayerBase player, PlaceableBase attacker);

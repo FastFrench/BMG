@@ -42,6 +42,7 @@
     <Compile Include="Common\BuildingAI.cs" />
     <Compile Include="Common\TroopAI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StandardAI\ContactTroopdefaultAI.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BMG_Structures\BMG_Structures.csproj">

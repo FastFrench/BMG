@@ -27,5 +27,20 @@ namespace BMG_Structures.Common
 		{
 			return p1.X != p2.X || p1.Y != p2.Y;
 		}
+
+		public bool IsInDeck
+		{
+			get
+			{
+				return X == InDeck.X && Y == InDeck.Y;
+			}
+		}
+
+		public int SquareDistance(Point fromPoint)
+		{
+			if (IsInDeck || fromPoint.IsInDeck)
+				return int.MaxValue;
+			return (X - fromPoint.X) * (X - fromPoint.X) + (Y - fromPoint.Y) * (Y - fromPoint.Y);
+		}
 	}
 }

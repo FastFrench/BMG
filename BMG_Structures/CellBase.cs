@@ -24,8 +24,19 @@ namespace BMG_Structures
 			TroopT1 = 1 << bTroop,
 			TroopMask = TeamMask << bTroop,
 			TotalObstacles = GroundObstacle | FlyObstacle | UnderGroundObstacle,
+			AllExceptBuildings = TotalObstacles | BuildingMask,
 			AllExceptTroops = TotalObstacles | BuildingMask
 		};
+
+		static public CellContent GetTroopFlag(int Team)
+		{
+			return (CellContent)((int)CellContent.TroopT1 << (Team-1));
+		}
+
+		static public CellContent GetBuildingFlag(int Team)
+		{
+			return (CellContent)((int)CellContent.BuildingT1 << (Team-1));
+		}
 
 		public CellContent Content { get; set; }
 
