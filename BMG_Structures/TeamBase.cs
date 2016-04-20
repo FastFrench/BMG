@@ -8,6 +8,14 @@ namespace BMG_Structures
 {
 	public class TeamBase
 	{
+		public PlayerBase this[string login]
+		{
+			get
+			{
+				return Players.FirstOrDefault(pl => pl.Login == login);
+			}
+		}
+
 		static private int teamIdCounter = 0;
 		public TeamBase()
 		{
@@ -20,12 +28,12 @@ namespace BMG_Structures
 			return new PlayerBase(login, password, this);
 		}
 
-		public virtual bool AddPlayer(string login, string password)
+		public virtual PlayerBase AddPlayer(string login, string password)
 		{
 			PlayerBase newPlayer = CreatePlayer(login, password);
-			if (newPlayer == null || !newPlayer.Valid) return false;
+			if (newPlayer == null || !newPlayer.Valid) return null;
 			Players.Add(newPlayer);
-			return true;
+			return newPlayer;
 		}
 
 		public virtual bool MoveExistingPlayerIntoThisTeam(PlayerBase player)

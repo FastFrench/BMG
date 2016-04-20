@@ -44,6 +44,7 @@
     <Compile Include="Buildings\BuildingBase.cs" />
     <Compile Include="Buildings\BuildingTemplateBase.cs" />
     <Compile Include="CellBase.cs" />
+    <Compile Include="Common\CommonHelper.cs" />
     <Compile Include="Common\DataProviderBase.cs" />
     <Compile Include="Common\AIBase.cs" />
     <Compile Include="Common\IDataProviderBase.cs" />

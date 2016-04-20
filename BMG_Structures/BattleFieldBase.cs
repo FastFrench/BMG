@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMG_Structures.Buildings;
 using BMG_Structures.Common;
 using BMG_Structures.Troops;
+
 
 namespace BMG_Structures
 {
@@ -128,7 +130,7 @@ namespace BMG_Structures
 		private Random rnd { get; set; }
 		// Find the closest cell then contents either troops and/or buildings
 		// If random = true, then will take randomly one of all the possible shortest range cells. Otherwise, will take the first one (left=>right, top=>down). 
-		public Point FindClosestCellInRange(Point point, int maxRange, int minRange = 0, bool includeBuildings = true, bool includeTroops = true, int? teamId = null, bool random = false)
+		public Point FindClosestCellInRange(Point point, int maxRange, int minRange = 0, bool includeBuildings = true, bool includeTroops = true, int? teamId = null, bool random = false, CellBase.CellContent refusedCellsMask = CellBase.CellContent.Empty)
 		{
 			CellBase.CellContent cellContentMask = contentMask(includeBuildings, includeTroops, teamId);
 			Point bestCellSoFar = Point.InDeck;
@@ -142,6 +144,8 @@ namespace BMG_Structures
 						if (y >= 0 && y < Height)
 						{
 							if ((Cells[x, y].Content & cellContentMask) == CellBase.CellContent.Empty)
+								continue;
+							if ((refusedCellsMask & Cells[x, y].Content) != CellBase.CellContent.Empty)
 								continue;
 							int d2 = (x - point.X) * (x - point.X) + (y - point.Y) * (y - point.Y);
 							if (d2 <= maxRange2 && d2 >= minRange2)
@@ -166,7 +170,33 @@ namespace BMG_Structures
 				return candidates[rnd.Next(candidates.Count)];
 			return bestCellSoFar;
 		}
+
+		public PlaceableBase FindClosestTargetInRange(PlaceableBase source, int maxRange, int minRange = 0, bool includeBuildings = true, bool includeTroops = true, int? teamId = null, bool random = false, CellBase.CellContent refusedCellsMask = CellBase.CellContent.Empty)
+		{
+			var targetMask = source.TargetableAltitudes;
+			Point bestCell = FindClosestCellInRange(source.CurrentPosition, source.ran maxRange)
+		}
+
 		#endregion Search routines
 
+
+
+		public Point SelectARandomDestination(TroopBase troop)
+		{
+			Point res = Point.InDeck;
+			CellBase.CellContent mask = troop.ImpossibleMoveMask();
+			int timeout = 100;
+			do
+			{
+				res = new Point(rnd.Next(Width), rnd.Next(Height));
+				if (timeout-- == 0)
+				{
+					res = Point.InDeck;
+					Debug.Assert(false, "Can't find an accessible cell out of obstacles");
+					break;
+				}
+			} while ((Cells[res.X, res.Y].Content & mask) != CellBase.CellContent.Empty);
+			return res;
+		}
 	}
 }
