@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="AIHelper.cs" />
     <Compile Include="Common\BuildingAI.cs" />
+    <Compile Include="Common\CommonAI.cs" />
     <Compile Include="Common\TroopAI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandardAI\ContactTroopdefaultAI.cs" />

@@ -12,20 +12,6 @@ namespace BMG_IA.StandardAI
 {
 	public class ContactTroopdefaultAI : TroopAI
 	{
-		override public Point MoveTo(BattleFieldBase battleField, TroopBase attacker)
-		{
-			// If the troop is not deployed or dead, then return default InDeck position. 
-			if (attacker == null || attacker.CurrentPosition.IsInDeck || attacker.CurrentHP <= 0) return Point.InDeck;
-			var dest = battleField.FindClosestCellInRange(attacker.CurrentPosition, attacker.VisionRange, 0, true, true, attacker.Player.TeamId, true);
-			if (dest.IsInDeck)
-			{
-
-			}
-		}
-		override public PlaceableBase Target(BattleFieldBase battleField, PlaceableBase attacker)
-		{
-			battleField.FindClosestCellInRange(CurrentPosition, attacker.VisionRange, 0, true, true, attacker.Player.TeamId, true);
-		}
 
 	}
 }
