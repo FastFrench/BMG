@@ -16,8 +16,7 @@ namespace BMG_IA.StandardAI
 		{
 			// If the troop is not deployed or dead, then return default InDeck position. 
 			if (attacker == null || attacker.CurrentPosition.IsInDeck || attacker.CurrentHP <= 0) return Point.InDeck;
-			Point CurrentPosition = attacker.CurrentPosition;
-			var dest = battleField.FindClosestCellInRange(CurrentPosition, attacker.VisionRange, 0, true, true, attacker.Player.TeamId, true);
+			var dest = battleField.FindClosestCellInRange(attacker.CurrentPosition, attacker.VisionRange, 0, true, true, attacker.Player.TeamId, true);
 			if (dest.IsInDeck)
 			{
 

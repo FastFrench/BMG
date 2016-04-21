@@ -33,9 +33,9 @@ namespace BMG_Structures
 		#region Cells management
 		public void UpdateCells()
 		{
-			// Reset troop content
+			// Reset troop content: remove all except obstacles (won't change, and if they do, then changes have to update this map)
 			foreach (CellBase cell in Cells)
-				cell.Content &= CellBase.CellContent.AllExceptTroops;
+				cell.Content &= CellBase.CellContent.AllObstacles;
 
 			for (int teamIndex = 0; teamIndex < Teams.Length; teamIndex++)
 			{
@@ -44,10 +44,10 @@ namespace BMG_Structures
 				{
 					foreach (TroopBase troop in player.Army.Troops)
 						if (!troop.CurrentPosition.IsInDeck)
-							Cells[troop.CurrentPosition.X, troop.CurrentPosition.Y].Content |= CellBase.GetTroopFlag(teamIndex);
+							Cells[troop.CurrentPosition.X, troop.CurrentPosition.Y].Content |= CellBase.GetTroopFlag(teamIndex, troop.Altitude);
 					foreach (BuildingBase building in player.OwnBuildings)
 						if (!building.CurrentPosition.IsInDeck)
-							Cells[building.CurrentPosition.X, building.CurrentPosition.Y].Content |= CellBase.GetBuildingFlag(teamIndex);
+							Cells[building.CurrentPosition.X, building.CurrentPosition.Y].Content |= CellBase.GetBuildingFlag(teamIndex, building.Altitude);
 				}
 			}
 		}
@@ -55,7 +55,7 @@ namespace BMG_Structures
 
 		#region Search routines
 		// Reasonnably fast method that returns all points at range
-		public IEnumerable<Point> CellsAtRange(Point point, int maxRange, int minRange = 0, CellBase.CellContent? cellContentMask = null)
+		public IEnumerable<Point> CellsAtRange(Point point, int maxRange, int minRange = 0, CellBase.CellContent? needAtLeastOneBitFromThisMask = null)
 		{
 			int minRange2 = minRange * minRange;
 			int maxRange2 = maxRange * maxRange;
@@ -64,7 +64,7 @@ namespace BMG_Structures
 					for (int y = point.Y - maxRange; y <= point.Y + maxRange; y++)
 						if (y >= 0 && y < Height)
 						{
-							if (cellContentMask != null && (Cells[x, y].Content & cellContentMask.Value) == CellBase.CellContent.Empty)
+							if (needAtLeastOneBitFromThisMask != null && (Cells[x, y].Content & needAtLeastOneBitFromThisMask.Value) == CellBase.CellContent.Empty)
 								continue;
 							int d2 = (x - point.X) * (x - point.X) + (y - point.Y) * (y - point.Y);
 							if (d2 <= maxRange2 && d2 >= minRange2)
@@ -98,13 +98,13 @@ namespace BMG_Structures
 			{
 				cellContentMask |= CellBase.CellContent.BuildingMask;
 				if (teamId != null)
-					cellContentMask ^= CellBase.GetBuildingFlag(teamId.Value);
+					cellContentMask ^= CellBase.GetBuildingFlag(teamId.Value, AltitudeEnum.Underground) | CellBase.GetBuildingFlag(teamId.Value, AltitudeEnum.Fly) | CellBase.GetBuildingFlag(teamId.Value, AltitudeEnum.Ground);
 			}
 			if (includeTroops)
 			{
 				cellContentMask |= CellBase.CellContent.TroopMask;
 				if (teamId != null)
-					cellContentMask ^= CellBase.GetTroopFlag(teamId.Value);
+					cellContentMask ^= CellBase.GetTroopFlag(teamId.Value, AltitudeEnum.Underground) | CellBase.GetTroopFlag(teamId.Value, AltitudeEnum.Fly) | CellBase.GetTroopFlag(teamId.Value, AltitudeEnum.Ground);
 			}
 			return cellContentMask;
 		}
@@ -128,9 +128,21 @@ namespace BMG_Structures
 		}
 
 		private Random rnd { get; set; }
-		// Find the closest cell then contents either troops and/or buildings
-		// If random = true, then will take randomly one of all the possible shortest range cells. Otherwise, will take the first one (left=>right, top=>down). 
-		public Point FindClosestCellInRange(Point point, int maxRange, int minRange = 0, bool includeBuildings = true, bool includeTroops = true, int? teamId = null, bool random = false, CellBase.CellContent refusedCellsMask = CellBase.CellContent.Empty)
+		
+		/// <summary>
+		/// Find the closest cell then contents either troops and/or buildings
+		/// </summary>
+		/// <param name="point">Location from which we are looking for a proper spot un range</param>
+		/// <param name="maxRange"></param>
+		/// <param name="minRange"></param>
+		/// <param name="includeBuildings"></param>
+		/// <param name="includeTroops"></param>
+		/// <param name="teamId">When provided (not null), will ignore all elements from that team.</param>
+		/// <param name="random">If random = true, then will take randomly one of all the possible shortest range cells. Otherwise, will take the first one (left=>right, top=>down). </param>
+		/// <param name="refusedCellsMask">Each bit from this mask should be 0 in the cell.Content. Can be used for instance to find a cell that has no obstacle for ground move. </param>
+		/// <param name="neededCellsMask">At least one of those bits should be 1 in the cell.Content. Can be used for instance to find a cell with a flying or ground target. </param>
+		/// <returns></returns>
+		public Point FindClosestCellInRange(Point point, int maxRange, int minRange = 0, bool includeBuildings = true, bool includeTroops = true, int? teamId = null, bool random = false, CellBase.CellContent refusedCellsMask = CellBase.CellContent.Empty, CellBase.CellContent? neededCellsMask = null)
 		{
 			CellBase.CellContent cellContentMask = contentMask(includeBuildings, includeTroops, teamId);
 			Point bestCellSoFar = Point.InDeck;
@@ -146,6 +158,8 @@ namespace BMG_Structures
 							if ((Cells[x, y].Content & cellContentMask) == CellBase.CellContent.Empty)
 								continue;
 							if ((refusedCellsMask & Cells[x, y].Content) != CellBase.CellContent.Empty)
+								continue;
+							if (neededCellsMask != null && ((neededCellsMask & Cells[x, y].Content) == CellBase.CellContent.Empty))
 								continue;
 							int d2 = (x - point.X) * (x - point.X) + (y - point.Y) * (y - point.Y);
 							if (d2 <= maxRange2 && d2 >= minRange2)
@@ -171,12 +185,24 @@ namespace BMG_Structures
 			return bestCellSoFar;
 		}
 
-		public PlaceableBase FindClosestTargetInRange(PlaceableBase source, int maxRange, int minRange = 0, bool includeBuildings = true, bool includeTroops = true, int? teamId = null, bool random = false, CellBase.CellContent refusedCellsMask = CellBase.CellContent.Empty)
+		/// <summary>
+		/// Find a possible target as close as possible for the source troop or building
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="includeBuildings"></param>
+		/// <param name="includeTroops"></param>
+		/// <param name="random"></param>
+		/// <returns></returns>
+		public PlaceableBase FindClosestTargetInRange(PlaceableBase source, bool includeBuildings = true, bool includeTroops = true, bool random = false)
 		{
 			var targetMask = source.TargetableAltitudes;
-			Point bestCell = FindClosestCellInRange(source.CurrentPosition, source.ran maxRange)
+			Point bestCell = FindClosestCellInRange(source.CurrentPosition, source.MaxAttackRange, source.MinAttackRange, includeBuildings, includeTroops, source.Player.TeamId, random, CellBase.CellContent.Empty, source.TargetMask(includeTroops, includeBuildings));
+			var placeables = GetPlaceablesInCell(bestCell, includeBuildings, includeTroops, source.Player.TeamId).Where(pl=>(pl.Altitude & source.TargetableAltitudes) != 0).ToArray();
+			if (placeables == null || placeables.Length==0) return null;
+			if (!random)
+				return placeables[0];
+			return placeables[rnd.Next(placeables.Length)];
 		}
-
 		#endregion Search routines
 
 

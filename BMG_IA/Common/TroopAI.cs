@@ -9,7 +9,7 @@ using BMG_Structures.Troops;
 
 namespace BMG_IA.Common
 {
-	public class TroopAI : AIBase
+	abstract public class TroopAI : AIBase
 	{
 	}
 }

@@ -11,11 +11,11 @@ namespace BMG_IA.Common
 	{
 		public override Point MoveTo(BMG_Structures.BattleFieldBase battleField, BMG_Structures.Troops.TroopBase attacker)
 		{
-			throw new NotImplementedException();
+			return attacker.CurrentPosition; // No move
 		}
 		public override PlaceableBase Target(BMG_Structures.BattleFieldBase battleField, PlaceableBase attacker)
 		{
-			return battleField.FindClosestCellInRange
+			return battleField.FindClosestTargetInRange(attacker, true, true, true);			
 		}
 	}
 }
