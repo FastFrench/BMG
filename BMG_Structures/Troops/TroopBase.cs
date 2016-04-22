@@ -22,7 +22,6 @@ namespace BMG_Structures.Troops
 		virtual public int BaseSpeed { get { return 0; } }
 		public TroopBase()
 		{
-			CurrentPosition = Point.InDeck;			
 			VisionRange = DefaultVisionRange;
 			MoveRetargetSW = Stopwatch.StartNew();
 			MoveTargetUpdateDelay = DefaultFreezeDelayAtStart;
@@ -56,5 +55,12 @@ namespace BMG_Structures.Troops
 			return CurrentDestination;
 		}
 
+		public override void Drop(Point pt)
+		{
+			base.Drop(pt);
+			CurrentDestination = Point.InDeck;
+			MoveRetargetSW = Stopwatch.StartNew();
+			MoveTargetUpdateDelay = DefaultFreezeDelayAtStart;
+		}
 	}
 }

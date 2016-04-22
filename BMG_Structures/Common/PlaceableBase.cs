@@ -10,7 +10,7 @@ namespace BMG_Structures.Common
 {
 	public class PlaceableBase
 	{
-		const int DefaultVisionRange = 100;		
+		const int DefaultVisionRange = 200;		
 		public Point CurrentPosition { get; protected set; }
 		virtual public AltitudeEnum Altitude { get; protected set; }
 		virtual public AltitudeEnum TargetableAltitudes { get { return Altitude; } }
@@ -29,12 +29,20 @@ namespace BMG_Structures.Common
 		virtual protected TimeSpan AttackTargetUpdateDelay { get; set; }
 		protected Stopwatch AttackRetargetSW { get; set; }
 
+		public virtual void Drop(Point pt)
+		{
+			CurrentPosition = pt;
+			CurrentAttackTarget = null;
+			AttackTargetUpdateDelay = DefaultFreezeDelayAtStart;
+		}
+
 		public PlaceableBase()
 		{
 			CurrentAttackTarget = null;
 			VisionRange = DefaultVisionRange;
 			AttackRetargetSW = Stopwatch.StartNew();
 			AttackTargetUpdateDelay = DefaultFreezeDelayAtStart;
+			CurrentPosition = Point.InDeck;						
 		}
 
 		public virtual Point MoveTo(BattleFieldBase battleField)

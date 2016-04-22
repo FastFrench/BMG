@@ -8,7 +8,7 @@ using BMG_Structures.Common;
 
 namespace BMG_Structures.Troops
 {
-	public abstract class TroopTemplateBase
+	public class TroopTemplateBase
 	{
 		public int TemplateId { get;  set; }
 		
