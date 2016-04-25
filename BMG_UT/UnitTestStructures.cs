@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BMG_GameData.TestData;
 using BMG_Structures;
 using BMG_Structures.Buildings;
 using BMG_Structures.Common;
@@ -64,6 +65,12 @@ namespace BMG_UnitTest
 			Assert.IsFalse(list.Exists(pl => pl == b2_t1), "Proper troop should not be included");
 			Assert.IsTrue(list.Exists(pl => pl == h1_t2), "Proper building not found");
 
+		}
+
+		[TestMethod]
+		public void SerialisationTest()
+		{
+			RunTests.BuildTemplates();
 		}
 	}
 }

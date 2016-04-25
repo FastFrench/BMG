@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMG_Structures;
 using BMG_Structures.Buildings;
+using BMG_Structures.Common;
 
 namespace BMG_GameData.Building
 {
 	public class BuildingFactory
 	{
-		BuildingTemplate CreateTemplate(BuildingEnum type)
+		BuildingTemplate GetTemplate(int templateId)
 		{
-			return new BuildingTemplate(type);
+			TemplateBase template = null;
+			if (PlaceableFactory.Templates.TryGetValue(templateId, out template) && template is BuildingTemplate)
+				return template as BuildingTemplate;
+			return null;
 		}
-		Building CreateBuilding(BuildingEnum type)
+		Building CreateBuilding(int templateId, Player player)
 		{
-			return new Building(CreateTemplate(type));
+			BuildingTemplate template = GetTemplate(templateId);
+			if (template == null) return null;
+			return new Building(template, player);
 		}
 	}
 }

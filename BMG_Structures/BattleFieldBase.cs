@@ -211,5 +211,10 @@ namespace BMG_Structures
 			} while ((Cells[res.X, res.Y].Content & mask) != CellBase.CellContent.Empty);
 			return res;
 		}
+
+		virtual public int ComputeEffectInCell(Point point, int? teamId, EffectTemplateBase effect)
+		{
+			return 0;
+		}
 	}
 }

@@ -9,6 +9,7 @@ namespace BMG_Structures.Common
 	[Flags]
 	public enum AltitudeEnum
 	{
+		None = 0,
 		Ground = 1,
 		Fly = 2 ,
 		Underground = 4,

@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMG_Structures;
 using BMG_Structures.Buildings;
+using BMG_Structures.Common;
 
 namespace BMG_GameData.Troop
 {
 	public class TroopFactory
 	{
-		TroopTemplate CreateTemplate(TroopEnum type)
+		TroopTemplate GetTemplate(int templateId)
 		{
-			return new TroopTemplate(type);
+			TemplateBase template = null;
+			if (PlaceableFactory.Templates.TryGetValue(templateId, out template) && template is TroopTemplate)
+				return template as TroopTemplate;
+			return null;
 		}
-		Troop CreateTroop(TroopEnum type)
+		Troop CreateBuilding(int templateId, Player player)
 		{
-			return new Troop(CreateTemplate(type));
+			TroopTemplate template = GetTemplate(templateId);
+			if (template == null) return null;
+			return new Troop(template, player);
 		}
 	}
 }

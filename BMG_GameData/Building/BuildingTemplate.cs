@@ -9,7 +9,7 @@ namespace BMG_GameData.Building
 {
 	public class BuildingTemplate : BuildingTemplateBase
 	{
-		int HousingCapacity { get; set; }
+		public int HousingCapacity { get; set; }
 		public BuildingTemplate()
 			: base()
 		{

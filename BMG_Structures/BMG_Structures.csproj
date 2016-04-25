@@ -47,6 +47,7 @@
     <Compile Include="Common\CommonHelper.cs" />
     <Compile Include="Common\DataProviderBase.cs" />
     <Compile Include="Common\AIBase.cs" />
+    <Compile Include="Common\EffectBase.cs" />
     <Compile Include="Common\IDataProviderBase.cs" />
     <Compile Include="Common\PlaceableBase.cs" />
     <Compile Include="Common\Point.cs" />
