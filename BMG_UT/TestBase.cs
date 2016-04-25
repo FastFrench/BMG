@@ -1,5 +1,6 @@
 ﻿using System;
 using BMG_Structures;
+using BMG_Structures.Buildings;
 using BMG_Structures.Common;
 using BMG_Structures.Troops;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,11 +13,14 @@ namespace BMG_UnitTest
 		protected TeamBase team1, team2;
 		protected TroopTemplateBase barbTemplate;
 		protected TroopTemplateBase flyTemplate;
+		protected BuildingTemplateBase houseTemplate;
 		protected BattleFieldBase bf;
 		protected Random rnd = new Random();
 		
 		protected void Init()
 		{
+			PlaceableFactory.FullReset(); // Makes sure counters are reset
+
 			team1 = new TeamBase();
 			team2 = new TeamBase();
 			p1_t1 = team1.AddPlayer("Test1_1", "Password");
@@ -48,20 +52,23 @@ namespace BMG_UnitTest
 			flyTemplate.TemplateId = 2;
 			flyTemplate.Altitude = AltitudeEnum.Fly;
 			flyTemplate.TargetableAltitude = AltitudeEnum.Fly | AltitudeEnum.Ground;
+
+			houseTemplate = new BuildingTemplateBase() { Width = 1, Name = "House", Range = 0, Altitude = AltitudeEnum.Ground, Cost = 10, Damage = 0, Delay = 60, MaxHP = 1000 };
 		}
 
 		protected TroopBase CreateBarbarian(int x, int y, PlayerBase player)
 		{
-			TroopBase barb = new TroopBase(barbTemplate, player);
-			barb.Drop(new Point(x, y));
-			return barb;
+			return player.AddTroop(barbTemplate, new Point(x, y));			
 		}
 
 		protected TroopBase CreateFly(int x, int y, PlayerBase player)
 		{
-			TroopBase fly = new TroopBase(flyTemplate, player);
-			fly.Drop(new Point(x, y));
-			return fly;
+			return player.AddTroop(flyTemplate, new Point(x, y));
+		}
+
+		protected BuildingBase CreateHouse(int x, int y, PlayerBase player)
+		{
+			return player.AddBuilding(houseTemplate, new Point(x, y));
 		}
 
 		protected void AddRandomObstacle(AltitudeEnum altitude = AltitudeEnum.All)

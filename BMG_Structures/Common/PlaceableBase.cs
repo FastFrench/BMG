@@ -8,26 +8,29 @@ using BMG_Structures.Troops;
 
 namespace BMG_Structures.Common
 {
-	public class PlaceableBase
+	public class PlaceableBase : IEquatable<PlaceableBase>
 	{
 		public TemplateBase Template { get; protected set; }
-		
-		const int DefaultVisionRange = 200;		
+
+		const int DefaultVisionRange = 200;
 		public Point CurrentPosition { get; protected set; }
 		virtual public AltitudeEnum Altitude { get; protected set; }
 		virtual public AltitudeEnum TargetableAltitudes { get { return Altitude; } }
 		public PlayerBase Player { get; protected set; }
 		public AIBase CurrentAI { get; set; }
 		public int CurrentHP { get; set; }
-		virtual public int VisionRange { get; protected set;}
+		virtual public int VisionRange { get; protected set; }
 		virtual public int MinAttackRange { get { return 0; } }
 		virtual public int MaxAttackRange { get { return 1; } }
 
-		public PlaceableBase CurrentAttackTarget { get; set;}
+		public int PlaceableId { get; private set; }
+		private static int PlaceableCounter = 0;
+
+		public PlaceableBase CurrentAttackTarget { get; set; }
 		private readonly static TimeSpan DefaultAttackTargetUpdateDelay = new TimeSpan(0, 0, 0, 0, 500);
 
 		protected readonly static TimeSpan DefaultFreezeDelayAtStart = new TimeSpan(0, 0, 0, 1, 0); // Stay 1 second freezed when dropped
-		
+
 		virtual protected TimeSpan AttackTargetUpdateDelay { get; set; }
 		protected Stopwatch AttackRetargetSW { get; set; }
 
@@ -44,12 +47,13 @@ namespace BMG_Structures.Common
 			VisionRange = DefaultVisionRange;
 			AttackRetargetSW = Stopwatch.StartNew();
 			AttackTargetUpdateDelay = DefaultFreezeDelayAtStart;
-			CurrentPosition = Point.InDeck;						
+			CurrentPosition = Point.InDeck;
+			PlaceableId = ++PlaceableCounter;
 		}
 
 		public virtual Point MoveTo(BattleFieldBase battleField)
 		{
-			return Point.InDeck;			
+			return Point.InDeck;
 		}
 
 		public virtual PlaceableBase Target(BattleFieldBase battleField)
@@ -59,5 +63,19 @@ namespace BMG_Structures.Common
 
 			return CurrentAI.Target(battleField, this);
 		}
+
+		public bool Equals(PlaceableBase other)
+		{
+			if (other == null) return false;
+			return this.PlaceableId == other.PlaceableId;
+		}
+
+		internal static void ResetCounter() { PlaceableCounter = 0; }
+
+		public override string ToString()
+		{
+			return string.Format("{0} {1} p:{2}", this.Template.Name, this.CurrentPosition, this.Player.Name);
+		}
+		
 	}
 }

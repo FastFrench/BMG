@@ -8,7 +8,7 @@ using BMG_Structures.Common;
 
 namespace BMG_Structures.Buildings
 {
-	public abstract class BuildingTemplateBase : TemplateBase
+	public class BuildingTemplateBase : TemplateBase
 	{
 		public int Width { get; set; }	
 	}

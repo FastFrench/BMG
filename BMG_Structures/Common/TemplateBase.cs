@@ -9,7 +9,15 @@ namespace BMG_Structures.Common
 {
 	public class TemplateBase
 	{
+		public TemplateBase()
+		{
+			TemplateId = ++TemplateCounter;
+			PlaceableFactory.Templates[TemplateId] = this;
+		}
+
+		internal static void ResetCounter() { TemplateCounter = 0; }
 		public int TemplateId { get; set; }
+		private static int TemplateCounter = 0;
 		public string Name { get; set; }
 
 		public int Cost { get; set; }

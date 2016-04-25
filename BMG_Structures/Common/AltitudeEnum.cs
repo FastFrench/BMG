@@ -11,6 +11,7 @@ namespace BMG_Structures.Common
 	{
 		Ground = 1,
 		Fly = 2 ,
-		Underground = 4
+		Underground = 4,
+		All = Ground | Fly | Underground
 	}
 }

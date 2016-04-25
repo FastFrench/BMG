@@ -44,6 +44,12 @@ namespace BMG_Structures.Common
 			return (X - fromPoint.X) * (X - fromPoint.X) + (Y - fromPoint.Y) * (Y - fromPoint.Y);
 		}
 
+		public IEnumerable<Point> SortFromTheClosest(IEnumerable<Point> points)
+		{
+			Point thisPoint = this;
+			return points.OrderBy(pt => thisPoint.SquareDistance(pt));
+		}
+
 		public override int GetHashCode()
 		{
 			return X << 16 | Y;			
@@ -59,6 +65,12 @@ namespace BMG_Structures.Common
 			if (obj is Point)
 				return this == (Point)obj;
 			return false;			
+		}
+
+		public override string ToString()
+		{
+			if (IsInDeck) return "(In deck)";
+			return string.Format("({0},{1})", X, Y);
 		}
 	}
 }

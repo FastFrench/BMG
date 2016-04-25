@@ -6,7 +6,7 @@ using BMG_Structures.Common;
 
 namespace BMG_Structures
 {
-	public class CellBase
+	public struct CellBase
 	{
 		public const int MaxTeams = 4;
 		public const int TeamMask = 0x0000000F;
@@ -16,7 +16,7 @@ namespace BMG_Structures
 		const int bTroopFly = bBuildingUnderground + MaxTeams;
 		const int bTroopGround = bTroopFly + MaxTeams;
 		const int bTroopUnderground = bTroopGround + MaxTeams;
-		
+
 		[Flags]
 		public enum CellContent
 		{

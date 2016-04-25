@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using BMG_Structures;
 using BMG_Structures.Common;
 using BMG_Structures.Troops;
@@ -7,57 +8,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BMG_UnitTest
 {
 	[TestClass]
-	public class UnitTestStructures
+	public class UnitTestStructures : TestBase
 	{
-		PlayerBase p11, p12, p21, p22;
-		TeamBase team1, team2;
-		TroopTemplateBase barbTemplate;
-		TroopTemplateBase flyTemplate;
-		BattleFieldBase bf;
-
-		private void Init()
+		[TestInitialize()]
+		public void MyTestInitialize()
 		{
-			team1 = new TeamBase();
-			team2 = new TeamBase();
-			p11 = team1.AddPlayer("Test1_1", "Password");
-			p12 = team1.AddPlayer("Test1_2", "Password");
-			p21 = team2.AddPlayer("Test2_1", "Password");
-			p22 = team2.AddPlayer("Test2_2", "Password");
-
-			bf = new BattleFieldBase();
-			bf.Initialize(8, 8);
-
-			barbTemplate = new TroopTemplateBase();
-			barbTemplate.Name = "Barbarian";
-			barbTemplate.Range = 2;
-			barbTemplate.MaxHP = 100;
-			barbTemplate.SpaceUsed = 3;
-			barbTemplate.Speed = 4;
-			barbTemplate.TemplateId = 1;
-			barbTemplate.Altitude = AltitudeEnum.Ground;
-
-			flyTemplate = new TroopTemplateBase();
-			flyTemplate.Name = "Fly";
-			flyTemplate.Range = 1;
-			flyTemplate.MaxHP = 20;
-			flyTemplate.SpaceUsed = 1;
-			flyTemplate.Speed = 6;
-			flyTemplate.TemplateId = 1;
-			flyTemplate.Altitude = AltitudeEnum.Fly;
-		}
-
-		private TroopBase CreateBarbarian(int x, int y, PlayerBase player)
-		{
-			TroopBase barb = new TroopBase(barbTemplate, player);
-			barb.Drop(new Point(x, y));
-			return barb;
-		}
-
-		private TroopBase CreateFly(int x, int y, PlayerBase player)
-		{
-			TroopBase fly = new TroopBase(flyTemplate, player);
-			fly.Drop(new Point(x, y));
-			return fly;
+			Init();
 		}
 
 		[TestMethod]
@@ -79,24 +35,17 @@ namespace BMG_UnitTest
 		}
 
 
-
 		[TestMethod]
 		public void TestMapSearch()
-		{
-			BattleFieldBase bf = new BattleFieldBase();			
-			bf.Initialize(8, 8);
-
-			TroopTemplateBase ttb = new TroopTemplateBase();
-			ttb.Name = "Barbarian";
-			ttb.Range = 2;
-			ttb.MaxHP = 100;
-			ttb.SpaceUsed = 1;
-			ttb.Speed = 4;
-			ttb.TemplateId = 1;
-			TroopBase troop = new TroopBase();
-			troop.Drop(new Point(2, 2));
+		{			
+			TroopBase b1_11 = CreateBarbarian(1,1,p1_t1);
+			TroopBase b2_11 = CreateBarbarian(2,1, p1_t1);
+			TroopBase f1_11 = CreateFly(8, 8, p1_t2);
+			TroopBase f2_11 = CreateFly(8, 7, p1_t2);
+			//AddObstacles(20);		
+			var res2 = bf.GetPlaceablesInCell(new Point(2, 1)).ToList();
+			Assert.AreEqual(res2.Count, 1, "Wrong number of troops found");
+			Assert.IsTrue(b2_11.Equals(res2[0]), "Proper troop not found");
 		}
-
-
 	}
 }

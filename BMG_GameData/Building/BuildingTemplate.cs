@@ -9,9 +9,10 @@ namespace BMG_GameData.Building
 {
 	public class BuildingTemplate : BuildingTemplateBase
 	{
-		public BuildingTemplate(BuildingEnum type)
+		int HousingCapacity { get; set; }
+		public BuildingTemplate()
+			: base()
 		{
-			TemplateId = (int)type;
 		}
 	}
 }

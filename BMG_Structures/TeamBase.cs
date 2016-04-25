@@ -23,6 +23,8 @@ namespace BMG_Structures
 			Players = new List<PlayerBase>();
 		}
 
+		internal static void ResetCounter() { teamIdCounter = 0; }
+		
 		protected PlayerBase CreatePlayer(string login, string password)
 		{
 			return new PlayerBase(login, password, this);
@@ -33,6 +35,7 @@ namespace BMG_Structures
 			PlayerBase newPlayer = CreatePlayer(login, password);
 			if (newPlayer == null || !newPlayer.Valid) return null;
 			Players.Add(newPlayer);
+			newPlayer.Team = this;
 			return newPlayer;
 		}
 

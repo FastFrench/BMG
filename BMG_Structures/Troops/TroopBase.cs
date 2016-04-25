@@ -10,6 +10,8 @@ namespace BMG_Structures.Troops
 {
 	public class TroopBase : PlaceableBase
 	{
+
+
 		public const int DefaultVisionRange = 100;
 		new public TroopTemplateBase Template { 
 			get { return base.Template as TroopTemplateBase; }

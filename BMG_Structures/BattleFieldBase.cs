@@ -16,8 +16,8 @@ namespace BMG_Structures
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
-		public TeamBase[] Teams { get; set; }
-		public CellBase[,] Cells { get; set; }
+		public List<TeamBase> Teams { get; set; }
+		public Map Cells { get; set; }
 
 
 		public virtual bool Initialize(int width, int height)
@@ -25,33 +25,11 @@ namespace BMG_Structures
 			Width = width;
 			Height = height;
 			if (Width < 2 || Height < 2) return false;
-			Cells = new CellBase[Width, Height];
+			Cells = new Map(Width, Height, this);
 			rnd = new Random();
+			Teams = new List<TeamBase>();
 			return true;
 		}
-
-		#region Cells management
-		public void UpdateCells()
-		{
-			// Reset troop content: remove all except obstacles (won't change, and if they do, then changes have to update this map)
-			foreach (CellBase cell in Cells)
-				cell.Content &= CellBase.CellContent.AllObstacles;
-
-			for (int teamIndex = 0; teamIndex < Teams.Length; teamIndex++)
-			{
-				TeamBase team = Teams[teamIndex];
-				foreach (PlayerBase player in team.Players)
-				{
-					foreach (TroopBase troop in player.Army.Troops)
-						if (!troop.CurrentPosition.IsInDeck)
-							Cells[troop.CurrentPosition.X, troop.CurrentPosition.Y].Content |= CellBase.GetTroopFlag(teamIndex, troop.Altitude);
-					foreach (BuildingBase building in player.OwnBuildings)
-						if (!building.CurrentPosition.IsInDeck)
-							Cells[building.CurrentPosition.X, building.CurrentPosition.Y].Content |= CellBase.GetBuildingFlag(teamIndex, building.Altitude);
-				}
-			}
-		}
-		#endregion
 
 		#region Search routines
 		// Reasonnably fast method that returns all points at range
@@ -72,6 +50,12 @@ namespace BMG_Structures
 						}
 		}
 
+		public IEnumerable<PlayerBase> GetAllPlayers(int? excludedTeamId = null)
+		{
+			return Teams.Where(te => excludedTeamId == null || te.TeamId != excludedTeamId.Value).Select(te => te.Players).
+								Aggregate<IEnumerable<PlayerBase>>((lp, next) => lp.Concat(next));
+		}
+
 		/// <summary>
 		/// Retrieves all placeables (troops and/or buildings) in a given Cell. Can possibly exclude own team.
 		/// </summary>
@@ -83,11 +67,10 @@ namespace BMG_Structures
 		public IEnumerable<PlaceableBase> GetPlaceablesInCell(Point point, bool includeBuildings = true, bool includeTroops = true, int? excludedTeamId = null)
 		{
 			return
-				Teams.Where(te => excludedTeamId == null || te.TeamId != excludedTeamId.Value).Select(te => te.Players).
-					Aggregate<IEnumerable<PlayerBase>>((lp, next) => lp.Concat(next)).
+				GetAllPlayers(excludedTeamId).
 						Aggregate<PlayerBase, IEnumerable<PlaceableBase>>(
 							Enumerable.Empty<PlaceableBase>(),
-							(current, next) => current.Concat(next.Army.Troops.Concat<PlaceableBase>(next.OwnBuildings).Where(pl => pl.CurrentPosition == point))
+							(list, player) => list.Concat(player.GetPlaceables(includeBuildings, includeTroops).Where(pl => pl.CurrentPosition == point))
 							);
 		}
 
@@ -204,7 +187,11 @@ namespace BMG_Structures
 			return placeables[rnd.Next(placeables.Length)];
 		}
 		#endregion Search routines
-
+		
+		public Point RandomPoint()
+		{
+			return new Point(1+rnd.Next(Width-2), 1+rnd.Next(Height-2));
+		}
 
 
 		public Point SelectARandomDestination(TroopBase troop)
@@ -214,7 +201,7 @@ namespace BMG_Structures
 			int timeout = 100;
 			do
 			{
-				res = new Point(rnd.Next(Width), rnd.Next(Height));
+				res = RandomPoint();
 				if (timeout-- == 0)
 				{
 					res = Point.InDeck;

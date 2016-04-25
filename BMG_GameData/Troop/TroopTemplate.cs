@@ -9,9 +9,9 @@ namespace BMG_GameData.Troop
 {
 	public class TroopTemplate : TroopTemplateBase
 	{
-		public TroopTemplate(TroopEnum type)
+		public TroopTemplate()
+			: base()
 		{
-			TemplateId = (int)type;
 		}
 	}
 }

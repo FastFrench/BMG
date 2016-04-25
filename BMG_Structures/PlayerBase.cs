@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMG_Structures.Buildings;
+using BMG_Structures.Common;
+using BMG_Structures.Troops;
 
 namespace BMG_Structures
 {
@@ -35,15 +37,58 @@ namespace BMG_Structures
 
 		public PlayerBase(string login, string password, TeamBase team)
 		{
-			Login = login;
+			Name = Login = login;
 			Password = password;
 			Valid = RetrievePlayer(login, password);
 			Team = team;
+			Army = new ArmyBase(this);
+			OwnBuildings = new List<BuildingBase>();
 		}
 
 		protected virtual bool RetrievePlayer(string login, string password)
 		{
 			return true;
+		}
+
+		public IEnumerable<PlaceableBase> GetPlaceables(bool includesBuildings, bool includesTroops)
+		{
+			if (includesTroops)
+				if (includesBuildings)
+					return Army.Troops.Concat<PlaceableBase>(OwnBuildings);
+				else
+					return Army.Troops;
+			else
+				return OwnBuildings;			
+		}
+
+		public TroopBase AddTroop(TroopTemplateBase template)
+		{
+			TroopBase troop = new TroopBase(template, this);
+			Army.AddTroop(troop);
+			return troop;
+		}
+
+		public TroopBase AddTroop(TroopTemplateBase template, Point point)
+		{
+			var troop = AddTroop(template);
+			if (!point.IsInDeck)
+				troop.Drop(point);
+			return troop;
+		}
+
+		public BuildingBase AddBuilding(BuildingTemplateBase template)
+		{
+			BuildingBase building = new BuildingBase(template, this);
+			OwnBuildings.Add(building);
+			return building;
+		}
+
+		public BuildingBase AddBuilding(BuildingTemplateBase template, Point point)
+		{
+			var building = AddBuilding(template);
+			if (!point.IsInDeck)
+				building.Drop(point);
+			return building;
 		}
 
 	}
