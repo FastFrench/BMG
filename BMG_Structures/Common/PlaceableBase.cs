@@ -10,6 +10,8 @@ namespace BMG_Structures.Common
 {
 	public class PlaceableBase
 	{
+		public TemplateBase Template { get; protected set; }
+		
 		const int DefaultVisionRange = 200;		
 		public Point CurrentPosition { get; protected set; }
 		virtual public AltitudeEnum Altitude { get; protected set; }

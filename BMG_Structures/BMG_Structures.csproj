@@ -51,6 +51,7 @@
     <Compile Include="Common\PlaceableBase.cs" />
     <Compile Include="Common\Point.cs" />
     <Compile Include="Common\AltitudeEnum.cs" />
+    <Compile Include="Common\TemplateBase.cs" />
     <Compile Include="GameBase.cs" />
     <Compile Include="PlayerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

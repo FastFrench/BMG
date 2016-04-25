@@ -9,7 +9,10 @@ namespace BMG_Structures.Buildings
 {
 	public class BuildingBase : PlaceableBase
 	{
-		public BuildingTemplateBase Template { get; protected set; }
+		new public BuildingTemplateBase Template { 
+			get { return base.Template as BuildingTemplateBase; }
+			protected set { base.Template = value; }
+		}			
 		
 		public BuildingBase()
 		{

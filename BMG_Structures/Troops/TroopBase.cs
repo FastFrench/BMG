@@ -11,9 +11,11 @@ namespace BMG_Structures.Troops
 	public class TroopBase : PlaceableBase
 	{
 		public const int DefaultVisionRange = 100;
-		virtual public TroopTemplateBase Template { get; protected set; }
-		virtual public AltitudeEnum TargetableAltitude { get; protected set; }
-
+		new public TroopTemplateBase Template { 
+			get { return base.Template as TroopTemplateBase; }
+			protected set { base.Template = value; }
+		}
+		
 		private static readonly TimeSpan DefaultMoveTargetUpdateDelay = new TimeSpan(0, 0, 0, 0, 200);
 		virtual protected TimeSpan MoveTargetUpdateDelay { get; set; }
 		protected Stopwatch MoveRetargetSW { get; set; }
@@ -40,7 +42,7 @@ namespace BMG_Structures.Troops
 		/// </summary>
 		/// <param name="battleField"></param>
 		/// <returns></returns>
-		public virtual Point MoveTo(BattleFieldBase battleField)
+		public override Point MoveTo(BattleFieldBase battleField)
 		{
 			if (CurrentAI == null) return Point.InDeck;
 			if (CurrentAttackTarget != null && !CurrentAttackTarget.CurrentPosition.IsInDeck)
