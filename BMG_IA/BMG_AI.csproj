@@ -43,6 +43,13 @@
     <Compile Include="Common\BuildingAI.cs" />
     <Compile Include="Common\CommonAI.cs" />
     <Compile Include="Common\TroopAI.cs" />
+    <Compile Include="PathFinder\CellInfo.cs" />
+    <Compile Include="PathFinder\DirectionEnum.cs" />
+    <Compile Include="PathFinder\Map.cs" />
+    <Compile Include="PathFinder\MapMovement.cs" />
+    <Compile Include="PathFinder\PathFinder.cs" />
+    <Compile Include="PathFinder\PathFinderCellData.cs" />
+    <Compile Include="PathFinder\PathFinderMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandardAI\ContactTroopdefaultAI.cs" />
   </ItemGroup>
