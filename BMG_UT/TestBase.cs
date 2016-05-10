@@ -5,7 +5,7 @@ using BMG_Structures.Common;
 using BMG_Structures.Troops;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace BMG_UnitTest
+namespace BMG_UT
 {
 	public class TestBase
 	{

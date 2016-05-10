@@ -50,11 +50,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Benchmark.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTestStructures.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BMG_Benchmarks\BMG_Benchmarks.csproj">
+      <Project>{c6c0f8d2-367a-472f-b634-aea23cfd4da0}</Project>
+      <Name>BMG_Benchmarks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BMG_GameData\BMG_GameData.csproj">
       <Project>{704cbcee-fbab-4105-8521-84fda6c3b15d}</Project>
       <Name>BMG_GameData</Name>

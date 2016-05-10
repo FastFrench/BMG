@@ -20,13 +20,15 @@ namespace BMG_IA.PathFinder
 			Height = height;
 			TotalSize = Width * Height;
 			Cells = new CellInfo[TotalSize];
+			//for (int i = 0; i < TotalSize; i++)
+			//	Cells[i] = new CellInfo(true, true);
 		}
 
 		public CellInfo this[int index]
 		{
 			get
 			{
-				if (index < 0 || index >= TotalSize) return null;
+				if (index < 0 || index >= TotalSize) return CellInfo.EmptyCell;
 				return Cells[index];
 			}
 			set
@@ -39,7 +41,7 @@ namespace BMG_IA.PathFinder
 		{
 			get
 			{
-				if (x < 0 || x >= Width || y < 0 || y >= Height) return null;
+				if (x < 0 || x >= Width || y < 0 || y >= Height) return CellInfo.EmptyCell;
 				return Cells[x + y * Width];
 			}
 			set
@@ -52,7 +54,7 @@ namespace BMG_IA.PathFinder
 		{
 			get
 			{
-				if (pt.IsInDeck) return null;
+				if (pt.IsInDeck) return CellInfo.EmptyCell;
 				return Cells[pt.X + pt.Y * Width];
 			}
 			set
@@ -74,7 +76,7 @@ namespace BMG_IA.PathFinder
 
 		public int GetIdFromPosSafe(Point pt)
 		{
-			if (pt.IsInDeck || pt.X < 0 || pt.X >= Width || pt.Y < Height || pt.Y >= Height) return CELL_ERROR;
+			if (pt.IsInDeck || pt.X < 0 || pt.X >= Width || pt.Y < 0 || pt.Y >= Height) return CELL_ERROR;
 			return pt.X + pt.Y * Width;
 		}
 
@@ -85,7 +87,7 @@ namespace BMG_IA.PathFinder
 
 		public int GetIdFromPosSafe(int x, int y)
 		{
-			if (x < 0 || x >= Width || y < Height || y >= Height) return CELL_ERROR;
+			if (x < 0 || x >= Width || y < 0 || y >= Height) return CELL_ERROR;
 			return x + y * Width;
 		}
 
@@ -144,17 +146,50 @@ namespace BMG_IA.PathFinder
 		}
 
 		/// <summary>
+		/// Returns straight path from cell1 to cell2 (excluding cell1, including cell2).
+		/// </summary>
+		/// <param name="cell1"></param>
+		/// <param name="cell2"></param>
+		/// <returns></returns>
+		public IEnumerable<int> GetStraightPath(int cell1, int cell2)
+		{		
+			int x1 = xfromid(cell1); int x2 = xfromid(cell2);
+			int y1 = yfromid(cell1); int y2 = yfromid(cell2);
+			if (x1 == x2 && y1 == y2) 
+			{
+				yield break;				
+			}
+			int dx = Math.Abs(x2 - x1);
+			int dy = Math.Abs(y2 - y1);
+			if (dx > dy)
+			{
+				int deltaX = (x2 - x1) / dx;
+				double deltaY = ((double)(y2 - y1)) / dx;
+				for (int n = 1; n <= dx; n++)
+					yield return GetIdFromPos(x1 + n * deltaX, (int)(y1 + n * deltaY));					
+			}
+			else
+			{
+				int deltaY = (y2 - y1) / dy;
+				double deltaX = ((double)(x2 - x1)) / dy;
+				for (int n = 1; n <= dy; n++)
+					yield return GetIdFromPos((int)(x1 + n * deltaX), y1 + n * deltaY);					
+			}			
+		}
+
+
+		/// <summary>
 		/// Says if Cell1 can see Cell2.
 		/// (Quite optimized)
 		/// </summary>
-		/// <param name="Cell1"></param>
-		/// <param name="Cell2"></param>
+		/// <param name="cell1"></param>
+		/// <param name="cell2"></param>
 		/// <returns></returns>
-		public bool CanBeSeen(int Cell1, int Cell2)
+		public bool CanBeSeen(int cell1, int cell2)
 		{
 
-			int x1 = xfromid(Cell1); int x2 = xfromid(Cell2);
-			int y1 = yfromid(Cell1); int y2 = yfromid(Cell2);
+			int x1 = xfromid(cell1); int x2 = xfromid(cell2);
+			int y1 = yfromid(cell1); int y2 = yfromid(cell2);
 			if (x1 == x2 && y1 == y2) return true; // On same cell
 			CellInfo info;
 
@@ -167,11 +202,11 @@ namespace BMG_IA.PathFinder
 				for (int n = 0; n <= dx; n++)
 				{
 					int x = x1 + n * deltaX;
-					int yb = (int)(y1 + n * deltaY); // Truncated toward 0
+					int yb = (int)(y1 + n * deltaY - 0.5); // Truncated toward 0
 					for (int y = yb; y <= yb + 1; y++)
 					{
 						info = this[x, y];
-						if (info == null || info.AllowLOS) continue;
+						if (info.Error || info.AllowLOS) continue;
 						// If one obstacle on the LOS, returns false
 						if (TooCloseFromSegment(x, y, x1, y1, x2, y2))
 							return false;
@@ -185,11 +220,11 @@ namespace BMG_IA.PathFinder
 				for (int n = 0; n <= dy; n++)
 				{
 					int y = y1 + n * deltaY;
-					int xb = (int)(x1 + n * deltaX); // Truncated toward 0
+					int xb = (int)(x1 + n * deltaX - 0.5); // Truncated toward 0
 					for (int x = xb; x <= xb + 1; x++)
 					{
 						info = this[x, y];
-						if (info == null || info.AllowLOS) continue;
+						if (info.Error || info.AllowLOS) continue;
 						// If one obstacle on the LOS, returns false
 						if (TooCloseFromSegment(x, y, x1, y1, x2, y2))
 							return false;
@@ -346,6 +381,7 @@ namespace BMG_IA.PathFinder
 				return dx * 1.414 /* diagonale part */ + /* straight line part */ dy - dx;			
 		}
 
+		// Returns true when both cells are on the same horizontal or vertical line
 		public bool AreInLine(int cellId1, int cellId2)
 		{
 			return (xfromid(cellId1) == xfromid(cellId2)) || (yfromid(cellId1) == yfromid(cellId2));

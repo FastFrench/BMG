@@ -1,0 +1,13 @@
+﻿Path finding Benchmarking
+
+Conditions: 
+	empty area, from top left (cell 0) to down right(cell with max id)
+
+
+Size	Debug time	Rel, run with dbg	Rel, run with no dbg
+10x10	 0.151ms	0.049ms				0.015ms
+50x50	 3.520ms	1.179ms				0.335ms
+100x100	14.135ms	4.701ms				1.325ms
+200x200	56.333ms	18.82ms				5.348ms
+
+Time is around 134µs * size²

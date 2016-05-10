@@ -12,23 +12,18 @@ namespace BMG_IA.PathFinder
 		public const int DEFAULT_DISTANCE = 999;
 
 		public PathFinderCellData[] PathFinderCells { get; set; }
+		private bool _eightDirs { get; set; }
 		public PathFinderMap(int width, int height, bool eightDirs)
 			: base(width, height)
 		{
-			PathFinderCells = new PathFinderCellData[TotalSize];
-			InitMovements(eightDirs ? 8 : 4);
+			_eightDirs = eightDirs;
 		}
 
 		public void ClearLogic()
 		{
 			// Reset some information about the cells.
-			for (int i = 0; i < PathFinderCells.Length; i++ )
-			{
-				PathFinderCellData cell = PathFinderCells[i];
-				cell.DistanceSteps = CellInfo.DEFAULT_DISTANCE;
-				cell.IsInPath = false;
-				//cell.IsInPath2 = false;
-			}
+			PathFinderCells = new PathFinderCellData[TotalSize];
+			InitMovements(_eightDirs ? 8 : 4);
 		}
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using BMG_Structures;
 using BMG_Structures.Common;
@@ -313,6 +314,7 @@ namespace BMG_IA.PathFinder
 					break;
 				}
 			}
+			Debug.Assert(CurrentCell == StartingCell);
 			return CurrentCell == StartingCell;
 		}
 
