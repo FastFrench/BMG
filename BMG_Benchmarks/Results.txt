@@ -3,7 +3,7 @@
 Conditions: 
 	empty area, from top left (cell 0) to down right(cell with max id)
 
-
+Old PC at work:
 Size	Debug time	Rel, run with dbg	Rel, run with no dbg
 10x10	 0.151ms	0.049ms				0.015ms
 50x50	 3.520ms	1.179ms				0.335ms
@@ -11,3 +11,11 @@ Size	Debug time	Rel, run with dbg	Rel, run with no dbg
 200x200	56.333ms	18.82ms				5.348ms
 
 Time is around 134µs * size²
+
+
+Fast Laptop BM:
+Size	Debug time	Rel, run with dbg	Rel, run with no dbg
+10x10	 0.087ms	?.???ms				0.008ms
+50x50	 1.786ms	?.???ms				0.186ms
+100x100	 6.887ms	?.???ms				0.737ms
+200x200	28.113ms	?.???ms				2.929ms

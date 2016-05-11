@@ -19,7 +19,7 @@ namespace BMG_UT
 		
 		protected void Init()
 		{
-			PlaceableFactory.FullReset(); // Makes sure counters are reset
+			PlaceableFactory.FullReset(false); // Makes sure counters are reset
 
 			team1 = new TeamBase();
 			team2 = new TeamBase();

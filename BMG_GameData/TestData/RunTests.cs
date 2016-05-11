@@ -39,7 +39,7 @@ namespace BMG_GameData.TestData
 		}
 		static public void BuildTemplates()
 		{
-			PlaceableFactory.FullReset();
+			PlaceableFactory.FullReset(false);
 			MakeTroopTemplates();
 			MakeBuildingTemplates();
 			MakeEffectTemplates();

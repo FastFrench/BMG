@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace BMG_IA.PathFinder
 {
-	public class MapMovement
+    public class MapMovement
 	{
 		Map cells;
 		public MapMovement(Map _cells)

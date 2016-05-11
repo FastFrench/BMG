@@ -70,9 +70,9 @@ namespace BMG_Structures.Common
 			return this.PlaceableId == other.PlaceableId;
 		}
 
-		internal static void ResetCounter() { PlaceableCounter = 0; }
+        internal static void ResetCounter(int value = 0) { PlaceableCounter = value; }
 
-		public override string ToString()
+        public override string ToString()
 		{
 			return string.Format("{0} {1} p:{2}", this.Template.Name, this.CurrentPosition, this.Player.Name);
 		}
