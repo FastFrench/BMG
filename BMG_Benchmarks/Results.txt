@@ -19,3 +19,13 @@ Size	Debug time	Rel, run with dbg	Rel, run with no dbg
 50x50	 1.786ms	?.???ms				0.186ms
 100x100	 6.887ms	?.???ms				0.737ms
 200x200	28.113ms	?.???ms				2.929ms
+
+
+New PC at work:
+Size	Debug time	Rel, run with dbg	Rel, run with no dbg
+10x10	 x.xxxms	x.xxxms				 0.009ms
+50x50	 x.xxxms	x.xxxms				 0.208ms
+100x100	 x.xxxms	x.xxxms				 0.821ms
+200x200	 x.xxxms	x.xxxms				 3.283ms
+500x500									20.253ms
+1000x1000								78.745ms

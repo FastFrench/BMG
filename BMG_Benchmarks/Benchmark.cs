@@ -54,6 +54,16 @@ namespace BMG_Benchmarks
 			RunPathFinder(200);
 		}
 
+		static public void PathFinding500()
+		{
+			RunPathFinder(500);
+		}
+
+		static public void PathFinding1000()
+		{
+			RunPathFinder(1000);
+		}
+
 		static public void AnyProcessThatNeedToBeBenchmarked()
 		{
 			int i = 0;
@@ -173,7 +183,9 @@ namespace BMG_Benchmarks
 			RunBenchmark("Path Finder 10x10", PathFinding);
 			RunBenchmark("Path Finder 50x50", PathFinding50);
 			RunBenchmark("Path Finder 100x100", PathFinding100);
-			RunBenchmark("Path Finder 200x200", PathFinding200); 
+			RunBenchmark("Path Finder 200x200", PathFinding200);
+			RunBenchmark("Path Finder 500x500", PathFinding500);
+			RunBenchmark("Path Finder 1000x1000", PathFinding1000);
 			BackToNormal();
 		}
 
