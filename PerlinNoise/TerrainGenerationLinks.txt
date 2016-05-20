@@ -1,0 +1,2 @@
+﻿http://www.gamasutra.com/view/feature/3098/a_realtime_procedural_universe_.php
+Compare different algorithms to get a dynamic good-looking animated planet, very good article. 

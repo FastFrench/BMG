@@ -1,0 +1,398 @@
+ LUMPY:   .03 * noise(8*x,8*y,8*z);  
+ CRINKLY:  -.10 * turbulence(x,y,z);  
+ MARBLED:   .01 * stripes(x + 2*turbulence(x,y,z), 1.6);  
+
+
+double stripes(double x, double f) {
+   double t = .5 + .5 * Math.sin(f * 2*Math.PI * x);
+   return t * t - .5;
+}
+double turbulence(double x, double y, double z) {
+   double t = -.5;
+   for (double f = 1 ; f <= W/12 ; f *= 2)
+      t += Math.abs(noise(f*x,f*y,f*z) / f);
+   return t;
+}
+
+====================================================================================================================
+
+/*<pre>
+   This is the support code that implements a frame buffer in a Java Applet,
+   by using a Memory Image Source.
+
+   You can probably use this class without ever needing to change it.
+*/
+
+import java.applet.*;
+import java.awt.*;
+import java.awt.image.*;
+
+public class MISApplet extends Applet implements Runnable {
+    public int W, H;
+
+    // YOUR APPLET CAN OVERRIDE THE FOLLOWING TWO METHODS:
+
+    public void initialize() {}
+
+    public void initFrame(double time) { }            // INITIALIZE EACH FRAME
+    public void setPixel(int x, int y, int rgb[]) { } // SET COLOR AT EACH PIXEL
+
+    // INITIALIZE THINGS WHEN APPLET STARTS UP
+
+    public void init() {
+        setLayout(new BorderLayout());
+
+        W = getBounds().width;      // FIND THE RESOLUTION OF THE JAVA APPLET
+        H = getBounds().height;
+        pix = new int[W*H];         // ALLOCATE A FRAME BUFFER IMAGE
+        mis = new MemoryImageSource(W, H, pix, 0, W);
+        mis.setAnimated(true);
+        im = createImage(mis);      // MAKE MEMORY IMAGE SOURCE FOR FRAME BUFFER
+
+	initialize();
+
+	startTime = clockTime();    // FETCH CLOCK TIME WHEN APPLET STARTS
+        new Thread(this).start();   // START THE BACKGROUND RENDERING THREAD
+    }
+
+    // UPDATE DISPLAY AT EACH FRAME, BY DRAWING FROM MEMORY IMAGE SOURCE
+
+    public void update(Graphics g) {
+        g.drawImage(im, 0, 0, null);
+    }
+
+    // BACKGROUND THREAD: COMPUTE AND DRAW FRAME, EVERY 30 MILLISEC
+
+    public void run() {
+        while(true) {
+            computeImage(clockTime() - startTime);
+            mis.newPixels(0, 0, W, H, true);
+            repaint();
+            try {
+                Thread.sleep(30);
+            }
+            catch(InterruptedException ie) {}
+        }
+    }
+
+    // COMPUTE IMAGE, GIVEN ANIMATION TIME
+
+    private int rgb[] = new int[3];
+    public void computeImage(double time) {
+	initFrame(time);                 // INITIALIZE COMPUTATION FOR FRAME
+        int i = 0;
+        for(int y = 0; y < H; y++)
+        for(int x = 0; x < W; x++) { // COMPUTE COLOR FOR EACH PIXEL
+           setPixel(x, y, rgb);
+	   pix[i++] = pack(rgb[0],rgb[1],rgb[2]);
+        }
+    }
+
+    public int pack(int red, int grn, int blu) {
+       return 255<<24 | clip(red,0,255)<<16
+		      | clip(grn,0,255)<< 8
+		      | clip(blu,0,255)    ;
+    }
+
+    public int unpack(int packedRGB, int component) {
+       return packedRGB >> 8*(2-component) & 255;
+    }
+
+    public int xy2i(int x, int y) { return x + W * y; }
+
+    int clip(int t, int lo, int hi) { return t<lo ? lo : t>hi ? hi : t; }
+
+    // RETURN THE TIME, IN SECONDS, ON THE CLOCK
+
+    double clockTime() { return System.currentTimeMillis() / 1000.; }
+
+    // PRIVATE DATA
+
+    public int[] pix;              // THE FRAME BUFFER ARRAY
+
+    private MemoryImageSource mis;  // MEMORY IMAGE SOURCE CONTAINING FRAME BUFFER
+    private Image im;               // IMAGE CONTAINING THE MEMORY IMAGE SOURCE
+    private double startTime;       // CLOCK TIME THAT THE APPLET STARTED
+}
+
+====================================================================================================================
+
+/*<pre>
+  Simple examples of procedural bump textures. - Ken Perlin
+*/
+
+public class Sphere extends MISApplet {
+
+   // PARAMETERS
+
+   int surfaceType = 0;                      // SURFACE TYPE (0,1 OR 2)
+
+   double surfaces[][][] = {                 // SURFACES:
+      // AMBIENT   DIFFUSE    SPECULAR
+      {{.2,.2,.2},{.6,.2,.1},{.3,.3,.3, 4}}, //    BROWN
+      {{.2,.2,.2},{.2,.4,.8},{.3,.3,.3,20}}, //    BLUISH
+      {{.2,.2,.2},{.6,.4,.3},{.3,.3,.3, 5}}, //    PAPERY
+   };
+
+   double lights[][][] = {                   // LIGHTS
+     // DIRECTION      // COLOR  // SCATTER
+     {{.577, .577, .577},{1,1,1} ,{0,0,0}},
+     {{-.707,   0,-.707},{0,0,0} ,{.5,.4,.5}},
+   };
+
+   // WORKING GLOBAL VARIABLES
+
+   int type;                                 // CURRENT SURFACE TYPE
+   double normal[] = {0,0,0};                // SURFACE NORMAL VECTOR
+   double color[] = {0,0,0};                 // SURFACE COLOR VECTOR
+
+   // INITIALIZE ONE RENDERED FRAME
+
+   public void initFrame(double time) {
+      type = surfaceType;                     // SET THE SURFACE TYPE
+   }
+
+   // SET THE COLOR OF A SINGLE PIXEL
+
+   public void setPixel(int x, int y, int rgb[]) {
+
+      // SEE WHETHER PIXEL IS WITHIN THE ANTIALIASED DISK
+
+      double X = x-W/2;    // X RELATIVE TO DISK CENTER
+      double Y = H/2-y;    // Y RELATIVE TO DISK CENTER
+      double R = W/2-W/10; // RADIUS OF DISK
+
+      // IF PIXEL IS IN THE DISK, THEN
+
+      double t = disk(X*X+Y*Y, R);
+      if (t > 0) {
+
+         // COMPUTE POINT ON UNIT SPHERE (WHICH IS ALSO THE SURFACE NORMAL)
+
+         normal[0] = X / R;
+         normal[1] = Y / R;
+         normal[2] = Math.sqrt(1 - normal[0]*normal[0] - normal[1]*normal[1]);
+
+         // SAMPLE THE FUNCTION FOUR TIMES TO GET GRADIENT INFO
+
+         double f0 = f(normal[0]      ,normal[1]      ,normal[2]      ),
+                fx = f(normal[0]+.0001,normal[1]      ,normal[2]      ),
+                fy = f(normal[0]      ,normal[1]+.0001,normal[2]      ),
+                fz = f(normal[0]      ,normal[1]      ,normal[2]+.0001);
+
+         // SUBTRACT THE FUNCTION'S GRADIENT FROM THE SURFACE NORMAL
+
+         normal[0] -= (fx - f0) / .0001;
+         normal[1] -= (fy - f0) / .0001;
+         normal[2] -= (fz - f0) / .0001;
+	 normalize(normal);
+
+         double s[][] = surfaces[type];
+
+	 for (int i = 0 ; i < 3 ; i++)               // START WITH JUST AMBIENT COLOR
+            color[i] = s[0][i];
+
+         for (int L = 0 ; L < lights.length ; L++) { // ITERATE OVER ALL LIGHTS
+
+            // COMPUTE DIFFUSE AND SPECULAR REFLECTANCE FACTORS
+
+            double spec = specular(normal, lights[L][0], s[2][3]);
+            double diff = diffuse (normal, lights[L][0]);
+
+            // SHADE THE PIXEL WITH PHONG ALGORITHM
+
+	    for (int i = 0 ; i < 3 ; i++)
+               color[i] += lights[L][1][i] * (s[1][i]*diff + s[2][i]*spec) + lights[L][2][i]*diff;
+         }
+
+	 // CHANGE COLOR TO FIXED POINT AND SEND IT TO THE FRAME BUFFER
+
+	 for (int i = 0 ; i < 3 ; i++)
+	    rgb[i] = (int)(255 * t * color[i]);
+      }
+
+      // IF BACKGROUND, THEN PIXEL IS BLACK
+
+      else
+         rgb[0] = rgb[1] = rgb[2] = 0;
+   }
+
+   // CHOOSE A TYPE OF SPACE FILLING TEXTURE
+
+   double f(double x,double y,double z) {
+      switch (type) {
+      case 0:  return  .03 * noise(x,y,z, 8);
+      case 1:  return  .01 * stripes(x + 2*turbulence(x,y,z,1), 1.6);
+      default: return -.10 * turbulence(x,y,z, 1);
+      }
+   }
+
+   // STRIPES TEXTURE (GOOD FOR MAKING MARBLE)
+
+   double stripes(double x, double f) {
+      double t = .5 + .5 * Math.sin(f * 2*Math.PI * x);
+      return t * t - .5;
+   }
+
+   // TURBULENCE TEXTURE
+
+   double turbulence(double x, double y, double z, double freq) {
+      double t = -.5;
+      for ( ; freq <= W/12 ; freq *= 2)
+         t += Math.abs(noise(x,y,z,freq) / freq);
+      return t;
+   }
+
+   // NOISE TEXTURE
+
+   double noise(double x, double y, double z, double freq) {
+      double x1, y1, z1;
+      x1 = .707*x-.707*z;
+      z1 = .707*x+.707*z;
+      y1 = .707*x1+.707*y;
+      x1 = .707*x1-.707*y;
+      return ImprovedNoise.noise(freq*x1 + 100, freq*y1, freq*z1);
+   }
+
+   // DIFFUSE REFLECTION
+
+   double diffuse(double normal[], double light[]) {
+      return Math.max(0, normal[0]*light[0] + normal[1]*light[1] + normal[2]*light[2]);
+   }
+
+   // SPECULAR REFLECTION (SPECIAL CASE, WHERE CAMERA IS ALWAYS IN (0,0,1) DIRECTION)
+
+   double r[] = {0,0,0};
+   double specular(double normal[], double light[], double power) {
+      r[0] = 2*normal[2]*normal[0];
+      r[1] = 2*normal[2]*normal[1];
+      r[2] = 2*normal[2]*normal[2]-normal[2];
+      return Math.pow(diffuse(r,light),power);
+   }
+
+   // COVERAGE OF ONE PIXEL BY A SMOOTH-EDGED DISK
+
+   double disk(double rr, double radius) {
+      double dd = rr - radius*radius;
+      return dd >= 2*radius ? 0 : dd <= -2*radius ? 1 : (2*radius - dd) / (4*radius);
+   }
+
+   // NORMALIZE THE LENGTH OF A VECTOR
+
+   void normalize(double v[]) {
+      double norm = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+      v[0] /= norm;
+      v[1] /= norm;
+      v[2] /= norm;
+   }
+
+   // ALLOW AN EXTERNAL CALLER TO SET THE SURFACE TYPE
+
+   public void setType(int t) { surfaceType = t; }
+}
+
+
+=================== CSharp implémentation sample
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace PloobsEngine.Utils
+{
+    /// Perlin Noise
+    public class PerlinNoise
+    {
+        /// Perlin Noise Constructot
+        public PerlinNoise(int width, int height)
+        {
+            this.MAX_WIDTH = width;
+            this.MAX_HEIGHT = height;                
+        }
+
+        public int MAX_WIDTH = 256;
+        public int MAX_HEIGHT = 256;
+                
+        /// Gets the value for a specific X and Y coordinate
+        /// results in range [-1, 1] * maxHeight
+        public float GetRandomHeight(float X, float Y, float MaxHeight,
+            float Frequency, float Amplitude, float Persistance,
+            int Octaves)
+        {
+            GenerateNoise();
+            float FinalValue = 0.0f;
+            for (int i = 0; i < Octaves; ++i)
+            {
+                FinalValue += GetSmoothNoise(X * Frequency, Y * Frequency) * Amplitude;
+                Frequency *= 2.0f;
+                Amplitude *= Persistance;
+            }
+            if (FinalValue < -1.0f)
+            {
+                FinalValue = -1.0f;
+            }
+            else if (FinalValue > 1.0f)
+            {
+                FinalValue = 1.0f;
+            }
+            return FinalValue * MaxHeight;
+        }
+
+        //This function is a simple bilinear filtering function which is good (and easy) enough.        
+        private float GetSmoothNoise(float X, float Y)
+        {
+            float FractionX = X - (int)X;
+            float FractionY = Y - (int)Y;
+            int X1 = ((int)X + MAX_WIDTH) % MAX_WIDTH;
+            int Y1 = ((int)Y + MAX_HEIGHT) % MAX_HEIGHT;
+            //for cool art deco looking images, do +1 for X2 and Y2 instead of -1...
+            int X2 = ((int)X + MAX_WIDTH - 1) % MAX_WIDTH;
+            int Y2 = ((int)Y + MAX_HEIGHT - 1) % MAX_HEIGHT;
+            float FinalValue = 0.0f;
+            FinalValue += FractionX * FractionY * Noise[X1, Y1];
+            FinalValue += FractionX * (1 - FractionY) * Noise[X1, Y2];
+            FinalValue += (1 - FractionX) * FractionY * Noise[X2, Y1];
+            FinalValue += (1 - FractionX) * (1 - FractionY) * Noise[X2, Y2];
+            return FinalValue;
+        }
+
+        float[,] Noise;
+        bool NoiseInitialized = false;
+        /// create a array of randoms
+        private void GenerateNoise()
+        {
+            if (NoiseInitialized)                //A boolean variable in the class to make sure we only do this once
+                return;
+            Noise = new float[MAX_WIDTH, MAX_HEIGHT];    //Create the noise table where MAX_WIDTH and MAX_HEIGHT are set to some value>0            
+            for (int x = 0; x < MAX_WIDTH; ++x)
+            {
+                for (int y = 0; y < MAX_HEIGHT; ++y)
+                {
+                    Noise[x, y] = ((float)(StaticRandom.Random()) - 0.5f) * 2.0f;  //Generate noise between -1 and 1
+                }
+            }
+            NoiseInitialized = true;
+        }
+
+    }
+}
+
+public Texture2D CreatePerlinNoiseTexture(int sizex, int sizey,float frequencia, float amplitude, float persistence, int octave,bool mipmap = false)
+        {
+            PerlinNoise pn = new PerlinNoise(sizex, sizey);
+            Texture2D t = factory.CreateTexture2D(sizex, sizey,mipmap); ///helper that creates a simple empty texture
+            Color[] cor = new Color[sizex * sizey];
+            for (int i = 0; i < sizex; i++)
+            {
+                for (int j = 0; j < sizey; j++)
+                {
+                    float value = pn.GetRandomHeight(i, j, 1, frequencia, amplitude, persistence, octave);
+                    value =  0.5f * (1 + value);
+                    cor[i + j * sizex] = new Color(value,value,value);
+                }
+            }
+
+            t.SetData(cor);
+            return t;            
+        }
