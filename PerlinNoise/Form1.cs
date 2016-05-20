@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerlinNoise.Implementation1;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,11 @@ namespace PerlinNoise
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void buttonTest1_Click(object sender, EventArgs e)
+        {
+            Usage.noiseButton_Click(pictureBox1);
         }
     }
 }
