@@ -13,7 +13,7 @@ namespace PerlinNoise
 {
     class PerlinNoise
     {
-        #region Feilds
+        #region Fields
         static Random random = new Random();
         #endregion
 
@@ -323,7 +323,8 @@ namespace PerlinNoise
             SaveImage(perlinImage, "perlin_noise.png");
         }
 
-        public static float[][] AdjustLevels(float[][] image, float low, float high)
+
+		public static float[][] AdjustLevels(float[][] image, float low, float high)
         {
             int width = image.Length;
             int height = image[0].Length;

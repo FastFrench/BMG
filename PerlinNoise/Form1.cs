@@ -20,7 +20,12 @@ namespace PerlinNoise
 
         private void buttonTest1_Click(object sender, EventArgs e)
         {
-            Usage.noiseButton_Click(pictureBox1);
+			Implementation1.Usage.noiseButton_Click(pictureBox1);
         }
-    }
+
+		private void buttonTest2_Click(object sender, EventArgs e)
+		{
+			Implementation2.Usage.noiseButton_Click(pictureBox1);
+		}
+	}
 }

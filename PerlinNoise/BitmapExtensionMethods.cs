@@ -1,11 +1,29 @@
 ﻿using System;
 using System.Drawing;
 
-namespace PerlinNoise.Implementation1
+namespace PerlinNoise
 {
     public static class BitmapExtensionMethods
     {
-        public static void ExecuteForEachPixel(this Bitmap bitmap, Action<Point, Bitmap> action)
+		public static void Normalize(this float[][] noise)
+		{
+			float min = 100.0f;
+			float max = -100.0f;
+			Array.ForEach(noise, tab => Array.ForEach(tab, val =>
+			{
+				if (val > max)
+					max = val;
+				if (val < min)
+					min = val;
+			}));
+			float delta = max - min;
+			if (delta > 0)
+				for (int x = 0; x < noise.Length; x++)
+					for (int y = 0; y < noise[x].Length; y++)
+						noise[x][y] = (noise[x][y] - min) / delta;
+		}
+
+		public static void ExecuteForEachPixel(this Bitmap bitmap, Action<Point, Bitmap> action)
         {
             Point point = new Point(0, 0);
             for (int x = 0; x < bitmap.Width; x++)

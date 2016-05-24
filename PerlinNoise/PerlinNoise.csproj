@@ -52,10 +52,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Implementation1\BitmapExtensionMethods.cs" />
+    <Compile Include="BitmapExtensionMethods.cs" />
     <Compile Include="Implementation1\PerlinNoise3D.cs" />
     <Compile Include="Implementation1\Usage.cs" />
     <Compile Include="Implementation2\PerlinNoise.cs" />
+    <Compile Include="Implementation2\Usage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
