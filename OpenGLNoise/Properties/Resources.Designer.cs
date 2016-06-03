@@ -63,6 +63,76 @@ namespace OpenGLNoise.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] classicnoise2D {
+            get {
+                object obj = ResourceManager.GetObject("classicnoise2D", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] classicnoise3D {
+            get {
+                object obj = ResourceManager.GetObject("classicnoise3D", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] classicnoise4D {
+            get {
+                object obj = ResourceManager.GetObject("classicnoise4D", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Explosion_Frag {
+            get {
+                object obj = ResourceManager.GetObject("Explosion_Frag", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Explosion_Vert {
+            get {
+                object obj = ResourceManager.GetObject("Explosion_Vert", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] minimal {
+            get {
+                object obj = ResourceManager.GetObject("minimal", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] noise3Dgrad {
+            get {
+                object obj = ResourceManager.GetObject("noise3Dgrad", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] normals_frag {
             get {
                 object obj = ResourceManager.GetObject("normals_frag", resourceCulture);

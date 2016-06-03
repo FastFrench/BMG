@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+//using System.Drawing.Imaging;
 using System.Text;
 using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
@@ -14,9 +16,15 @@ namespace OpenGLNoise
 {
   public class RenderWindow : GameWindow
   {
+    TextRenderer renderer;
+    Font serif = new Font(FontFamily.GenericSerif, 24);
+    Font sans = new Font(FontFamily.GenericSansSerif, 24);
+    Font mono = new Font(FontFamily.GenericMonospace, 24);
+
+
     const int LatitudeBands = 50;
     const int LongitudeBands = 100;
-    const float SphereRadius = 1.6f;
+    const float SphereRadius = 0.40f;//1.6f;
 
     bool DisplayNormals = false;
 
@@ -59,8 +67,7 @@ namespace OpenGLNoise
       {
         var infoLog = GL.GetShaderInfoLog(shaderHandle);
         Debug.Print("Compile failed for shader {0}: {1}", resourceName, infoLog);
-      }
-
+      }      
       return shaderHandle;
     }
 
@@ -255,17 +262,74 @@ namespace OpenGLNoise
       GL.Viewport(ClientRectangle);
       ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
           MathHelper.PiOver4, ClientSize.Width / (float)ClientSize.Height, 0.1f, 1000);
+      
+      // Ensure Bitmap and texture match window size
+      //GL.MatrixMode(MatrixMode.Projection);
+      //GL.LoadIdentity();
+      //GL.Ortho(-1.0, 1.0, -1.0, 1.0, 0.0, 4.0);
+
+
+    }
+
+    /*
+     * computeFPS() - Calculate, display and return samples per second.
+     * Stats are recomputed only once per second.
+     */
+    double t0 = 0.0;
+    int frames = 0;
+    double t = 0.0;
+    
+    double computeFPS(FrameEventArgs e)
+    {
+
+      double fps = 0.0;
+      string titlestring;
+
+      
+            
+      // Get current time
+      t += e.Time;  // Gets number of seconds since glfwInit()
+                          // If one second has passed, or if this is the very first frame
+      if ((t - t0) > 4.0 || frames == 0)
+      {
+        fps = (double)frames / (t - t0);
+        titlestring = string.Format("GLSL noise demo ({0:0.0} FPS)", fps);
+        Title = titlestring;
+        // Update your text
+        renderer.Clear(Color.Black);
+        renderer.DrawString(titlestring, serif, Brushes.White, new PointF(0.0f, 0.0f));
+
+        t0 = t;
+        frames = 0;
+      }
+      frames++;
+      return fps;
     }
 
     protected override void OnLoad(EventArgs e)
     {
+      t0 = 0.0;
+      frames = 0;
+
+      renderer = new TextRenderer(Width, Height);
+      PointF position = PointF.Empty;
+
+      renderer.Clear(Color.MidnightBlue);
+      renderer.DrawString("The quick brown fox jumps over the lazy dog", serif, Brushes.White, position);
+      position.Y += serif.Height;
+      renderer.DrawString("The quick brown fox jumps over the lazy dog", sans, Brushes.White, position);
+      position.Y += sans.Height;
+      renderer.DrawString("The quick brown fox jumps over the lazy dog", mono, Brushes.White, position);
+      position.Y += mono.Height;
+      
+      
       GL.ClearColor(Color4.Gray);
 
       GL.Enable(EnableCap.DepthTest);
 
       // Load sphere shader
-      var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "sphere_vert");
-      var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "sphere_frag");
+      var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "Explosion_Vert"/*"sphere_vert"*/);
+      var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "Explosion_Frag"/*"sphere_frag"*/);
       SphereProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
       MvpUniformLocation = GL.GetUniformLocation(SphereProgramHandle, "MVP");
 
@@ -289,10 +353,17 @@ namespace OpenGLNoise
       SetupNoiseMapBuilder();
     }
 
+    protected override void OnUnload(EventArgs e)
+    {
+      renderer.Dispose();
+      base.OnUnload(e);
+    }
+
     static float alt = 4;
     bool sign = true;
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
+      computeFPS(e);
       if (sign)
         alt += 0.03f;
       else
@@ -324,10 +395,33 @@ namespace OpenGLNoise
       Matrix4 mvMatrix;
       Matrix4.Mult(ref ModelMatrix, ref ViewMatrix, out mvMatrix);
       Matrix4.Mult(ref mvMatrix, ref ProjectionMatrix, out MvpMatrix);
+
+
+      
+      //GL.Enable(EnableCap.Texture2D);
+      //GL.Enable(EnableCap.Blend);
+      //GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDst.OneMinusSourceAlpha);
+
+      //GL.Enable(EnableCap.Texture2D);
+      //GL.BindTexture(TextureTarget.Texture2D, renderer.Texture);
+      //GL.Begin(BeginMode.Quads);
+      
+      //GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(-1f, -1f);
+      //GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, -1f);
+      //GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 1f);
+      //GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(-1f, 1f);
+
+      //GL.End();
+
+      //SwapBuffers();
     }
 
     protected override void OnRenderFrame(FrameEventArgs e)
     {
+      // Update your text
+      renderer.Clear(Color.Black);
+      //renderer.DrawString("Hello, world", serif, Brushes.White, new PointF(0.0f, 0.0f));
+
       GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
       GL.UseProgram(SphereProgramHandle);
@@ -355,6 +449,20 @@ namespace OpenGLNoise
         GL.BindVertexArray(0);
         GL.UseProgram(0);
       }
+
+      GL.MatrixMode(MatrixMode.Modelview);
+      GL.LoadIdentity();
+
+      //GL.Enable(EnableCap.Texture2D);
+      //GL.BindTexture(TextureTarget.Texture2D, renderer.Texture);
+      //GL.Begin(BeginMode.Quads);
+
+      //GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(-1f, -1f);
+      //GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, -1f);
+      //GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 1f);
+      //GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(-1f, 1f);
+
+      //GL.End();
 
       SwapBuffers();
     }
