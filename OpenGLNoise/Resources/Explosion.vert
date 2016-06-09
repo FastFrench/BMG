@@ -1,4 +1,4 @@
-//#version 430 core
+#version 330 core
 // https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js
 
 // Include the Ashima code here! (ClassicNoise3D)
@@ -183,12 +183,35 @@ float pnoise(vec3 P, vec3 rep)
 
 
 // ---------------------------------------------------------
+//layout(location = 0) in vec3 vertexPosition_modelspace;
+//layout(location = 1) in vec2 vertexUV;
+
+// Output data ; will be interpolated for each fragment.
 
 varying vec2 vUv;
 varying float noise;
 //in vec2 UV;
 //layout(location = 2) in vec2 uv;
 //layout(location = 1) in vec3 normal;
+
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 normal;
+
+// Output data ; will be interpolated for each fragment.
+//out vec2 UV;
+out vec3 Position_worldspace;
+out vec3 Normal_cameraspace;
+out vec3 EyeDirection_cameraspace;
+out vec3 LightDirection_cameraspace;
+
+// Values that stay constant for the whole mesh.
+uniform mat4 MVP;
+uniform mat4 V;
+uniform mat4 M;
+uniform vec3 LightPosition_worldspace;
+
 
 float turbulence( vec3 p ) {
     float w = 100.0;
@@ -202,7 +225,7 @@ float turbulence( vec3 p ) {
 
 void main() {
 
-    vUv = uv;
+    vUv = vertexUV;
 
     // get a turbulent 3d noise using the normal, normal to high freq
     noise = 10.0 *  -.10 * turbulence( .5 * normal );
@@ -213,6 +236,6 @@ void main() {
     
     // move the position along the normal and transform it
     vec3 newPosition = position + normal * displacement;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+    gl_Position =  /*projectionMatrix * modelViewMatrix*/ MVP * vec4( newPosition, 1.0 );
 
 }

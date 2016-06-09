@@ -1,4 +1,5 @@
-#version 430 core
+#version 330 core
+
 
 varying vec2 vUv;
 varying float noise;
