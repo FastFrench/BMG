@@ -12,3 +12,6 @@ https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-thre
 
 Tuto:
 http://www.opengl-tutorial.org/fr/intermediate-tutorials/tutorial-13-normal-mapping/
+
+Autre tuto: 
+https://github.com/giawa/opengl4tutorials

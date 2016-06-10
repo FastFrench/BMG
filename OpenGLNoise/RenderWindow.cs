@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Drawing;
 //using System.Drawing.Imaging;
 using System.Text;
+using System.Threading;
 using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
@@ -278,7 +279,7 @@ namespace OpenGLNoise
     double t0 = 0.0;
     int frames = 0;
     double t = 0.0;
-    
+    Stopwatch chrono = Stopwatch.StartNew();
     double computeFPS(FrameEventArgs e)
     {
 
@@ -286,20 +287,20 @@ namespace OpenGLNoise
       string titlestring;
 
       
-            
+      if (chrono.ElapsedMilliseconds > 1000)    
       // Get current time
-      t += e.Time;  // Gets number of seconds since glfwInit()
+      //t += e.Time;  // Gets number of seconds since glfwInit()
                           // If one second has passed, or if this is the very first frame
-      if ((t - t0) > 4.0 || frames == 0)
+      //if ((t - t0) > 4.0 || frames == 0)
       {
-        fps = (double)frames / (t - t0);
+        fps = ((double)frames * 1000) / chrono.ElapsedMilliseconds;
         titlestring = string.Format("GLSL noise demo ({0:0.0} FPS)", fps);
         Title = titlestring;
         // Update your text
         renderer.Clear(Color.Black);
         renderer.DrawString(titlestring, serif, Brushes.White, new PointF(0.0f, 0.0f));
-
-        t0 = t;
+        chrono.Restart();
+        //t0 = t;
         frames = 0;
       }
       frames++;
@@ -450,8 +451,8 @@ namespace OpenGLNoise
         GL.UseProgram(0);
       }
 
-      GL.MatrixMode(MatrixMode.Modelview);
-      GL.LoadIdentity();
+      //GL.MatrixMode(MatrixMode.Modelview);
+      //GL.LoadIdentity();
 
       //GL.Enable(EnableCap.Texture2D);
       //GL.BindTexture(TextureTarget.Texture2D, renderer.Texture);

@@ -195,9 +195,15 @@ varying float noise;
 //layout(location = 1) in vec3 normal;
 
 // Input vertex data, different for all executions of this shader.
+//layout(location = 0) in vec3 position;
+//layout(location = 1) in vec2 vertexUV;
+//layout(location = 2) in vec3 normal;
+
+
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 vertexUV;
-layout(location = 2) in vec3 normal;
+layout(location = 1) in vec3 normal;
+//layout(location = 2) in float vertexUV;
+layout(location = 2) in vec2 vertexUV;
 
 // Output data ; will be interpolated for each fragment.
 //out vec2 UV;
@@ -232,7 +238,7 @@ void main() {
     // get a 3d noise using the position, low frequency
     float b = 5.0 * pnoise( 0.05 * position, vec3( 100.0 ) );
     // compose both noises
-    float displacement = - 10. * noise + b;
+    float displacement = - 1. * noise + b;
     
     // move the position along the normal and transform it
     vec3 newPosition = position + normal * displacement;
