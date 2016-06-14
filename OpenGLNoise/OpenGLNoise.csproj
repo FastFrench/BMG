@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColouredVertex.cs" />
+    <Compile Include="OLObject.cs" />
     <Compile Include="TextRenderer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
