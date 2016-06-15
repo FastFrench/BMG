@@ -215,11 +215,6 @@ namespace OpenGLNoise
 
     #endregion
 
-    void UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
-    {
-      // Do nothing
-    }
-
     void GenerateElevationNoise(double timeDelta)
     {
       // Shift time and generate noise

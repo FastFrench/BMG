@@ -114,7 +114,7 @@ namespace OpenGLNoise
             Objects = new List<OpenGLObject>();
             var sphere1 = new SphereObject(0, 0, SphereRadius);
             sphere1.LoadShaders("Explosion_Frag", "Explosion_Vert", null);
-            Objects.Add(new SphereObject(0, 0, SphereRadius));
+            Objects.Add(sphere1);
 
             frames = 0;
 

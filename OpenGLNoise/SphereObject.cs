@@ -99,7 +99,7 @@ namespace OpenGLNoise
       normals = new List<Vector3>();
       indices = new List<int>();
 
-      CreateSphereData(0f, 0f, 0, _sphereRadius);
+      CreateSphereData(6f, 0f, 0, _sphereRadius);
 
       //CreateSphereData(0.5f, 0f, 0.5f, 0.5f+SphereRadius);
 
