@@ -112,9 +112,12 @@ namespace OpenGLNoise
         protected override void OnLoad(EventArgs e)
         {
             Objects = new List<OpenGLObject>();
-            var sphere1 = new SphereObject(0, 0, SphereRadius);
+            var sphere1 = new SphereObject(new Vector3(0, -2f, 0), SphereRadius);
             sphere1.LoadShaders("Explosion_Frag", "Explosion_Vert", null);
             Objects.Add(sphere1);
+            var sphere2 = new SphereObject(new Vector3(4f, 2f, 1f), SphereRadius/2);
+            sphere2.LoadShaders("Explosion_Frag", "Explosion_Vert", null);
+            Objects.Add(sphere2);
 
             frames = 0;
 

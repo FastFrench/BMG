@@ -9,9 +9,10 @@ namespace OpenGLNoise
 {
   public class SphereObject : OpenGLObject
   {
-    public SphereObject(float px, float py, float radius)
+    public SphereObject(Vector3 center, float radius)
     {
-
+            this.radius = radius;
+            this.center = center;
     }
     public override void BuildObject()
     {
@@ -39,25 +40,24 @@ namespace OpenGLNoise
     protected override int upperBoundX { get { return longitudeBands; } }
     protected override int upperBoundZ { get { return latitudeBands; } }
     
-    public float SphereRadius { get; private set; }
-
-    List<Vector3> positions;
+    public float radius { get; private set; }
+    public Vector3 center { get; private set; }
+    
+        List<Vector3> positions;
     List<Vector3> normals;
     List<int> indices;
 
-    void CreateSphereData(float x, float y, float z, float radius = _sphereRadius, int latitudeBands = _latitudeBands, int longitudeBands = _longitudeBands)
+    void CreateSphereData(int latitudeBands = _latitudeBands, int longitudeBands = _longitudeBands)
     {
       this.latitudeBands = latitudeBands;
       this.longitudeBands = longitudeBands;
-      SphereRadius = radius;
-
+      
       int i_basis = indices.Count;
       for (double latitudeNum = 0; latitudeNum <= _latitudeBands; latitudeNum++)
       {
         var theta = latitudeNum * MathHelper.Pi / _latitudeBands;
         var sinTheta = Math.Sin(theta);
         var cosTheta = Math.Cos(theta);
-        Vector3 p0 = new Vector3(x, y, z);
         for (double longitudeNum = 0; longitudeNum <= _longitudeBands; longitudeNum++)
         {
           var phi = longitudeNum * MathHelper.TwoPi / _longitudeBands;
@@ -69,7 +69,7 @@ namespace OpenGLNoise
           var pz = cosTheta;
 
           var normal = new Vector3((float)px, (float)py, (float)pz);
-          var position = (normal + p0) * radius;
+          var position = (normal + center) * radius;
           normals.Add(normal);
           positions.Add(position);
         }
@@ -99,7 +99,7 @@ namespace OpenGLNoise
       normals = new List<Vector3>();
       indices = new List<int>();
 
-      CreateSphereData(6f, 0f, 0, _sphereRadius);
+      CreateSphereData();
 
       //CreateSphereData(0.5f, 0f, 0.5f, 0.5f+SphereRadius);
 

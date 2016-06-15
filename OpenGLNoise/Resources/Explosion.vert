@@ -207,16 +207,16 @@ layout(location = 2) in vec2 vertexUV;
 
 // Output data ; will be interpolated for each fragment.
 //out vec2 UV;
-out vec3 Position_worldspace;
-out vec3 Normal_cameraspace;
-out vec3 EyeDirection_cameraspace;
-out vec3 LightDirection_cameraspace;
+//out vec3 Position_worldspace;
+//out vec3 Normal_cameraspace;
+//out vec3 EyeDirection_cameraspace;
+//out vec3 LightDirection_cameraspace;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
-uniform mat4 V;
-uniform mat4 M;
-uniform vec3 LightPosition_worldspace;
+//uniform mat4 V;
+//uniform mat4 M;
+//uniform vec3 LightPosition_worldspace;
 
 
 float turbulence( vec3 p ) {
@@ -239,7 +239,7 @@ void main() {
     // get a 3d noise using the position, low frequency
     float b = 5.0 * pnoise( 0.05 * position, vec3( 100.0 ) );
     // compose both noises
-    float displacement = 1.0 ;//- 0.5 * noise + b;
+    float displacement = 0.3 ;//- 0.5 * noise + b;
 
     // move the position along the normal and transform it
     vec3 newPosition = position + normal * displacement;
