@@ -94,7 +94,7 @@ namespace OpenGLNoise
     }
 
     void CreateVertexData()
-    {
+    {            
       positions = new List<Vector3>();
       normals = new List<Vector3>();
       indices = new List<int>();

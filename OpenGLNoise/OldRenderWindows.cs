@@ -17,25 +17,25 @@ namespace OpenGLNoise
 {
   public class OldRenderWindow : GameWindow
   {
-    TextRenderer renderer;
-    Font serif = new Font(FontFamily.GenericSerif, 24);
-    Font sans = new Font(FontFamily.GenericSansSerif, 24);
-    Font mono = new Font(FontFamily.GenericMonospace, 24);
+    //TextRenderer renderer;
+    //Font serif = new Font(FontFamily.GenericSerif, 24);
+    //Font sans = new Font(FontFamily.GenericSansSerif, 24);
+    //Font mono = new Font(FontFamily.GenericMonospace, 24);
 
 
     const int LatitudeBands = 50;
     const int LongitudeBands = 100;
     const float SphereRadius = 0.40f;//1.6f;
 
-    bool DisplayNormals = false;
+    //bool DisplayNormals = false;
 
     int SphereProgramHandle;
     Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
     int MvpUniformLocation;
 
-    int NormalProgramHandle;
-    float NormalLength = 0.5f;
-    int NormalUniformLocationNormalLength, NormalUniformLocationMvpMatrix;
+    //int NormalProgramHandle;
+    //float NormalLength = 0.5f;
+    //int NormalUniformLocationNormalLength, NormalUniformLocationMvpMatrix;
 
     int VertexArrayObject;
     int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
@@ -264,8 +264,8 @@ namespace OpenGLNoise
 
     protected override void OnKeyPress(KeyPressEventArgs e)
     {
-      if (e.KeyChar == ' ')
-        DisplayNormals = !DisplayNormals;
+      //if (e.KeyChar == ' ')
+       // DisplayNormals = !DisplayNormals;
 
       base.OnKeyPress(e);
     }
@@ -288,7 +288,7 @@ namespace OpenGLNoise
 		 * computeFPS() - Calculate, display and return samples per second.
 		 * Stats are recomputed only once per second.
 		 */
-    double t0 = 0.0;
+    //double t0 = 0.0;
     int frames = 0;
     double t = 0.0;
     Stopwatch chrono = Stopwatch.StartNew();
@@ -309,8 +309,8 @@ namespace OpenGLNoise
         titlestring = string.Format("GLSL noise demo ({0:0.0} FPS)", fps);
         Title = titlestring;
         // Update your text
-        renderer.Clear(Color.Black);
-        renderer.DrawString(titlestring, serif, Brushes.White, new PointF(0.0f, 0.0f));
+        //renderer.Clear(Color.Black);
+        //renderer.DrawString(titlestring, serif, Brushes.White, new PointF(0.0f, 0.0f));
         chrono.Restart();
         //t0 = t;
         frames = 0;
@@ -321,19 +321,19 @@ namespace OpenGLNoise
 
     protected override void OnLoad(EventArgs e)
     {
-      t0 = 0.0;
+      //t0 = 0.0;
       frames = 0;
 
-      renderer = new TextRenderer(Width, Height);
-      PointF position = PointF.Empty;
+      //renderer = new TextRenderer(Width, Height);
+      //PointF position = PointF.Empty;
 
-      renderer.Clear(Color.MidnightBlue);
-      renderer.DrawString("The quick brown fox jumps over the lazy dog", serif, Brushes.White, position);
-      position.Y += serif.Height;
-      renderer.DrawString("The quick brown fox jumps over the lazy dog", sans, Brushes.White, position);
-      position.Y += sans.Height;
-      renderer.DrawString("The quick brown fox jumps over the lazy dog", mono, Brushes.White, position);
-      position.Y += mono.Height;
+      //renderer.Clear(Color.MidnightBlue);
+      //renderer.DrawString("The quick brown fox jumps over the lazy dog", serif, Brushes.White, position);
+      //position.Y += serif.Height;
+      //renderer.DrawString("The quick brown fox jumps over the lazy dog", sans, Brushes.White, position);
+      //position.Y += sans.Height;
+      //renderer.DrawString("The quick brown fox jumps over the lazy dog", mono, Brushes.White, position);
+      //position.Y += mono.Height;
 
 
       GL.ClearColor(Color4.Gray);
@@ -343,16 +343,16 @@ namespace OpenGLNoise
       // Load sphere shader
       var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "Explosion_Vert"/*"sphere_vert"*/);
       var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "Explosion_Frag"/*"sphere_frag"*/);
-      SphereProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
+      SphereProgramHandle = CreateAndLinkProgram(fragmentHandle, vertexHandle);
       MvpUniformLocation = GL.GetUniformLocation(SphereProgramHandle, "MVP");
 
       // Load normal shader
-      var normalVertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "normals_vert");
-      var normalGeometryHandle = LoadShaderFromResource(ShaderType.GeometryShader, "normals_geom");
-      var normalFragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "normals_frag");
-      NormalProgramHandle = CreateAndLinkProgram(normalVertexHandle, normalGeometryHandle, normalFragmentHandle);
-      NormalUniformLocationMvpMatrix = GL.GetUniformLocation(NormalProgramHandle, "MVP");
-      NormalUniformLocationNormalLength = GL.GetUniformLocation(NormalProgramHandle, "NormalLength");
+      //var normalVertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "normals_vert");
+      //var normalGeometryHandle = LoadShaderFromResource(ShaderType.GeometryShader, "normals_geom");
+      //var normalFragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "normals_frag");
+      //NormalProgramHandle = CreateAndLinkProgram(normalVertexHandle, normalGeometryHandle, normalFragmentHandle);
+      //NormalUniformLocationMvpMatrix = GL.GetUniformLocation(NormalProgramHandle, "MVP");
+      //NormalUniformLocationNormalLength = GL.GetUniformLocation(NormalProgramHandle, "NormalLength");
 
       // Create sphere data and set up buffers
       CreateVertexData();
@@ -370,7 +370,7 @@ namespace OpenGLNoise
 
     protected override void OnUnload(EventArgs e)
     {
-      renderer.Dispose();
+      //renderer.Dispose();
       base.OnUnload(e);
     }
 
@@ -393,7 +393,7 @@ namespace OpenGLNoise
       GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
       // Update normals
-      UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
+      //UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
       GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
       GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
       GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -434,7 +434,7 @@ namespace OpenGLNoise
     protected override void OnRenderFrame(FrameEventArgs e)
     {
       // Update your text
-      renderer.Clear(Color.Black);
+      //renderer.Clear(Color.Black);
       //renderer.DrawString("Hello, world", serif, Brushes.White, new PointF(0.0f, 0.0f));
 
       GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -450,20 +450,20 @@ namespace OpenGLNoise
       GL.BindVertexArray(0);
       GL.UseProgram(0);
 
-      if (DisplayNormals)
-      {
-        GL.UseProgram(NormalProgramHandle);
-        GL.BindVertexArray(VertexArrayObject);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
+      //if (DisplayNormals)
+      //{
+      //  GL.UseProgram(NormalProgramHandle);
+      //  GL.BindVertexArray(VertexArrayObject);
+      //  GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
-        GL.Uniform1(NormalUniformLocationNormalLength, NormalLength);
-        GL.UniformMatrix4(NormalUniformLocationMvpMatrix, false, ref MvpMatrix);
-        GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+      //  GL.Uniform1(NormalUniformLocationNormalLength, NormalLength);
+      //  GL.UniformMatrix4(NormalUniformLocationMvpMatrix, false, ref MvpMatrix);
+      //  GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        GL.BindVertexArray(0);
-        GL.UseProgram(0);
-      }
+      //  GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+      //  GL.BindVertexArray(0);
+      //  GL.UseProgram(0);
+      //}
 
       //GL.MatrixMode(MatrixMode.Modelview);
       //GL.LoadIdentity();
