@@ -59,7 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColouredVertex.cs" />
+    <Compile Include="OldRenderWindows.cs" />
     <Compile Include="OLObject.cs" />
+    <Compile Include="SphereObject.cs" />
     <Compile Include="TextRenderer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
