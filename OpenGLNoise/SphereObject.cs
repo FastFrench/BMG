@@ -30,8 +30,8 @@ namespace OpenGLNoise
       base.OnUpdateObject(e);
 
     }
-    const int _latitudeBands = 50;
-    const int _longitudeBands = 100;
+        const int _latitudeBands = 50;
+        const int _longitudeBands = 100;
     const float _sphereRadius = 0.40f;//1.6f;
 
     int latitudeBands;
@@ -47,10 +47,10 @@ namespace OpenGLNoise
     List<Vector3> normals;
     List<int> indices;
 
-    void CreateSphereData(int latitudeBands = _latitudeBands, int longitudeBands = _longitudeBands)
+    void CreateSphereData()
     {
-      this.latitudeBands = latitudeBands;
-      this.longitudeBands = longitudeBands;
+      this.latitudeBands = (int)(_latitudeBands * radius);
+      this.longitudeBands = (int)(_longitudeBands * radius);
       
       int i_basis = indices.Count;
       for (double latitudeNum = 0; latitudeNum <= _latitudeBands; latitudeNum++)

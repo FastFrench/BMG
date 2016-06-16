@@ -188,7 +188,7 @@ float pnoise(vec3 P, vec3 rep)
 
 // Output data ; will be interpolated for each fragment.
 
-varying vec2 vUv;
+varying float vUv;
 varying float noise;
 //in vec2 UV;
 //layout(location = 2) in vec2 uv;
@@ -203,7 +203,7 @@ varying float noise;
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 //layout(location = 2) in float vertexUV;
-layout(location = 2) in vec2 vertexUV;
+layout(location = 2) in float elevation;
 
 // Output data ; will be interpolated for each fragment.
 //out vec2 UV;
@@ -232,14 +232,14 @@ void main() {
 //vUv = vertexUV;
 //noise = 10.0 *  -.10 * turbulence( .5 * normal );
  
-    vUv = vertexUV;
+    vUv = clamp((elevation + 1) * 1.5, 0, 1);
 
     // get a turbulent 3d noise using the normal, normal to high freq
     noise = 10.0 *  -.10 * turbulence( .5 * normal );
     // get a 3d noise using the position, low frequency
     float b = 5.0 * pnoise( 0.05 * position, vec3( 100.0 ) );
     // compose both noises
-    float displacement = 0.3 ;//- 0.5 * noise + b;
+    float displacement = 0.3;// - 0.5 * noise + b;
 
     // move the position along the normal and transform it
     vec3 newPosition = position + normal * displacement;

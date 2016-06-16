@@ -49,7 +49,7 @@ namespace OpenGLNoise
         {
             if (e.KeyChar == ' ')
                 DisplayNormals = !DisplayNormals;
-
+            Thread.Sleep(2000);
             base.OnKeyPress(e);
         }
 
@@ -112,7 +112,7 @@ namespace OpenGLNoise
         protected override void OnLoad(EventArgs e)
         {
             Objects = new List<OpenGLObject>();
-            var sphere1 = new SphereObject(new Vector3(0, -2f, 0), SphereRadius);
+            var sphere1 = new SphereObject(new Vector3(-3, -2f, 0), SphereRadius);
             sphere1.LoadShaders("Explosion_Frag", "Explosion_Vert", null);
             Objects.Add(sphere1);
             var sphere2 = new SphereObject(new Vector3(4f, 2f, 1f), SphereRadius/2);
@@ -155,8 +155,8 @@ namespace OpenGLNoise
 
             BuildObjects();
 
-            TargetRenderFrequency = 50;
-            TargetUpdateFrequency = 50;
+            //TargetRenderFrequency = 100;
+            //TargetUpdateFrequency = 100;
             // Initialize model and view matrices once
             ViewMatrix = Matrix4.LookAt(new Vector3(7, 0, 0), Vector3.Zero, Vector3.UnitZ);
             ModelMatrix = Matrix4.CreateScale(1.0f);
