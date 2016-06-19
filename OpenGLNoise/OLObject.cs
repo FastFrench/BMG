@@ -114,11 +114,17 @@ namespace OpenGLNoise
 		}
 
 		#endregion Noise
+
+		Stopwatch sw = Stopwatch.StartNew();
 		/// <summary>
 		/// Called on OnUpdateFrame
 		/// </summary>
 		virtual public void OnUpdateObject(FrameEventArgs e)
 		{
+			double ratio = (sw.ElapsedMilliseconds % 2000) / 1000.0;
+			if (ratio > 1.0) ratio = 2 - ratio;
+			AjustedDeformationSize = (float)(Size * ratio);
+
 			// Update elevation data
 			GenerateElevationNoise(e.Time);
 			GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
@@ -216,6 +222,7 @@ namespace OpenGLNoise
 		public Color Color2 { get; set; }
 
 		public float Size { get; set; }
+		public float AjustedDeformationSize { get; set; }
 
 		/// <summary>
 		/// Called on OnRenderFrame
@@ -229,7 +236,7 @@ namespace OpenGLNoise
 			GL.UniformMatrix4(MvpUniformLocation, false, ref mvpMatrix);
 			GL.Uniform4(Color1UniformLocation, new Vector4(Color1.R / 255.0f, Color1.G / 255.0f, Color1.B / 255.0f, Color1.A / 255.0f));
 			GL.Uniform4(Color2UniformLocation, new Vector4(Color2.R / 255.0f, Color2.G / 255.0f, Color2.B / 255.0f, Color2.A / 255.0f));
-			GL.Uniform1(SizeUniformLocation, Size);
+			GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
 			GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
