@@ -154,4 +154,13 @@
   <data name="sphere_vert" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\shader.vert;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Explosion2_frag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\explosion2.frag;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Explosion2_vert" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\explosion2.vert;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Explosion3_frag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\explosion3.frag;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

@@ -182,18 +182,41 @@ float pnoise(vec3 P, vec3 rep)
 }
 
 
+// ---------------------------------------------------------
+//layout(location = 0) in vec3 vertexPosition_modelspace;
+//layout(location = 1) in vec2 vertexUV;
+
 // Output data ; will be interpolated for each fragment.
+
 varying float vUv;
 varying float noise;
+//in vec2 UV;
+//layout(location = 2) in vec2 uv;
+//layout(location = 1) in vec3 normal;
+
+// Input vertex data, different for all executions of this shader.
+//layout(location = 0) in vec3 position;
+//layout(location = 1) in vec2 vertexUV;
+//layout(location = 2) in vec3 normal;
+
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
+//layout(location = 2) in float vertexUV;
 layout(location = 2) in float vertexUV;
 
+// Output data ; will be interpolated for each fragment.
+//out vec2 UV;
+//out vec3 Position_worldspace;
+//out vec3 Normal_cameraspace;
+//out vec3 EyeDirection_cameraspace;
+//out vec3 LightDirection_cameraspace;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
-uniform float Size;
+//uniform mat4 V;
+//uniform mat4 M;
+//uniform vec3 LightPosition_worldspace;
 
 
 float turbulence( vec3 p ) {
@@ -215,7 +238,7 @@ void main() {
     // get a 3d noise using the position, low frequency
     float b = 6.0 * pnoise( 0.05 * position, vec3( 100.0 ) );
     // compose both noises
-    float displacement = Size * (- 1.0 * noise + b);
+    float displacement = - 0.3 * noise + b;
     
     // move the position along the normal and transform it
     vec3 newPosition = position + normal * displacement;
