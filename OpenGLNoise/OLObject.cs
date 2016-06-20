@@ -162,7 +162,7 @@ namespace OpenGLNoise
 			Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
 			Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
 
-			Debug.Assert(MvpUniformLocation != -1);
+			//Debug.Assert(MvpUniformLocation != -1);
 		}
 
 		int LoadShaderFromResource(ShaderType shaderType, string resourceName)

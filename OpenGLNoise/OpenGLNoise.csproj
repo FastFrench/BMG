@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColouredVertex.cs" />
+    <Compile Include="CubeSample.cs" />
     <Compile Include="OldRenderWindows.cs" />
     <Compile Include="OLObject.cs" />
     <Compile Include="SphereObject.cs" />

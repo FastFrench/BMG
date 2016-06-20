@@ -185,7 +185,7 @@ float pnoise(vec3 P, vec3 rep)
 // Output data ; will be interpolated for each fragment.
 varying float vUv;
 varying float noise;
-
+varying vec3  fragt_normal;
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in float vertexUV;
@@ -207,6 +207,7 @@ float turbulence( vec3 p ) {
 }
 
 void main() {
+	fragt_normal = normal;
 	vUv = clamp((vertexUV + 1) * 1.5, 0, 1);
     //vUv = vertexUV;
 
