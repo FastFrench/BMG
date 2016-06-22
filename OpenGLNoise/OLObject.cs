@@ -142,10 +142,30 @@ namespace OpenGLNoise
 
 		}
 
-		#region Shaders and Programs management
-		#region Shader Loading
+        #region Shaders and Programs management
+        #region Shader Loading
 
-		public void LoadShaders(string pixelShaderName, string vertexShaderName, string geometryShaderName = null)
+        public void LoadShaders(byte[] pixelShaderData, byte[] vertexShaderData, byte[] geometryShaderData = null)
+        {
+            int? pixelShader = null;
+            int? vertexShader = null;
+            int? geometryShader = null;
+            if (pixelShaderData != null)
+                pixelShader = LoadShaderFromResource(ShaderType.FragmentShader, pixelShaderData, "Fragment Shader");
+            if (vertexShaderData != null)
+                vertexShader = LoadShaderFromResource(ShaderType.VertexShader, vertexShaderData, "Vertex Shader");
+            if (geometryShaderData != null)
+                geometryShader = LoadShaderFromResource(ShaderType.GeometryShader, geometryShaderData, "Geometry Shader");
+            CreateAndLinkProgram(pixelShader, vertexShader, geometryShader);
+            MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
+            SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
+            Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
+            Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
+
+            //Debug.Assert(MvpUniformLocation != -1);
+        }
+
+        public void LoadShaders(string pixelShaderName, string vertexShaderName, string geometryShaderName = null)
 		{
 			int? pixelShader = null;
 			int? vertexShader = null;
@@ -167,31 +187,35 @@ namespace OpenGLNoise
 
 		int LoadShaderFromResource(ShaderType shaderType, string resourceName)
 		{
-			// Load shader from WinForms resource manager thing
-			var shaderBytes = (byte[])Resources.ResourceManager.GetObject(resourceName);
-			var shaderSource = Encoding.UTF8.GetString(shaderBytes);
-
-			// Create and compile shader
-			var shaderHandle = GL.CreateShader(shaderType);
-			GL.ShaderSource(shaderHandle, shaderSource);
-			GL.CompileShader(shaderHandle);
-
-			// Check for compilation errors
-			int status;
-			GL.GetShader(shaderHandle, ShaderParameter.CompileStatus, out status);
-			if (status == 0)
-			{
-				var infoLog = GL.GetShaderInfoLog(shaderHandle);
-				Debug.Print("Compile failed for shader {0}: {1}", resourceName, infoLog);
-			}
-			return shaderHandle;
+            return LoadShaderFromResource(shaderType, (byte[])Resources.ResourceManager.GetObject(resourceName), resourceName);            
 		}
 
+        int LoadShaderFromResource(ShaderType shaderType, byte[] data, string name)
+        {
+            // Load shader from WinForms resource manager thing
+            var shaderSource = Encoding.UTF8.GetString(data);
 
-		#endregion
+            // Create and compile shader
+            var shaderHandle = GL.CreateShader(shaderType);
+            GL.ShaderSource(shaderHandle, shaderSource);
+            GL.CompileShader(shaderHandle);
+
+            // Check for compilation errors
+            int status;
+            GL.GetShader(shaderHandle, ShaderParameter.CompileStatus, out status);
+            if (status == 0)
+            {
+                var infoLog = GL.GetShaderInfoLog(shaderHandle);
+                Debug.Print("Compile failed for shader {0}: {1}", name, infoLog);
+            }
+            return shaderHandle;
+        }
 
 
-		int CreateAndLinkProgram(params int?[] shaders)
+        #endregion
+
+
+        int CreateAndLinkProgram(params int?[] shaders)
 		{
 			// Create program, attach shaders, link
 			var programHandle = GL.CreateProgram();

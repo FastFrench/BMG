@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColouredVertex.cs" />
+    <Compile Include="CubeObject.cs" />
     <Compile Include="CubeSample.cs" />
     <Compile Include="OldRenderWindows.cs" />
     <Compile Include="OLObject.cs" />
@@ -100,6 +101,8 @@
     <None Include="Resources\classicnoise2D.glsl" />
     <None Include="Resources\classicnoise3D.glsl" />
     <None Include="Resources\classicnoise4D.glsl" />
+    <None Include="Resources\Lighting.frag" />
+    <None Include="Resources\Lighting.vert" />
     <None Include="Resources\Explosion2.vert" />
     <None Include="Resources\Explosion3.frag" />
     <None Include="Resources\Explosion2.frag" />

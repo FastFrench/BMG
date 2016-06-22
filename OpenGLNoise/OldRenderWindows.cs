@@ -334,7 +334,7 @@ namespace OpenGLNoise
       GL.ClearColor(Color4.Gray);
 
       GL.Enable(EnableCap.DepthTest);
-
+           
       // Load sphere shader
       var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "Explosion_Vert"/*"sphere_vert"*/);
       var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "Explosion_Frag"/*"sphere_frag"*/);
