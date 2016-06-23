@@ -37,7 +37,7 @@ namespace OpenGLNoise
         }
 
         const float _sphereRadius = 0.40f;//1.6f;
-        const float _quality = 200.0f;
+        const float _quality = 20.0f;
         int latitudeBands;
         int longitudeBands;
 
@@ -53,8 +53,8 @@ namespace OpenGLNoise
 
         void CreateSphereData(float quality = _quality)
         {
-            latitudeBands = (int)(quality * 2 *  radius);
-            longitudeBands = (int)(quality * radius);
+            latitudeBands = (int)(quality * radius);
+            longitudeBands = (int)(quality * 2 *  radius);
 
             int i_basis = indices.Count;
             for (double latitudeNum = 0; latitudeNum <= latitudeBands; latitudeNum++)
