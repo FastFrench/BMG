@@ -294,9 +294,9 @@ namespace OpenGLNoise
             if (Bouncing)
             {
                 if (sign)
-                    alt += 0.03f;
+                    alt += (float)e.Time;
                 else
-                    alt -= 0.03f;
+                    alt -= (float)e.Time;
                 if (alt > 15 || alt < 3) sign = !sign;
             }
             ViewMatrix = Matrix4.LookAt(new Vector3(alt, 0, 0), Vector3.Zero, Vector3.UnitZ);

@@ -37,7 +37,7 @@ namespace OpenGLNoise
         }
 
         const float _sphereRadius = 0.40f;//1.6f;
-        const float _quality = 20.0f;
+        const float _quality = 80.0f;
         int latitudeBands;
         int longitudeBands;
 
@@ -81,7 +81,7 @@ namespace OpenGLNoise
 
             for (int latitudeNum = 0; latitudeNum < latitudeBands; latitudeNum++)
             {
-                for (int longitudeNum = 0; longitudeNum <= latitudeBands; longitudeNum++)
+                for (int longitudeNum = 0; longitudeNum <= longitudeBands; longitudeNum++)
                 {
                     var i0 = i_basis + (latitudeNum * (longitudeBands + 1)) + longitudeNum;
                     var i1 = i_basis + i0 + longitudeBands + 1;
