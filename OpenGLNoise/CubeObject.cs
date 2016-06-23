@@ -50,7 +50,7 @@ namespace OpenGLNoise
         List<Vector3> normals;
         List<int> indices;
 
-        void CreateCubeData(float quality = 10/*_quality*/)
+        void CreateCubeData(float quality = 2/*_quality*/)
         {
             this.latitudeBands = (int)(quality * radius);
             this.longitudeBands = (int)(quality * radius);
@@ -110,7 +110,7 @@ namespace OpenGLNoise
                 for (int latitudeNum = 0; latitudeNum < latitudeBands; latitudeNum++)
                 {
                     int basis = (face * (latitudeBands +1)+ latitudeNum) * (longitudeBands + 1);
-                    for (int longitudeNum = 0; longitudeNum <= longitudeBands; longitudeNum++)
+                    for (int longitudeNum = 0; longitudeNum < longitudeBands; longitudeNum++)
                     {
                         var i0 = basis + longitudeNum;
                         var i1 = i0 + longitudeBands + 1;

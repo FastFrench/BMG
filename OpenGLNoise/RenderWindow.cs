@@ -181,7 +181,7 @@ namespace OpenGLNoise
 
         void AddSphere(float px, float py, float pz, float radius)
         {
-            var sphere = new SphereObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
+            var sphere = new CubeObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
             sphere.Color1 = GetRandomColor();
             do
             {
@@ -340,7 +340,8 @@ namespace OpenGLNoise
             //renderer.DrawString("Hello, world", serif, Brushes.White, new PointF(0.0f, 0.0f));
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+            GL.Disable(EnableCap.CullFace);
+            GL.Enable(EnableCap.DepthTest);
 
             foreach (var obj in Objects)
                 obj.OnRenderObject(MvpMatrix);

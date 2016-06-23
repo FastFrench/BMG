@@ -4,6 +4,7 @@ const vec3 lightVecNormalized = normalize(vec3(0.5, 0.5, 2.0));
 const vec3 lightColor = vec3(0.9, 0.9, 0.7);
 //in vec3 normal;
 varying vec3 fragt_normal;
+out vec4 PixelColor;
 
 uniform vec4 GlobalColor1;
 uniform vec4 GlobalColor2;
@@ -21,5 +22,5 @@ void main() {
 	//float colorGreen = clamp(colorRange*3, 1, 2)-1;
 	//float colorBlue = clamp(colorRange*3, 2, 3)-2;
 	 
-    gl_FragColor = mix(GlobalColor1, GlobalColor2, diffuse); // vec4( colorRed, colorGreen, colorBlue, 1.0 );
+    PixelColor = mix(GlobalColor1, GlobalColor2, diffuse);
 }
