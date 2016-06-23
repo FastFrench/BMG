@@ -64,6 +64,7 @@
     <Compile Include="OldRenderWindows.cs" />
     <Compile Include="OLObject.cs" />
     <Compile Include="SphereObject.cs" />
+    <Compile Include="TeaPotObject.cs" />
     <Compile Include="TextRenderer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -101,6 +102,8 @@
     <None Include="Resources\classicnoise2D.glsl" />
     <None Include="Resources\classicnoise3D.glsl" />
     <None Include="Resources\classicnoise4D.glsl" />
+    <None Include="Resources\LightingAdvanced.vert" />
+    <None Include="Resources\LightingAdvanced.frag" />
     <None Include="Resources\Lighting.frag" />
     <None Include="Resources\Lighting.vert" />
     <None Include="Resources\Explosion2.vert" />
@@ -116,6 +119,7 @@
     <None Include="Resources\shader.frag" />
     <None Include="Resources\shader.vert" />
     <None Include="Resources\sparkling.frag" />
+    <None Include="Resources\teapot.data" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

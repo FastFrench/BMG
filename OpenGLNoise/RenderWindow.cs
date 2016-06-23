@@ -53,7 +53,7 @@ namespace OpenGLNoise
             switch (e.KeyChar)
             {
                 case '+':
-                    AddARandomSphere();
+                    AddARandomObject();
                     BuildObjects();
                     break;
                 case '-':
@@ -137,15 +137,15 @@ namespace OpenGLNoise
         Random rnd = new Random();
 
        
-        void AddSphere(float px, float py, float pz, float radius)
+        void AddObject(float px, float py, float pz, float radius)
         {
             var olObject = OpenGLObject.CreateObject(px, py, pz, radius);
             Objects.Add(olObject);
         }
 
-        void AddARandomSphere()
+        void AddARandomObject()
         {
-            AddSphere((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
+            AddObject((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
         }
 
         void CreateObjects()
@@ -156,7 +156,9 @@ namespace OpenGLNoise
             Objects = new List<OpenGLObject>();
             int nbSpheres = rnd.Next(4, 20);
             for (int i = 0; i < nbSpheres; i++)
-                AddARandomSphere();
+                AddARandomObject();
+            var teaPot = OpenGLObject.CreateTeapot(0f, 0f, 0f, 1.0f);
+            Objects.Add(teaPot);
             BuildObjects();
         }
 

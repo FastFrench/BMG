@@ -215,6 +215,7 @@ namespace OpenGLNoise
             {
                 var infoLog = GL.GetShaderInfoLog(shaderHandle);
                 Debug.Print("Compile failed for shader {0}: {1}", name, infoLog);
+                Debug.Assert(false);
             }
             return shaderHandle;
         }
@@ -239,6 +240,7 @@ namespace OpenGLNoise
             {
                 var infoLog = GL.GetProgramInfoLog(programHandle);
                 Debug.Print("Link for shader program {0} failed: {1}", programHandle, infoLog);
+                Debug.Assert(false);
             }
 
             // Delete shaders
@@ -349,9 +351,22 @@ namespace OpenGLNoise
         {
             OpenGLObject openGLObject = null;
             if (rnd.Next(2) == 1)
-                openGLObject = new SphereObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
+                openGLObject = new SphereObject(new Vector3(px, py, pz), radius * 2, true);
             else
-                openGLObject = new CubeObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
+                openGLObject = new CubeObject(new Vector3(px, py, pz), radius * 2, true);
+            openGLObject.Color1 = GetRandomColor();
+            do
+            {
+                openGLObject.Color2 = GetRandomColor();
+            } while (openGLObject.Color2 == openGLObject.Color1);
+            openGLObject.LoadShaders(GetRandomFragmentShader(), GetRandomVertexShader(), null);
+            return openGLObject;
+        }
+
+        public static OpenGLObject CreateTeapot(float px, float py, float pz, float radius)
+        {
+            OpenGLObject openGLObject = null;
+            openGLObject = new TeaPotObject();
             openGLObject.Color1 = GetRandomColor();
             do
             {
