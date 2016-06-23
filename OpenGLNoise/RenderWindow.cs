@@ -136,63 +136,11 @@ namespace OpenGLNoise
 
         Random rnd = new Random();
 
-        byte[] GetRandomFragmentShader()
-        {
-            return Resources.Lighting_frag;
-            //int randomFrag = rnd.Next(3);
-            //switch (randomFrag)
-            //{
-            //	case 0: return "Explosion_Frag";
-            //	case 1: return "Explosion2_frag";
-            //	case 2: return "Explosion3_frag";
-            //}
-            //return "";
-        }
-
-        byte[] GetRandomVertexShader()
-        {
-            return Resources.Lighting_vert;
-            //int randomVert = rnd.Next(2);
-            //switch (randomVert)
-            //{
-            //	case 0: return "Explosion_Vert";
-            //	case 1: return "Explosion2_vert";
-            //}
-            //return "";
-        }
-
-        Color GetRandomColor()
-        {
-            switch (rnd.Next(10))
-            {
-                case 0: return Color.Red;
-                case 1: return Color.Blue;
-                case 2: return Color.Black;
-                case 3: return Color.Yellow;
-                case 4: return Color.Green;
-                case 5: return Color.Cyan;
-                case 6: return Color.Indigo;
-                case 7: return Color.White;
-                case 8: return Color.Tomato;
-                case 9: return Color.LawnGreen;
-                default: return Color.Gray;
-            }
-        }
-
+       
         void AddSphere(float px, float py, float pz, float radius)
         {
-            var sphere = new SphereObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
-            sphere.Color1 = GetRandomColor();
-            do
-            {
-                sphere.Color2 = GetRandomColor();
-            } while (sphere.Color2 == sphere.Color1);
-            sphere.LoadShaders(GetRandomFragmentShader(), GetRandomVertexShader(), null);
-
-            //sphere.LoadShaders(null, null, null);// GetRandomFragmentShader(), GetRandomVertexShader(), null);
-
-            Objects.Add(sphere);
-
+            var olObject = OpenGLObject.CreateObject(px, py, pz, radius);
+            Objects.Add(olObject);
         }
 
         void AddARandomSphere()

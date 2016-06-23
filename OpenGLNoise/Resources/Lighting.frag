@@ -13,8 +13,8 @@ void main() {
     // and modulate it with the noise like ambient occlusion
 	//float colorRange = clamp(vUv * ( 1. - 2. * noise ), 0, (1-ambient));
 	//vec3 lightColor = GlobalColor2.xyz;
-
-	float diffuse = clamp(dot(lightVecNormalized, normalize(fragt_normal)), 0.0, 1);
+	// We could normalize fragt_normal, but doesn't seems to have visual impact
+	float diffuse = clamp(dot(lightVecNormalized, fragt_normal), 0.0, 1);
 
 	//vec4 lightColor = (ambient + diffuse )* (GlobalColor2 / 2 + 0.5);//clamp(, 1.0);
 	//vec4 lightedResult = mix(GlobalColor1, GlobalColor2, colorRange); // vec4( colorRed, colorGreen, colorBlue, 1.0 );

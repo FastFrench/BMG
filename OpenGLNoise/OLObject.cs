@@ -40,7 +40,7 @@ namespace OpenGLNoise
             }
         }
 
-        protected Random rnd = new Random();
+        static protected Random rnd = new Random();
 
         /// <summary>
         /// Initial building of the object (usually called in OnLoad or chen the object appears)
@@ -301,6 +301,65 @@ namespace OpenGLNoise
 
         int VertexArrayObject;
         int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
+        static byte[] GetRandomFragmentShader()
+        {
+            return Resources.Lighting_frag;
+            //int randomFrag = rnd.Next(3);
+            //switch (randomFrag)
+            //{
+            //	case 0: return "Explosion_Frag";
+            //	case 1: return "Explosion2_frag";
+            //	case 2: return "Explosion3_frag";
+            //}
+            //return "";
+        }
+
+        static byte[] GetRandomVertexShader()
+        {
+            return Resources.Lighting_vert;
+            //int randomVert = rnd.Next(2);
+            //switch (randomVert)
+            //{
+            //	case 0: return "Explosion_Vert";
+            //	case 1: return "Explosion2_vert";
+            //}
+            //return "";
+        }
+
+        static Color GetRandomColor()
+        {
+            switch (rnd.Next(10))
+            {
+                case 0: return Color.Red;
+                case 1: return Color.Blue;
+                case 2: return Color.Black;
+                case 3: return Color.Yellow;
+                case 4: return Color.Green;
+                case 5: return Color.Cyan;
+                case 6: return Color.Indigo;
+                case 7: return Color.White;
+                case 8: return Color.Tomato;
+                case 9: return Color.LawnGreen;
+                default: return Color.Gray;
+            }
+        }
+
+        //Random rnd = new Random();
+        public static OpenGLObject CreateObject(float px, float py, float pz, float radius)
+        {
+            OpenGLObject openGLObject = null;
+            if (rnd.Next(2) == 1)
+                openGLObject = new SphereObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
+            else
+                openGLObject = new CubeObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
+            openGLObject.Color1 = GetRandomColor();
+            do
+            {
+                openGLObject.Color2 = GetRandomColor();
+            } while (openGLObject.Color2 == openGLObject.Color1);
+            openGLObject.LoadShaders(GetRandomFragmentShader(), GetRandomVertexShader(), null);
+            return openGLObject;
+        }
 
         void SetupBuffers()
         {
