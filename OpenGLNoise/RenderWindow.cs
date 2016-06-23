@@ -181,7 +181,7 @@ namespace OpenGLNoise
 
         void AddSphere(float px, float py, float pz, float radius)
         {
-            var sphere = new CubeObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
+            var sphere = new SphereObject(new Vector3(px, py, pz), radius * 2, true /*rnd.Next(2) == 0*/);
             sphere.Color1 = GetRandomColor();
             do
             {

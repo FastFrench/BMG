@@ -50,10 +50,11 @@ namespace OpenGLNoise
         List<Vector3> normals;
         List<int> indices;
 
-        void CreateCubeData(float quality = 2/*_quality*/)
+        void CreateCubeData(float quality = 1/*_quality*/)
         {
-            this.latitudeBands = (int)(quality * radius);
-            this.longitudeBands = (int)(quality * radius);
+            this.latitudeBands = Math.Max(1,(int)(quality * radius));
+            this.longitudeBands = Math.Max(1, (int)(quality * radius));
+
             for (int face = 0; face < 6; face++)
                 for (double latitudeNum = 0; latitudeNum <= latitudeBands; latitudeNum++)
                     for (double longitudeNum = 0; longitudeNum <= longitudeBands; longitudeNum++)
