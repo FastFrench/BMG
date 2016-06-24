@@ -25,19 +25,8 @@ namespace OpenGLNoise
             base.BuildObject();
         }
 
-        public override void OnRenderObject(Matrix4 mvpMatrix)
-        {
-            base.OnRenderObject(mvpMatrix);
-        }
-
-        public override void OnUpdateObject(FrameEventArgs e)
-        {
-            base.OnUpdateObject(e);
-
-        }
-
         const float _sphereRadius = 0.40f;//1.6f;
-        const float _quality = 40.0f;
+        const float _quality = 50.0f;
         int latitudeBands;
         int longitudeBands;
 

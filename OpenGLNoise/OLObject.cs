@@ -66,8 +66,9 @@ namespace OpenGLNoise
         NoiseMap NoiseMap;
         PlaneNoiseMapBuilder NoiseMapBuilder;
         protected int MvpUniformLocation { get; set; }
+		protected int ViewUniformLocation { get; set; }
 
-        protected int SizeUniformLocation { get; set; }
+		protected int SizeUniformLocation { get; set; }
         protected int Color1UniformLocation { get; set; }
         protected int Color2UniformLocation { get; set; }
 
@@ -166,31 +167,18 @@ namespace OpenGLNoise
                 geometryShader = LoadShaderFromResource(ShaderType.GeometryShader, geometryShaderData, "Geometry Shader");
             CreateAndLinkProgram(pixelShader, vertexShader, geometryShader);
             MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
-            SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
+			ViewUniformLocation = GL.GetUniformLocation(ProgramHandle, "View");
+			SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
             Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
             Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
 
             //Debug.Assert(MvpUniformLocation != -1);
         }
 
+		
         public void LoadShaders(string pixelShaderName, string vertexShaderName, string geometryShaderName = null)
         {
-            int? pixelShader = null;
-            int? vertexShader = null;
-            int? geometryShader = null;
-            if (pixelShaderName != null)
-                pixelShader = LoadShaderFromResource(ShaderType.FragmentShader, pixelShaderName);
-            if (vertexShaderName != null)
-                vertexShader = LoadShaderFromResource(ShaderType.VertexShader, vertexShaderName);
-            if (geometryShaderName != null)
-                geometryShader = LoadShaderFromResource(ShaderType.GeometryShader, geometryShaderName);
-            CreateAndLinkProgram(pixelShader, vertexShader, geometryShader);
-            MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
-            SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
-            Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
-            Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
-
-            //Debug.Assert(MvpUniformLocation != -1);
+			LoadShaders((byte[])Resources.ResourceManager.GetObject(pixelShaderName), (byte[])Resources.ResourceManager.GetObject(vertexShaderName), (byte[])Resources.ResourceManager.GetObject(geometryShaderName));                       
         }
 
         int LoadShaderFromResource(ShaderType shaderType, string resourceName)
@@ -261,14 +249,15 @@ namespace OpenGLNoise
         /// <summary>
         /// Called on OnRenderFrame
         /// </summary>
-        virtual public void OnRenderObject(Matrix4 mvpMatrix)
+        virtual public void OnRenderObject(Matrix4 mvpMatrix, Matrix4 viewMatrix)
         {
             GL.UseProgram(ProgramHandle);
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
             GL.UniformMatrix4(MvpUniformLocation, false, ref mvpMatrix);
-            GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
+			GL.UniformMatrix4(ViewUniformLocation, false, ref viewMatrix);
+			GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
             GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
             GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
             GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);

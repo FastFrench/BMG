@@ -37,17 +37,17 @@ namespace OpenGLNoise
                 if (items[0] == "v")
                 {
                     float fx, fy, fz;
-                    if (!float.TryParse(items[1], NumberStyles.Float, CultureInfo.In­variantCulture, out fx))
+                    if (!float.TryParse(items[1], NumberStyles.Float, CultureInfo.In­variantCulture, out fy))
                     {
                         Debug.Assert(false, items[1] + " is not a valid float");
                         continue;
                     }
-                    if (!float.TryParse(items[2], NumberStyles.Float, CultureInfo.In­variantCulture, out fy))
+                    if (!float.TryParse(items[2], NumberStyles.Float, CultureInfo.In­variantCulture, out fz))
                     {
                         Debug.Assert(false, items[2] + " is not a valid float");
                         continue;
                     }
-                    if (!float.TryParse(items[3], NumberStyles.Float, CultureInfo.In­variantCulture, out fz))
+                    if (!float.TryParse(items[3], NumberStyles.Float, CultureInfo.In­variantCulture, out fx))
                     {
                         Debug.Assert(false, items[3] + " is not a valid float");
                         continue;

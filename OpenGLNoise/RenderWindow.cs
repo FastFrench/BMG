@@ -294,7 +294,7 @@ namespace OpenGLNoise
             GL.Enable(EnableCap.DepthTest);
 
             foreach (var obj in Objects)
-                obj.OnRenderObject(MvpMatrix);
+                obj.OnRenderObject(MvpMatrix, ViewMatrix);
             //GL.MatrixMode(MatrixMode.Modelview);
             //GL.LoadIdentity();
 
