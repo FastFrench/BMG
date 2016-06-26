@@ -8,6 +8,7 @@
  uniform mat4 View;
  // Output data ; will be interpolated for each fragment.
 varying vec3  fragt_normal;
+varying vec4 eye;
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 
@@ -21,7 +22,6 @@ uniform mat4 MVP;
 //    vec3 normal;
 //    vec4 eye;
 //} DataOut;
-out vec4 eye;
 
 void main () { 
 	fragt_normal = normal;

@@ -98,7 +98,7 @@ namespace OpenGLNoise
                 Debug.Assert(i3 >= 0 && i3 < vertices.Length);
                 Vector3 v1 = vertices[i3] - vertices[i1];
                 Vector3 v2 = vertices[i2] - vertices[i1];
-                Vector3 normal = Vector3.Cross(v1, v2);
+                Vector3 normal = Vector3.Cross(v2, v1);
                 normalComponents[i1].Add(normal);
                 normalComponents[i2].Add(normal);
                 normalComponents[i3].Add(normal);
