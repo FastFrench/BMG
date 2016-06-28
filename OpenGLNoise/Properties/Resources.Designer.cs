@@ -143,6 +143,26 @@ namespace OpenGLNoise.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] Gouraud_Frag {
+            get {
+                object obj = ResourceManager.GetObject("Gouraud_Frag", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Gouraud_Vert {
+            get {
+                object obj = ResourceManager.GetObject("Gouraud_Vert", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] Lighting_frag {
             get {
                 object obj = ResourceManager.GetObject("Lighting_frag", resourceCulture);
@@ -206,6 +226,26 @@ namespace OpenGLNoise.Properties {
         internal static byte[] normals_vert {
             get {
                 object obj = ResourceManager.GetObject("normals_vert", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Phong_Frag {
+            get {
+                object obj = ResourceManager.GetObject("Phong_Frag", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Phong_Vert {
+            get {
+                object obj = ResourceManager.GetObject("Phong_Vert", resourceCulture);
                 return ((byte[])(obj));
             }
         }
