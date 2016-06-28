@@ -102,6 +102,10 @@
     <None Include="Resources\classicnoise2D.glsl" />
     <None Include="Resources\classicnoise3D.glsl" />
     <None Include="Resources\classicnoise4D.glsl" />
+    <None Include="Resources\Phong Shading.frag" />
+    <None Include="Resources\Phong Shading.vert" />
+    <None Include="Resources\Gouraud Shading.frag" />
+    <None Include="Resources\Gouraud Shading.vert" />
     <None Include="Resources\LightingAdvanced.vert" />
     <None Include="Resources\LightingAdvanced.frag" />
     <None Include="Resources\Lighting.frag" />

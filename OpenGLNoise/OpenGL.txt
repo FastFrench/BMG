@@ -15,3 +15,7 @@ http://www.opengl-tutorial.org/fr/intermediate-tutorials/tutorial-13-normal-mapp
 
 Autre tuto: 
 https://github.com/giawa/opengl4tutorials
+
+// uniform struct array usage: 
+http://www.opentk.com/node/2926
+
