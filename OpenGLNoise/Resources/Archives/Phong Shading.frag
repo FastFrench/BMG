@@ -2,11 +2,12 @@
  
 struct LightInfo
 {
-	vec3 Position;	//Light Position in eye-coords
-	vec3 La;		//Ambient light intensity
-	vec3 Ld;		//Diffuse light intensity
-	vec3 Ls;		//Specular light intensity
+	vec3 Position;		//Light Position in eye-coords
+	vec3 La;			//Ambient light intensity
+	vec3 Ld;			//Diffuse light intensity
+	vec3 Ls;			//Specular light intensity
 };
+uniform LightInfo Light[LIGHTCOUNT];
  
 struct MaterialInfo
 {
@@ -15,6 +16,7 @@ struct MaterialInfo
 	vec3 Ks;			//Specular reflectivity
 	float Shininess;	//Specular shininess factor
 };
+uniform MaterialInfo Material;
  
 in Data
 {
@@ -25,8 +27,6 @@ in Data
  
 out vec4 FragColor;
 
-uniform LightInfo Light[LIGHTCOUNT];
-uniform MaterialInfo Material;
 uniform sampler2D Tex;
  
 void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )

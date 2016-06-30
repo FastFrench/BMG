@@ -275,8 +275,6 @@ namespace OpenGLNoise
       //GL.MatrixMode(MatrixMode.Projection);
       //GL.LoadIdentity();
       //GL.Ortho(-1.0, 1.0, -1.0, 1.0, 0.0, 4.0);
-
-
     }
 
     /*

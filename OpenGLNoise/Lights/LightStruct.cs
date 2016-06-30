@@ -12,7 +12,9 @@ namespace OpenGLNoise.Lights
   [StructLayout(LayoutKind.Sequential)]
   public struct LightStruct
   {
-    public Vector4 Color;
+    public Vector4 AmbientColor;
+    public Vector4 DiffuseColor;
+    public Vector4 SpecularColor;
     public Vector3 Position;
     public bool Visible; 
   }

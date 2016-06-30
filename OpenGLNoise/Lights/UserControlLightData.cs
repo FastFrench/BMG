@@ -39,10 +39,19 @@ namespace OpenGLNoise
       dataBindingSource = new BindingSource() { DataSource = Data };
       checkBoxVisible.DataBindings.Clear();
       buttonSetColor.DataBindings.Clear();
+      buttonSetAmbientColor.DataBindings.Clear();
+      buttonSetDiffuseColor.DataBindings.Clear();
+      buttonSetSpecularColor.DataBindings.Clear();
       checkBoxVisible.DataBindings.Add("Checked", dataBindingSource,
           "Visible", false, DataSourceUpdateMode.OnPropertyChanged);
       buttonSetColor.DataBindings.Add("BackColor", dataBindingSource,
-          "Color", false, DataSourceUpdateMode.OnPropertyChanged);
+          "GlobalColor", false, DataSourceUpdateMode.OnPropertyChanged);
+      buttonSetAmbientColor.DataBindings.Add("BackColor", dataBindingSource,
+          "AmbientColor", false, DataSourceUpdateMode.OnPropertyChanged);
+      buttonSetDiffuseColor.DataBindings.Add("BackColor", dataBindingSource,
+          "DiffuseColor", false, DataSourceUpdateMode.OnPropertyChanged);
+      buttonSetSpecularColor.DataBindings.Add("BackColor", dataBindingSource,
+          "SpecularColor", false, DataSourceUpdateMode.OnPropertyChanged);
       textBoxX.Text = Data.Position.X.ToString();
       textBoxY.Text = Data.Position.Y.ToString();
       textBoxZ.Text = Data.Position.Z.ToString();
@@ -54,9 +63,9 @@ namespace OpenGLNoise
     private void buttonSetColor_Click(object sender, EventArgs e)
     {
       if (Data == null) return;
-      colorDialog.Color = Data.Color;
+      colorDialog.Color = Data.GlobalColor;
       if (colorDialog.ShowDialog() == DialogResult.OK)
-        Data.Color = colorDialog.Color;
+        Data.GlobalColor = colorDialog.Color;
     }
 
     private void textBoxX_TextChanged(object sender, EventArgs e)
@@ -90,6 +99,30 @@ namespace OpenGLNoise
         Vector3 newPosition = new Vector3(Data.Position.X, Data.Position.Y, newValue);
         Data.Position = newPosition;
       }
+    }
+
+    private void buttonSetAmbiantColor_Click(object sender, EventArgs e)
+    {
+      if (Data == null) return;
+      colorDialog.Color = Data.AmbientColor;
+      if (colorDialog.ShowDialog() == DialogResult.OK)
+        Data.AmbientColor = colorDialog.Color;
+    }
+
+    private void buttonSetDiffuseColor_Click(object sender, EventArgs e)
+    {
+      if (Data == null) return;
+      colorDialog.Color = Data.DiffuseColor;
+      if (colorDialog.ShowDialog() == DialogResult.OK)
+        Data.DiffuseColor = colorDialog.Color;
+    }
+
+    private void buttonSetSpecularColor_Click(object sender, EventArgs e)
+    {
+      if (Data == null) return;
+      colorDialog.Color = Data.SpecularColor;
+      if (colorDialog.ShowDialog() == DialogResult.OK)
+        Data.SpecularColor = colorDialog.Color;
     }
   }
 }

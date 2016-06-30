@@ -39,6 +39,9 @@
       this.buttonSetColor = new System.Windows.Forms.Button();
       this.colorDialog = new System.Windows.Forms.ColorDialog();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.buttonSetSpecularColor = new System.Windows.Forms.Button();
+      this.buttonSetDiffuseColor = new System.Windows.Forms.Button();
+      this.buttonSetAmbientColor = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.textBoxX)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.textBoxY)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.textBoxZ)).BeginInit();
@@ -100,7 +103,7 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(9, 26);
+      this.label1.Location = new System.Drawing.Point(9, 28);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(12, 13);
       this.label1.TabIndex = 4;
@@ -118,7 +121,7 @@
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(84, 26);
+      this.label6.Location = new System.Drawing.Point(84, 28);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(12, 13);
       this.label6.TabIndex = 4;
@@ -127,7 +130,7 @@
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(164, 26);
+      this.label8.Location = new System.Drawing.Point(164, 28);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(12, 13);
       this.label8.TabIndex = 4;
@@ -152,6 +155,9 @@
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.textBoxY);
+      this.groupBox1.Controls.Add(this.buttonSetSpecularColor);
+      this.groupBox1.Controls.Add(this.buttonSetDiffuseColor);
+      this.groupBox1.Controls.Add(this.buttonSetAmbientColor);
       this.groupBox1.Controls.Add(this.buttonSetColor);
       this.groupBox1.Controls.Add(this.checkBoxVisible);
       this.groupBox1.Controls.Add(this.label8);
@@ -162,9 +168,39 @@
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Location = new System.Drawing.Point(3, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(409, 56);
+      this.groupBox1.Size = new System.Drawing.Size(605, 56);
       this.groupBox1.TabIndex = 6;
       this.groupBox1.TabStop = false;
+      // 
+      // buttonSetSpecularColor
+      // 
+      this.buttonSetSpecularColor.Location = new System.Drawing.Point(533, 25);
+      this.buttonSetSpecularColor.Name = "buttonSetSpecularColor";
+      this.buttonSetSpecularColor.Size = new System.Drawing.Size(64, 19);
+      this.buttonSetSpecularColor.TabIndex = 5;
+      this.buttonSetSpecularColor.Text = "Specular";
+      this.buttonSetSpecularColor.UseVisualStyleBackColor = true;
+      this.buttonSetSpecularColor.Click += new System.EventHandler(this.buttonSetSpecularColor_Click);
+      // 
+      // buttonSetDiffuseColor
+      // 
+      this.buttonSetDiffuseColor.Location = new System.Drawing.Point(471, 25);
+      this.buttonSetDiffuseColor.Name = "buttonSetDiffuseColor";
+      this.buttonSetDiffuseColor.Size = new System.Drawing.Size(56, 19);
+      this.buttonSetDiffuseColor.TabIndex = 5;
+      this.buttonSetDiffuseColor.Text = "Diffuse";
+      this.buttonSetDiffuseColor.UseVisualStyleBackColor = true;
+      this.buttonSetDiffuseColor.Click += new System.EventHandler(this.buttonSetDiffuseColor_Click);
+      // 
+      // buttonSetAmbiantColor
+      // 
+      this.buttonSetAmbientColor.Location = new System.Drawing.Point(409, 25);
+      this.buttonSetAmbientColor.Name = "buttonSetAmbiantColor";
+      this.buttonSetAmbientColor.Size = new System.Drawing.Size(56, 19);
+      this.buttonSetAmbientColor.TabIndex = 5;
+      this.buttonSetAmbientColor.Text = "Ambiant";
+      this.buttonSetAmbientColor.UseVisualStyleBackColor = true;
+      this.buttonSetAmbientColor.Click += new System.EventHandler(this.buttonSetAmbiantColor_Click);
       // 
       // UserControlLightData
       // 
@@ -172,7 +208,7 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBox1);
       this.Name = "UserControlLightData";
-      this.Size = new System.Drawing.Size(418, 66);
+      this.Size = new System.Drawing.Size(668, 66);
       ((System.ComponentModel.ISupportInitialize)(this.textBoxX)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.textBoxY)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.textBoxZ)).EndInit();
@@ -195,5 +231,8 @@
     private System.Windows.Forms.Button buttonSetColor;
     private System.Windows.Forms.ColorDialog colorDialog;
     private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.Button buttonSetAmbientColor;
+    private System.Windows.Forms.Button buttonSetSpecularColor;
+    private System.Windows.Forms.Button buttonSetDiffuseColor;
   }
 }

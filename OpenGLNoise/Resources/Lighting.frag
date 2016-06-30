@@ -1,5 +1,16 @@
 #version 330 core
 const float ambient = 0.2;
+const int LIGHTCOUNT = 3;
+
+struct LightInfo
+{
+	vec3 Position;		//Light Position in eye-coords
+	vec3 La;			//Ambient light intensity
+	vec3 Ld;			//Diffuse light intensity
+	vec3 Ls;			//Specular light intensity
+};
+uniform LightInfo Light[LIGHTCOUNT];
+
 //const vec3 diffuseLightVecNormalized = normalize(vec3(0.5, 0.5, 2.0));
 const vec3 specularLightVecNormalized = normalize(vec3(3, 0.5, 0.0));
 const vec3 specularLightVecNormalized2 = normalize(vec3(-3, -5.5, -4.0));

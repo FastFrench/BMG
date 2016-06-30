@@ -80,7 +80,7 @@
       this.userControlLightData1.ColorName = "Light 1";
       this.userControlLightData1.Location = new System.Drawing.Point(240, 5);
       this.userControlLightData1.Name = "userControlLightData1";
-      this.userControlLightData1.Size = new System.Drawing.Size(418, 63);
+      this.userControlLightData1.Size = new System.Drawing.Size(620, 63);
       this.userControlLightData1.TabIndex = 3;
       // 
       // userControlLightData2
@@ -88,7 +88,7 @@
       this.userControlLightData2.ColorName = "Light 2";
       this.userControlLightData2.Location = new System.Drawing.Point(240, 68);
       this.userControlLightData2.Name = "userControlLightData2";
-      this.userControlLightData2.Size = new System.Drawing.Size(418, 63);
+      this.userControlLightData2.Size = new System.Drawing.Size(620, 63);
       this.userControlLightData2.TabIndex = 3;
       // 
       // userControlLightData3
@@ -96,7 +96,7 @@
       this.userControlLightData3.ColorName = "Light 3";
       this.userControlLightData3.Location = new System.Drawing.Point(240, 131);
       this.userControlLightData3.Name = "userControlLightData3";
-      this.userControlLightData3.Size = new System.Drawing.Size(418, 63);
+      this.userControlLightData3.Size = new System.Drawing.Size(620, 63);
       this.userControlLightData3.TabIndex = 3;
       // 
       // checkBoxPaused
@@ -123,7 +123,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(696, 263);
+      this.ClientSize = new System.Drawing.Size(933, 263);
       this.Controls.Add(this.checkBoxBouncing);
       this.Controls.Add(this.checkBoxPaused);
       this.Controls.Add(this.userControlLightData3);

@@ -71,6 +71,7 @@
     <Compile Include="Lights\LightData.cs" />
     <Compile Include="Lights\LightDataCollection.cs" />
     <Compile Include="Lights\LightStruct.cs" />
+    <Compile Include="Materials\MaterialData.cs" />
     <Compile Include="OldRenderWindows.cs" />
     <Compile Include="OLObject.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
