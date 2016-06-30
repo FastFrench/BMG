@@ -242,10 +242,10 @@ namespace OpenGLNoise
 
         public Color Color1 { get; set; }
         public Color Color2 { get; set; }
-
+        
         public float Size { get; set; }
         public float AjustedDeformationSize { get; set; }
-
+        
         /// <summary>
         /// Called on OnRenderFrame
         /// </summary>
@@ -256,8 +256,8 @@ namespace OpenGLNoise
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
             GL.UniformMatrix4(MvpUniformLocation, false, ref mvpMatrix);
-			GL.UniformMatrix4(ViewUniformLocation, false, ref viewMatrix);
-			GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
+			      GL.UniformMatrix4(ViewUniformLocation, false, ref viewMatrix);
+			      GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
             GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
             GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
             GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);

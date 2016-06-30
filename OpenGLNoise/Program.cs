@@ -15,13 +15,8 @@ namespace OpenGLNoise
     static void Main()
     {
       Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      //Application.Run(new Form1());
-
-      using (var window = new RenderWindow())//HelloGL3())// RenderWindow())
-      {
-        window.Run();
-      }
+      Application.SetCompatibleTextRenderingDefault(false);      
+      Application.Run(new Form1());
     }
   }
 }

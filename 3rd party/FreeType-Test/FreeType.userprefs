@@ -1,0 +1,18 @@
+﻿<Properties StartupItem="FreeTypeLineWise/FreeTypeLineWise.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="FreeTypeLineWise/FtFont.cs">
+    <Files>
+      <File FileName="FreeTypeLineWise/FtFont.cs" Line="85" Column="6" />
+      <File FileName="FreeTypeLineWise/FreeTypeLineWiseTest.cs" Line="1" Column="1" />
+      <File FileName="FreeTypeLineWise/FreeType.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/home/rupert/Projects/OpenGL-FontTests/FreeType-Test/FreeTypeLineWise/Font.cs" line="762" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="FreeTypeLineWise/Font.cs" line="663" offsetX="742" offsetY="7680" expression="viewport" liveUpdate="True" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
+</Properties>
