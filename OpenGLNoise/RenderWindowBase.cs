@@ -10,6 +10,7 @@ using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Input;
 using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
@@ -18,6 +19,17 @@ namespace OpenGLNoise
 {
   public abstract class RenderWindowBase : GameWindow
   {
+    float zoom = 1.0f;
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+      base.OnMouseWheel(e);
+      float zoomDelta= e.Delta > 0 ? .05f : -.05f;
+      zoom *= (1f + zoomDelta);
+      if (zoom > 20) zoom = 20;
+      if (zoom < 0.1) zoom = 0.1f;
+      ModelMatrix = Matrix4.CreateScale(zoom);
+    }
+
     const float SphereRadius = 0.40f;//1.6f;
 
     public bool Bouncing { get { return RenderSettings.Bouncing; } }
@@ -146,13 +158,13 @@ namespace OpenGLNoise
           alt -= (float)e.Time;
         if (alt > 15 || alt < 3) sign = !sign;
       }
-      ViewMatrix = Matrix4.LookAt(new Vector3(alt, 0, 0), Vector3.Zero, Vector3.UnitZ);
+      ViewMatrix = Matrix4.LookAt(new Vector3(0, 12, 0), new Vector3(0, alt-5, 0), Vector3.UnitZ);
 
       foreach (var obj in Objects)
         obj.OnUpdateObject(e);
 
       if (!RenderSettings.Paused)
-      {
+      {                
         // Rotate the plane
         var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.5));
         Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
