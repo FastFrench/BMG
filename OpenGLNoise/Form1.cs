@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using OpenGLNoise.Lights;
+using OpenGLNoise.Materials;
 using OpenTK;
 
 namespace OpenGLNoise
@@ -20,7 +21,9 @@ namespace OpenGLNoise
       settings.Lights.Add(new LightData(Color.White, new Vector3(3, 0.5f, 0.0f), true));
       settings.Lights.Add(new LightData(Color.Green, new Vector3(-3, -5.5f, -4.0f), true));
       settings.Lights.Add(new LightData(Color.Red, new Vector3(0, 3.5f, -12.0f), true));
+      settings.Material = new MaterialData(Color.SteelBlue, 12.0f);
       InitializeComponent();
+      userControlMaterialData1.Data = settings.Material;
       userControlLightData1.Data = settings.Lights[0];
       userControlLightData2.Data = settings.Lights[1];
       userControlLightData3.Data = settings.Lights[2];
@@ -62,39 +65,5 @@ namespace OpenGLNoise
     public bool HasLight2 { get; set; }
     public bool HasLight3 { get; set; }
 
-    //private void buttonSetLight1_Click(object sender, EventArgs e)
-    //{      
-    //  colorDialog1.Color = ColorLight1;
-    //  if (colorDialog1.ShowDialog()== DialogResult.OK)
-    //  {
-    //    ColorLight1 = colorDialog1.Color;
-    //    buttonSetLight1.BackColor = ColorLight1;
-    //  }
-    //}
-
-    //private void buttonSetLight2_Click(object sender, EventArgs e)
-    //{
-    //  colorDialog1.Color = ColorLight2;
-    //  if (colorDialog1.ShowDialog() == DialogResult.OK)
-    //  {
-    //    ColorLight2 = colorDialog1.Color;
-    //    buttonSetLight2.BackColor = ColorLight2;
-    //  }
-    //}
-
-    //private void buttonSetLight3_Click(object sender, EventArgs e)
-    //{
-    //  colorDialog1.Color = ColorLight3;
-    //  if (colorDialog1.ShowDialog() == DialogResult.OK)
-    //  {
-    //    ColorLight3 = colorDialog1.Color;
-    //    buttonSetLight3.BackColor = ColorLight3;
-    //  }
-    //}
-
-    private void checkBoxLight1_CheckedChanged(object sender, EventArgs e)
-    {
-
-    }
   }
 }

@@ -67,6 +67,11 @@
             0,
             65536});
       this.textBoxX.Location = new System.Drawing.Point(23, 24);
+      this.textBoxX.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
       this.textBoxX.Name = "textBoxX";
       this.textBoxX.Size = new System.Drawing.Size(55, 20);
       this.textBoxX.TabIndex = 1;
@@ -81,6 +86,11 @@
             0,
             65536});
       this.textBoxY.Location = new System.Drawing.Point(102, 24);
+      this.textBoxY.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
       this.textBoxY.Name = "textBoxY";
       this.textBoxY.Size = new System.Drawing.Size(55, 20);
       this.textBoxY.TabIndex = 2;
@@ -95,6 +105,11 @@
             0,
             65536});
       this.textBoxZ.Location = new System.Drawing.Point(179, 24);
+      this.textBoxZ.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
       this.textBoxZ.Name = "textBoxZ";
       this.textBoxZ.Size = new System.Drawing.Size(55, 20);
       this.textBoxZ.TabIndex = 3;
@@ -192,10 +207,10 @@
       this.buttonSetDiffuseColor.UseVisualStyleBackColor = true;
       this.buttonSetDiffuseColor.Click += new System.EventHandler(this.buttonSetDiffuseColor_Click);
       // 
-      // buttonSetAmbiantColor
+      // buttonSetAmbientColor
       // 
       this.buttonSetAmbientColor.Location = new System.Drawing.Point(409, 25);
-      this.buttonSetAmbientColor.Name = "buttonSetAmbiantColor";
+      this.buttonSetAmbientColor.Name = "buttonSetAmbientColor";
       this.buttonSetAmbientColor.Size = new System.Drawing.Size(56, 19);
       this.buttonSetAmbientColor.TabIndex = 5;
       this.buttonSetAmbientColor.Text = "Ambiant";

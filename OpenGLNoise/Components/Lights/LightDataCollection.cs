@@ -13,12 +13,12 @@ namespace OpenGLNoise.Lights
 {
   public class LightDataCollection : ObservableCollection<LightData>
   {     
-    float b2f(byte value)
+    public static float b2f(byte value)
     {
       return value / (float)Byte.MaxValue;
     }
 
-    Vector4 Color2Vector(System.Drawing.Color color)
+    public static Vector4 Color2Vector(System.Drawing.Color color)
     {
       return new Vector4(b2f(color.R), b2f(color.G), b2f(color.B), b2f(color.A));
     }

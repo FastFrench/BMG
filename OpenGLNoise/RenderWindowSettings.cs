@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenGLNoise.Lights;
+using OpenGLNoise.Materials;
 
 namespace OpenGLNoise
 {
@@ -23,6 +24,7 @@ namespace OpenGLNoise
     public RenderWindowSettings()
     {
       Lights = new LightDataCollection();
+      Material = new MaterialData();
       Lights.CollectionChanged += Lights_CollectionChanged;
       DataBindingSource = new BindingSource() { DataSource = this };
     }
@@ -33,6 +35,12 @@ namespace OpenGLNoise
     }
 
     public LightDataCollection Lights
+    {
+      get;
+      set;
+    }
+
+    public MaterialData Material
     {
       get;
       set;

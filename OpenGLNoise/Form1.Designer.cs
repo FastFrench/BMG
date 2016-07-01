@@ -37,6 +37,7 @@
       this.userControlLightData3 = new OpenGLNoise.UserControlLightData();
       this.checkBoxPaused = new System.Windows.Forms.CheckBox();
       this.checkBoxBouncing = new System.Windows.Forms.CheckBox();
+      this.userControlMaterialData1 = new OpenGLNoise.Materials.UserControlMaterialData();
       this.SuspendLayout();
       // 
       // buttonRandom
@@ -102,7 +103,7 @@
       // checkBoxPaused
       // 
       this.checkBoxPaused.AutoSize = true;
-      this.checkBoxPaused.Location = new System.Drawing.Point(89, 221);
+      this.checkBoxPaused.Location = new System.Drawing.Point(43, 217);
       this.checkBoxPaused.Name = "checkBoxPaused";
       this.checkBoxPaused.Size = new System.Drawing.Size(62, 17);
       this.checkBoxPaused.TabIndex = 4;
@@ -112,18 +113,27 @@
       // checkBoxBouncing
       // 
       this.checkBoxBouncing.AutoSize = true;
-      this.checkBoxBouncing.Location = new System.Drawing.Point(240, 221);
+      this.checkBoxBouncing.Location = new System.Drawing.Point(143, 217);
       this.checkBoxBouncing.Name = "checkBoxBouncing";
       this.checkBoxBouncing.Size = new System.Drawing.Size(71, 17);
       this.checkBoxBouncing.TabIndex = 4;
       this.checkBoxBouncing.Text = "Bouncing";
       this.checkBoxBouncing.UseVisualStyleBackColor = true;
       // 
+      // userControlMaterialData1
+      // 
+      this.userControlMaterialData1.ColorName = "noname";
+      this.userControlMaterialData1.Location = new System.Drawing.Point(339, 200);
+      this.userControlMaterialData1.Name = "userControlMaterialData1";
+      this.userControlMaterialData1.Size = new System.Drawing.Size(448, 66);
+      this.userControlMaterialData1.TabIndex = 5;
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(933, 263);
+      this.ClientSize = new System.Drawing.Size(868, 290);
+      this.Controls.Add(this.userControlMaterialData1);
       this.Controls.Add(this.checkBoxBouncing);
       this.Controls.Add(this.checkBoxPaused);
       this.Controls.Add(this.userControlLightData3);
@@ -150,6 +160,7 @@
     private UserControlLightData userControlLightData3;
     private System.Windows.Forms.CheckBox checkBoxPaused;
     private System.Windows.Forms.CheckBox checkBoxBouncing;
+    private Materials.UserControlMaterialData userControlMaterialData1;
   }
 }
 

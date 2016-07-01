@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenGLNoise.Lights;
 using OpenTK;
 
 namespace OpenGLNoise.Materials
@@ -24,6 +25,11 @@ namespace OpenGLNoise.Materials
     Color _specularReflectivity;    //Specular reflectivity
     float _shininess;	              //Specular shininess factor
 
+
+    public MaterialData()
+      : this(Color.Maroon, 5.1f)
+    {
+    }
 
     public MaterialData(Color color, float shininess)
     {
@@ -62,7 +68,7 @@ namespace OpenGLNoise.Materials
         {
           _ambientReflectivity = value;
           Notify("AmbientReflectivity");
-          Notify("GlobalReflectivity");
+          Notify("GlobalColor");
         }
       }
     }
@@ -79,7 +85,7 @@ namespace OpenGLNoise.Materials
         {
           _diffuseReflectivity = value;
           Notify("DiffuseReflectivity");
-          Notify("GlobalReflectivity");
+          Notify("GlobalColor");
         }
       }
     }
@@ -95,7 +101,7 @@ namespace OpenGLNoise.Materials
         {
           _specularReflectivity = value;
           Notify("SpecularReflectivity");
-          Notify("GlobalReflectivity");
+          Notify("GlobalColor");
         }
       }
     }
@@ -115,5 +121,11 @@ namespace OpenGLNoise.Materials
         }
       }
     }
+
+    public MaterialStruct ConvertIntoGLStruct()
+    {
+      return new MaterialStruct() {   AmbientReflectivity = LightDataCollection.Color2Vector(this.AmbientReflectivity), DiffuseReflectivity = LightDataCollection.Color2Vector(this.DiffuseReflectivity), SpecularReflectivity = LightDataCollection.Color2Vector(this.SpecularReflectivity), Shininess = this.Shininess };
+    }
+
   }
 }
