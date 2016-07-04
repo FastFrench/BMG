@@ -38,6 +38,7 @@ namespace OpenGLNoise
  
     void FillLightUniformBuffer()
     {
+      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
       GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO);
       GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), LightsUBOData);
       GL.BindBuffer(BufferTarget.UniformBuffer, 0);
@@ -146,23 +147,25 @@ namespace OpenGLNoise
 
       InitLightBuffer();
       // Add lights
-      UpdateLights();
+      UpdateLights(false);
     }
 
-    private void UpdateLights()
+    private void UpdateLights(bool buildThem = true)
     {
       foreach (var light in Objects.OfType<LightObject>().ToArray())
       {
         Objects.Remove(light);
         light.Dispose();
       }
+
+      FillLightUniformBuffer();
       foreach (var light in RenderSettings.Lights)
       {
         var lightObj = new LightObject(light.Position, light.GlobalColor);
         lightObj.LoadShaders(Resources.Simple_frag, Resources.Simple_vert, null);
+        lightObj.BuildObject();
         Objects.Add(lightObj);
       }
-      FillLightUniformBuffer();
     }
 
     protected override void OnClosing(CancelEventArgs e)
