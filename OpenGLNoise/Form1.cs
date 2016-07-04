@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -35,11 +36,20 @@ namespace OpenGLNoise
 
     }
 
-    private void buttonRandom_Click(object sender, EventArgs e)
+    List<RenderWindowBase> windows = new List<RenderWindowBase>();
+    void CloseRunningWindows()
     {
+      foreach (var window in windows)
+        window.Close();
+      windows.Clear();
+    }
+    private void buttonRandom_Click(object sender, EventArgs e)
+    {    
       using (var window = new RenderRandomItems(settings))//HelloGL3())// RenderWindow())
       {
+        windows.Add(window);
         window.Run();
+        windows.Remove(window);
       }
     }
 
@@ -47,23 +57,17 @@ namespace OpenGLNoise
     {
       using (var window = new RenderTeaPot(settings))//HelloGL3())// RenderWindow())
       {
+        windows.Add(window);
         window.Run();
+        windows.Remove(window);
       }
 
     }
 
     private void buttonTerrain_Click(object sender, EventArgs e)
-    {
-
+    {      
     }
 
-    public Color ColorLight1 { get; set; }
-    public Color ColorLight2 { get; set; }
-    public Color ColorLight3 { get; set; }
-
-    public bool HasLight1 { get; set; }
-    public bool HasLight2 { get; set; }
-    public bool HasLight3 { get; set; }
 
   }
 }

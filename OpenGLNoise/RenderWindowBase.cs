@@ -1,11 +1,14 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 //using System.Drawing.Imaging;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using OpenGLNoise.Lights;
 using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
@@ -19,6 +22,27 @@ namespace OpenGLNoise
 {
   public abstract class RenderWindowBase : GameWindow
   {
+    int LightsBufferUBO; // Lights: Location for the UBO given by OpenGL
+    public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
+    int LightsUniformBlockLocation; // Lights : Uniform Block Location in the program given by OpenGL
+    LightStruct[] LightsUBOData = null;
+    void InitLightBuffer()
+    {
+      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
+      GL.GenBuffers(1, out LightsBufferUBO); // Generate the buffer
+      GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO); // Bind the buffer for writing
+      GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
+
+      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, LIGHTS_BUFFER_INDEX, LightsBufferUBO, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length)); // Bind the created Uniform Buffer to the Buffer Index
+    }
+ 
+    void FillLightUniformBuffer()
+    {
+      GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO);
+      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), LightsUBOData);
+      GL.BindBuffer(BufferTarget.UniformBuffer, 0);
+    }
+
     float zoom = 1.0f;
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
@@ -116,9 +140,35 @@ namespace OpenGLNoise
       AddObject((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
     }
 
-    protected abstract void CreateObjects();
+    protected virtual void CreateObjects()
+    {
+      // Initialize List of objects
+      if (Objects != null)
+        foreach (var obj in Objects)
+          obj.Dispose();
+      Objects = new List<OpenGLObject>();
 
+      InitLightBuffer();
+      // Add lights
+      UpdateLights();
+    }
 
+    private void UpdateLights()
+    {
+      foreach (var light in Objects.OfType<LightObject>().ToArray())
+      {
+        Objects.Remove(light);
+        light.Dispose();
+      }
+      foreach (var light in RenderSettings.Lights)
+        Objects.Add(new LightObject(light.Position, light.GlobalColor));
+      FillLightUniformBuffer();
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      base.OnClosing(e);
+    }
 
     protected override void OnLoad(EventArgs e)
     {
@@ -136,7 +186,6 @@ namespace OpenGLNoise
       // Initialize model and view matrices once
       ViewMatrix = Matrix4.LookAt(new Vector3(7, 0, 0), Vector3.Zero, Vector3.UnitZ);
       ModelMatrix = Matrix4.CreateScale(1.0f);
-
     }
 
     protected override void OnUnload(EventArgs e)
@@ -150,6 +199,7 @@ namespace OpenGLNoise
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
       computeFPS(e);
+      FillLightUniformBuffer();
       if (!RenderSettings.Paused && Bouncing)
       {
         if (sign)
@@ -213,7 +263,19 @@ namespace OpenGLNoise
           GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
     {
       RenderSettings = settings;
+      RenderSettings.Lights.CollectionChanged += Lights_CollectionChanged;
+      RenderSettings.PropertyChanged += RenderSettings_PropertyChanged;
       VSync = VSyncMode.Off;
+    }
+
+    private void RenderSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      UpdateLights();
+    }
+
+    private void Lights_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      UpdateLights();
     }
   }
 }

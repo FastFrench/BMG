@@ -50,10 +50,7 @@ namespace OpenGLNoise
 
     override protected void CreateObjects()
     {
-      if (Objects != null)
-        foreach (var obj in Objects)
-          obj.Dispose();
-      Objects = new List<OpenGLObject>();
+      base.CreateObjects();
       int nbSpheres = rnd.Next(4, 20);
       for (int i = 0; i < nbSpheres; i++)
         AddARandomObject();
