@@ -25,11 +25,11 @@ namespace OpenGLNoise
     {
       Lights = new LightDataCollection();
       Material = new MaterialData();
-      Lights.CollectionChanged += Lights_CollectionChanged;
+      Lights.ListChanged += Lights_ListChanged; 
       DataBindingSource = new BindingSource() { DataSource = this };
     }
 
-    private void Lights_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void Lights_ListChanged(object sender, ListChangedEventArgs e)
     {
       Notify("Lights");
     }

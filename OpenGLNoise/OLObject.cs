@@ -144,10 +144,13 @@ namespace OpenGLNoise
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
       }
       // Update normals
-      GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-      GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
-      GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
+      if (Normals != null)
+      {
+        GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
+        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        Normals = null;
+      }
       var error = GL.GetError();
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error: " + error.ToString());

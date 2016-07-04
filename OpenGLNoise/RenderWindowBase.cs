@@ -263,17 +263,11 @@ namespace OpenGLNoise
           GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
     {
       RenderSettings = settings;
-      RenderSettings.Lights.CollectionChanged += Lights_CollectionChanged;
-      RenderSettings.PropertyChanged += RenderSettings_PropertyChanged;
+      RenderSettings.Lights.ListChanged += Lights_ListChanged;
       VSync = VSyncMode.Off;
     }
 
-    private void RenderSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-      UpdateLights();
-    }
-
-    private void Lights_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void Lights_ListChanged(object sender, ListChangedEventArgs e)
     {
       UpdateLights();
     }

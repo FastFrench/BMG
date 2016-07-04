@@ -36,6 +36,12 @@ namespace OpenGLNoise
 
     }
 
+    protected override void OnClosed(EventArgs e)
+    {
+      base.OnClosed(e);
+      CloseRunningWindows();
+    }
+
     List<RenderWindowBase> windows = new List<RenderWindowBase>();
     void CloseRunningWindows()
     {
