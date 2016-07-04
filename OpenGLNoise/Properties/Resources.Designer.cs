@@ -91,6 +91,26 @@ namespace OpenGLNoise.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Simple_frag {
+            get {
+                object obj = ResourceManager.GetObject("Simple_frag", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Simple_vert {
+            get {
+                object obj = ResourceManager.GetObject("Simple_vert", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to v 1.38137 2.45469 -9.07128e-006
         ///v 1.4 2.4 -8.86918e-006
         ///v 1.35074 2.4 0.375917

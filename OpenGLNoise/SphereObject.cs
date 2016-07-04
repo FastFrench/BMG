@@ -62,7 +62,7 @@ namespace OpenGLNoise
                     var pz = cosTheta;
 
                     var normal = new Vector3((float)px, (float)py, (float)pz);
-                    var position = (normal + center) * radius;
+                    var position = center + normal * radius;
                     normals.Add(normal);
                     positions.Add(position);
                 }

@@ -132,10 +132,14 @@
     <None Include="Resources\Archives\classicnoise2D.glsl" />
     <None Include="Resources\Archives\classicnoise3D.glsl" />
     <None Include="Resources\Archives\classicnoise4D.glsl" />
+    <None Include="Resources\Simple.frag" />
+    <None Include="Resources\Simple.vert" />
     <None Include="Resources\Archives\Phong Shading.frag" />
     <None Include="Resources\Archives\Phong Shading.vert" />
     <None Include="Resources\Archives\Gouraud Shading.frag" />
     <None Include="Resources\Archives\Gouraud Shading.vert" />
+    <None Include="Resources\Explosion.frag" />
+    <None Include="Resources\Explosion.vert" />
     <None Include="Resources\LightingAdvanced.vert" />
     <None Include="Resources\LightingAdvanced.frag" />
     <None Include="Resources\Lighting.frag" />

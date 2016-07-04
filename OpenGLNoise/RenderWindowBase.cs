@@ -47,11 +47,7 @@ namespace OpenGLNoise
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
       base.OnMouseWheel(e);
-      float zoomDelta= e.Delta > 0 ? .05f : -.05f;
-      zoom *= (1f + zoomDelta);
-      if (zoom > 20) zoom = 20;
-      if (zoom < 0.1) zoom = 0.1f;
-      ModelMatrix = Matrix4.CreateScale(zoom);
+      ModelMatrix = ModelMatrix * Matrix4.CreateScale(e.Delta > 0 ? 1.05f : 0.95f);
     }
 
     const float SphereRadius = 0.40f;//1.6f;
@@ -161,7 +157,11 @@ namespace OpenGLNoise
         light.Dispose();
       }
       foreach (var light in RenderSettings.Lights)
-        Objects.Add(new LightObject(light.Position, light.GlobalColor));
+      {
+        var lightObj = new LightObject(light.Position, light.GlobalColor);
+        lightObj.LoadShaders(Resources.Simple_frag, Resources.Simple_vert, null);
+        Objects.Add(lightObj);
+      }
       FillLightUniformBuffer();
     }
 
@@ -208,7 +208,7 @@ namespace OpenGLNoise
           alt -= (float)e.Time;
         if (alt > 15 || alt < 3) sign = !sign;
       }
-      ViewMatrix = Matrix4.LookAt(new Vector3(0, 12, 0), new Vector3(0, alt-5, 0), Vector3.UnitZ);
+      ViewMatrix = Matrix4.LookAt(new Vector3(0, alt, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
       foreach (var obj in Objects)
         obj.OnUpdateObject(e);
