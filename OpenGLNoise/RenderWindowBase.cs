@@ -22,6 +22,7 @@ namespace OpenGLNoise
 {
   public abstract class RenderWindowBase : GameWindow
   {
+    #region Array of Lights data
     int LightsBufferUBO; // Lights: Location for the UBO given by OpenGL
     public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
     int LightsUniformBlockLocation; // Lights : Uniform Block Location in the program given by OpenGL
@@ -43,13 +44,18 @@ namespace OpenGLNoise
       GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), LightsUBOData);
       GL.BindBuffer(BufferTarget.UniformBuffer, 0);
     }
+    #endregion Array of Lights data
 
+    #region Zooming
     float zoom = 1.0f;
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
       base.OnMouseWheel(e);
-      ModelMatrix = ModelMatrix * Matrix4.CreateScale(e.Delta > 0 ? 1.05f : 0.95f);
+      float newZoom = e.Delta > 0 ? 1.05f : 0.95f;
+      zoom *= newZoom;
+      ModelMatrix = ModelMatrix * Matrix4.CreateScale(newZoom);
     }
+    #endregion Zooming
 
     const float SphereRadius = 0.40f;//1.6f;
 
@@ -75,13 +81,6 @@ namespace OpenGLNoise
       GL.Viewport(ClientRectangle);
       ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
         MathHelper.PiOver4, ClientSize.Width / (float)ClientSize.Height, 0.1f, 1000);
-
-      // Ensure Bitmap and texture match window size
-      //GL.MatrixMode(MatrixMode.Projection);
-      //GL.LoadIdentity();
-      //GL.Ortho(-1.0, 1.0, -1.0, 1.0, 0.0, 4.0);
-
-
     }
 
     /*
@@ -231,30 +230,13 @@ namespace OpenGLNoise
 
     protected override void OnRenderFrame(FrameEventArgs e)
     {
-      // Update your text
-      //renderer.Clear(Color.Black);
-      //renderer.DrawString("Hello, world", serif, Brushes.White, new PointF(0.0f, 0.0f));
-
       GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
       GL.Disable(EnableCap.CullFace);
       GL.Enable(EnableCap.DepthTest);
-      //SwapBuffers();
 
       foreach (var obj in Objects)
         obj.OnRenderObject(MvpMatrix, ViewMatrix);
-      //GL.MatrixMode(MatrixMode.Modelview);
-      //GL.LoadIdentity();
 
-      //GL.Enable(EnableCap.Texture2D);
-      //GL.BindTexture(TextureTarget.Texture2D, renderer.Texture);
-      //GL.Begin(BeginMode.Quads);
-
-      //GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(-1f, -1f);
-      //GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, -1f);
-      //GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 1f);
-      //GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(-1f, 1f);
-
-      //GL.End();
 
       SwapBuffers();
     }
