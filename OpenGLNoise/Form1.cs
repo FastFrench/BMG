@@ -40,11 +40,17 @@ namespace OpenGLNoise
     void CloseRunningWindows()
     {
       foreach (var window in windows)
-        window.Close();
+      {
+        //window.Visible = false;
+        window.Exit();
+        //window.ProcessEvents();
+        //window.Dispose();
+      }
       windows.Clear();
     }
     private void buttonRandom_Click(object sender, EventArgs e)
-    {    
+    {
+      CloseRunningWindows();
       using (var window = new RenderRandomItems(settings))//HelloGL3())// RenderWindow())
       {
         windows.Add(window);
@@ -55,6 +61,7 @@ namespace OpenGLNoise
 
     private void buttonTeapot_Click(object sender, EventArgs e)
     {
+      CloseRunningWindows();
       using (var window = new RenderTeaPot(settings))//HelloGL3())// RenderWindow())
       {
         windows.Add(window);
@@ -65,7 +72,9 @@ namespace OpenGLNoise
     }
 
     private void buttonTerrain_Click(object sender, EventArgs e)
-    {      
+    {
+      CloseRunningWindows();
+
     }
 
 
