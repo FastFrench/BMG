@@ -11,6 +11,14 @@ struct LightInfo
 };
 uniform LightInfo Light[LIGHTCOUNT];
 
+struct FragDataStruct
+{
+	vec3 Normal;
+	vec3 Position;	
+	vec3 Eye;
+};
+in FragDataStruct FragData;
+
 //const vec3 diffuseLightVecNormalized = normalize(vec3(0.5, 0.5, 2.0));
 const vec3 specularLightVecNormalized = normalize(vec3(3, 0.5, 0.0));
 const vec3 specularLightVecNormalized2 = normalize(vec3(-3, -5.5, -4.0));
@@ -20,20 +28,19 @@ const vec4 lightColor2 = vec4(0, 1, 0, 1);
 const vec4 lightColor3 = vec4(1, 0, 0, 1);
 const float shininess = 20;
 //in vec3 normal;
-varying vec3 fragt_normal;
-varying vec3 eye;
 out vec4 PixelColor;
 
 uniform vec4 GlobalColor1;
 uniform vec4 GlobalColor2;
+
 void main() {
     // compose the colour using the UV coordinate
     // and modulate it with the noise like ambient occlusion
 	//float colorRange = clamp(vUv * ( 1. - 2. * noise ), 0, (1-ambient));
 	//vec3 lightColor = GlobalColor2.xyz;
 	// We could normalize fragt_normal, but doesn't seems to have visual impact
-	vec3 n = normalize(fragt_normal);
-    vec3 e = normalize(eye);
+	vec3 n = normalize(FragData.Normal);
+    vec3 e = normalize(FragData.Eye);
 
 	float diffuse = clamp(dot(specularLightVecNormalized, n), 0.0, 1) * 0.4;
 
