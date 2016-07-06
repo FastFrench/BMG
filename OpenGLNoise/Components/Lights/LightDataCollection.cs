@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,9 @@ using OpenTK.Graphics;
 
 namespace OpenGLNoise.Lights
 {
-  public class LightDataCollection : ObservableCollection<LightData>
-  {     
+  public class LightDataCollection : BindingList<LightData>
+  {
+    
     public static float b2f(byte value)
     {
       return value / (float)Byte.MaxValue;

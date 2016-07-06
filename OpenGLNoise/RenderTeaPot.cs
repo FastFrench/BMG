@@ -49,10 +49,7 @@ namespace OpenGLNoise
 
     override protected void CreateObjects()
     {
-      if (Objects != null)
-        foreach (var obj in Objects)
-          obj.Dispose();
-      Objects = new List<OpenGLObject>();     
+      base.CreateObjects();
       var teaPot = OpenGLObject.CreateTeapot(0f, 0f, 0f, 1.0f);
       Objects.Add(teaPot);      
     }

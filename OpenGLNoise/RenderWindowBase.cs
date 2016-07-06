@@ -1,11 +1,14 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 //using System.Drawing.Imaging;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using OpenGLNoise.Lights;
 using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
@@ -19,16 +22,40 @@ namespace OpenGLNoise
 {
   public abstract class RenderWindowBase : GameWindow
   {
+    #region Array of Lights data
+    int LightsBufferUBO; // Lights: Location for the UBO given by OpenGL
+    public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
+    int LightsUniformBlockLocation; // Lights : Uniform Block Location in the program given by OpenGL
+    LightStruct[] LightsUBOData = null;
+    void InitLightBuffer()
+    {
+      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
+      GL.GenBuffers(1, out LightsBufferUBO); // Generate the buffer
+      GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO); // Bind the buffer for writing
+      GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
+
+      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, LIGHTS_BUFFER_INDEX, LightsBufferUBO, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length)); // Bind the created Uniform Buffer to the Buffer Index
+    }
+ 
+    void FillLightUniformBuffer()
+    {
+      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
+      GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO);
+      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), LightsUBOData);
+      GL.BindBuffer(BufferTarget.UniformBuffer, 0);
+    }
+    #endregion Array of Lights data
+
+    #region Zooming
     float zoom = 1.0f;
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
       base.OnMouseWheel(e);
-      float zoomDelta= e.Delta > 0 ? .05f : -.05f;
-      zoom *= (1f + zoomDelta);
-      if (zoom > 20) zoom = 20;
-      if (zoom < 0.1) zoom = 0.1f;
-      ModelMatrix = Matrix4.CreateScale(zoom);
+      float newZoom = e.Delta > 0 ? 1.05f : 0.95f;
+      zoom *= newZoom;
+      ModelMatrix = ModelMatrix * Matrix4.CreateScale(newZoom);
     }
+    #endregion Zooming
 
     const float SphereRadius = 0.40f;//1.6f;
 
@@ -54,13 +81,6 @@ namespace OpenGLNoise
       GL.Viewport(ClientRectangle);
       ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
         MathHelper.PiOver4, ClientSize.Width / (float)ClientSize.Height, 0.1f, 1000);
-
-      // Ensure Bitmap and texture match window size
-      //GL.MatrixMode(MatrixMode.Projection);
-      //GL.LoadIdentity();
-      //GL.Ortho(-1.0, 1.0, -1.0, 1.0, 0.0, 4.0);
-
-
     }
 
     /*
@@ -116,9 +136,41 @@ namespace OpenGLNoise
       AddObject((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
     }
 
-    protected abstract void CreateObjects();
+    protected virtual void CreateObjects()
+    {
+      // Initialize List of objects
+      if (Objects != null)
+        foreach (var obj in Objects)
+          obj.Dispose();
+      Objects = new List<OpenGLObject>();
 
+      InitLightBuffer();
+      // Add lights
+      UpdateLights(false);
+    }
 
+    private void UpdateLights(bool buildThem = true)
+    {
+      foreach (var light in Objects.OfType<LightObject>().ToArray())
+      {
+        Objects.Remove(light);
+        light.Dispose();
+      }
+
+      FillLightUniformBuffer();
+      foreach (var light in RenderSettings.Lights)
+      {
+        var lightObj = new LightObject(light.Position, light.GlobalColor);
+        lightObj.LoadShaders(Resources.Simple_frag, Resources.Simple_vert, null);
+        lightObj.BuildObject();
+        Objects.Add(lightObj);
+      }
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      base.OnClosing(e);
+    }
 
     protected override void OnLoad(EventArgs e)
     {
@@ -136,7 +188,6 @@ namespace OpenGLNoise
       // Initialize model and view matrices once
       ViewMatrix = Matrix4.LookAt(new Vector3(7, 0, 0), Vector3.Zero, Vector3.UnitZ);
       ModelMatrix = Matrix4.CreateScale(1.0f);
-
     }
 
     protected override void OnUnload(EventArgs e)
@@ -150,6 +201,7 @@ namespace OpenGLNoise
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
       computeFPS(e);
+      FillLightUniformBuffer();
       if (!RenderSettings.Paused && Bouncing)
       {
         if (sign)
@@ -158,7 +210,7 @@ namespace OpenGLNoise
           alt -= (float)e.Time;
         if (alt > 15 || alt < 3) sign = !sign;
       }
-      ViewMatrix = Matrix4.LookAt(new Vector3(0, 12, 0), new Vector3(0, alt-5, 0), Vector3.UnitZ);
+      ViewMatrix = Matrix4.LookAt(new Vector3(0, alt, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
       foreach (var obj in Objects)
         obj.OnUpdateObject(e);
@@ -178,30 +230,13 @@ namespace OpenGLNoise
 
     protected override void OnRenderFrame(FrameEventArgs e)
     {
-      // Update your text
-      //renderer.Clear(Color.Black);
-      //renderer.DrawString("Hello, world", serif, Brushes.White, new PointF(0.0f, 0.0f));
-
       GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
       GL.Disable(EnableCap.CullFace);
       GL.Enable(EnableCap.DepthTest);
-      //SwapBuffers();
 
       foreach (var obj in Objects)
         obj.OnRenderObject(MvpMatrix, ViewMatrix);
-      //GL.MatrixMode(MatrixMode.Modelview);
-      //GL.LoadIdentity();
 
-      //GL.Enable(EnableCap.Texture2D);
-      //GL.BindTexture(TextureTarget.Texture2D, renderer.Texture);
-      //GL.Begin(BeginMode.Quads);
-
-      //GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(-1f, -1f);
-      //GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1f, -1f);
-      //GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1f, 1f);
-      //GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(-1f, 1f);
-
-      //GL.End();
 
       SwapBuffers();
     }
@@ -213,7 +248,13 @@ namespace OpenGLNoise
           GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
     {
       RenderSettings = settings;
+      RenderSettings.Lights.ListChanged += Lights_ListChanged;
       VSync = VSyncMode.Off;
+    }
+
+    private void Lights_ListChanged(object sender, ListChangedEventArgs e)
+    {
+      UpdateLights();
     }
   }
 }
