@@ -179,8 +179,12 @@ namespace OpenGLNoise
       Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
       if (WithLightsArray)
       {
-        LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "Light");
-        GL.UniformBlockBinding(ProgramHandle, LightsUniformBlockLocation, RenderWindowBase.LIGHTS_BUFFER_INDEX);
+        LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "LightInfo"); // LightInfo and LightInfo[0] are both valid and equivalent
+
+        if (LightsUniformBlockLocation >= 0)
+          GL.UniformBlockBinding(ProgramHandle, LightsUniformBlockLocation, RenderWindowBase.LIGHTS_BUFFER_INDEX);
+        else
+          WithLightsArray = false; // Autoset to false
       }
       //Debug.Assert(MvpUniformLocation != -1);
     }
@@ -213,7 +217,7 @@ namespace OpenGLNoise
       {
         var infoLog = GL.GetShaderInfoLog(shaderHandle);
         Debug.Print("Compile failed for shader {0}: {1}", name, infoLog);
-        Debug.Assert(false);
+        Debug.Assert(false, infoLog);
       }
       return shaderHandle;
     }

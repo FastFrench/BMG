@@ -1,15 +1,18 @@
-#version 330 core
+#version 430 core
 const float ambient = 0.2;
 const int LIGHTCOUNT = 3;
 
-struct LightInfo
+uniform LightInfo
 {
-	vec3 Position;		//Light Position in eye-coords
-	vec3 La;			//Ambient light intensity
-	vec3 Ld;			//Diffuse light intensity
+	vec4 Position;		//Light Position in eye-coords
+	//float unused1;
+	vec4 La;			//Ambient light intensity
+	//float unused2;
+	vec4 Ld;			//Diffuse light intensity
+	//float unused3;
 	vec3 Ls;			//Specular light intensity
-};
-uniform LightInfo Light[LIGHTCOUNT];
+	bool Visible;	
+} Light[LIGHTCOUNT];
 
 in struct DataStruct 
 {
@@ -18,6 +21,25 @@ in struct DataStruct
 	vec3 Eye;
 } Data;
 
+const vec3 Material_Ka = vec3(1., 1., 1.);
+const vec3 Material_Ks = vec3(1., 1., 1.);
+const vec3 Material_Kd = vec3(1., 1., 1.);
+const float Material_Shininess = 20.0;
+void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )
+{
+	vec3 n = normalize( norm );
+	vec3 s = normalize( vec3(Light[lightIndex].Position) - position );
+	vec3 v = normalize( -position );
+	vec3 r = reflect( -s, n );
+ 
+	ambient = vec3(Light[lightIndex].La) * Material_Ka;
+ 
+	float sDotN = max( dot( s, n ), 0.0 );
+	diffuse = vec3(Light[lightIndex].Ld) * Material_Kd * sDotN;
+ 
+	spec = vec3(Light[lightIndex].Ls) * Material_Ks * pow( max( dot(r,v) , 0.0 ), Material_Shininess ); 
+}
+const int mode = 2;
 
 //const vec3 diffuseLightVecNormalized = normalize(vec3(0.5, 0.5, 2.0));
 const vec3 specularLightVecNormalized = normalize(vec3(3, 0.5, 0.0));
@@ -26,7 +48,9 @@ const vec3 specularLightVecNormalized3 = normalize(vec3(0, 3.5, -12.0));
 const vec4 lightColor = vec4(0.9, 0.9, 0.7, 1);
 const vec4 lightColor2 = vec4(0, 1, 0, 1);
 const vec4 lightColor3 = vec4(1, 0, 0, 1);
+const vec3 EyePosition = vec3(7,0,0);
 const float shininess = 20;
+const float screenGamma = 2.2; // Assume the monitor is calibrated to the sRGB color space
 //in vec3 normal;
 //varying vec3 fragt_normal;
 //varying vec3 eye;
@@ -34,40 +58,39 @@ out vec4 PixelColor;
 
 uniform vec4 GlobalColor1;
 uniform vec4 GlobalColor2;
+
 void main() {
-    // compose the colour using the UV coordinate
-    // and modulate it with the noise like ambient occlusion
-	//float colorRange = clamp(vUv * ( 1. - 2. * noise ), 0, (1-ambient));
-	//vec3 lightColor = GlobalColor2.xyz;
-	// We could normalize fragt_normal, but doesn't seems to have visual impact
-	vec3 n = normalize(Data.Normal);
-    vec3 e = normalize(Data.Eye);
 
-	float diffuse = clamp(dot(specularLightVecNormalized, n), 0.0, 1) * 0.4;
+  vec3 normal = normalize(Data.Normal);
+  vec3 lightDir = normalize(vec3(Light[0].Position) - Data.Position);
 
-	// compute the half vector
-    vec3 h = normalize(specularLightVecNormalized + e);  
-    // compute the specular term into spec
-    float intSpec = max(dot(h,n), 0.0);
-    float spec = pow(intSpec,shininess) * 1.0;
+  float lambertian = max(dot(lightDir,normal), 0.0);
+  float specular = 0.0;
 
-	float diffuse2 = clamp(dot(specularLightVecNormalized2, n), 0.0, 1) * 0.4;
-	vec3 h2 = normalize(specularLightVecNormalized2 + e);  
-    // compute the specular term into spec
-    float intSpec2 = max(dot(h2,n), 0.0);
-    float spec2 = pow(intSpec2,shininess);
+  if(lambertian > 0.0) {
 
-	float diffuse3 = clamp(dot(specularLightVecNormalized3, n), 0.0, 1) * 0.4;
-	vec3 h3 = normalize(specularLightVecNormalized3 + e);  
-    // compute the specular term into spec
-    float intSpec3 = max(dot(h3,n), 0.0);
-    float spec3 = pow(intSpec3,shininess);
+    vec3 viewDir = normalize(-Data.Position);
 
-	//vec4 lightColor = (ambient + diffuse )* (GlobalColor2 / 2 + 0.5);//clamp(, 1.0);
-	//vec4 lightedResult = mix(GlobalColor1, GlobalColor2, colorRange); // vec4( colorRed, colorGreen, colorBlue, 1.0 );
-	//float colorRed = clamp(colorRange*3, 0, 1);
-	//float colorGreen = clamp(colorRange*3, 1, 2)-1;
-	//float colorBlue = clamp(colorRange*3, 2, 3)-2;
-	 
-    PixelColor = max(GlobalColor1 * ambient, lightColor * diffuse + lightColor2 * diffuse2 + lightColor3 * diffuse3 + lightColor * spec + lightColor2 * spec2 + lightColor3 * spec3) ;//) //mix(GlobalColor1 * 0.1, GlobalColor2, diffuse);
+    // this is blinn phong
+    vec3 halfDir = normalize(lightDir + viewDir);
+    float specAngle = max(dot(halfDir, normal), 0.0);
+    specular = pow(specAngle, Material_Shininess);
+       
+    // this is phong (for comparison)
+    if(mode == 2) {
+      vec3 reflectDir = reflect(-lightDir, normal);
+      specAngle = max(dot(reflectDir, viewDir), 0.0);
+      // note that the exponent is different here
+      specular = pow(specAngle, Material_Shininess/4.0);
+    }
+  }
+  vec3 colorLinear = vec3(Light[0].La) +
+                     lambertian * vec3(Light[0].Ld) +
+                     specular * vec3(Light[0].Ls);
+  // apply gamma correction (assume ambientColor, diffuseColor and specColor
+  // have been linearized, i.e. have no gamma correction in them)
+  vec3 colorGammaCorrected = colorLinear;//pow(colorLinear, vec3(1.0/screenGamma));
+  // use the gamma corrected color in the fragment
+  gl_FragColor = /*vec4(vec3(Light[0].La),1.0);*/vec4(colorGammaCorrected, 1.0);
 }
+

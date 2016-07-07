@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 //using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using OpenGLNoise.Lights;
@@ -24,17 +25,16 @@ namespace OpenGLNoise
   {
     #region Array of Lights data
     int LightsBufferUBO; // Lights: Location for the UBO given by OpenGL
-    public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
-    int LightsUniformBlockLocation; // Lights : Uniform Block Location in the program given by OpenGL
+    public const int LIGHTS_BUFFER_INDEX = 7; // Lights : Index to use for the buffer binding (All good things start at 0 )
     LightStruct[] LightsUBOData = null;
     void InitLightBuffer()
     {
       LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
       GL.GenBuffers(1, out LightsBufferUBO); // Generate the buffer
       GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO); // Bind the buffer for writing
-      GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
+      GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(Marshal.SizeOf<LightStruct>() * LightsUBOData.Length), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
 
-      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, LIGHTS_BUFFER_INDEX, LightsBufferUBO, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length)); // Bind the created Uniform Buffer to the Buffer Index
+      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, LIGHTS_BUFFER_INDEX, LightsBufferUBO, (IntPtr)0, (IntPtr)(Marshal.SizeOf<LightStruct>() * LightsUBOData.Length)); // Bind the created Uniform Buffer to the Buffer Index
     }
  
     void FillLightUniformBuffer()

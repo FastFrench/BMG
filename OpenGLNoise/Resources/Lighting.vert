@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 // Output data ; will be interpolated for each fragment.
 //varying vec3  fragt_normal;
