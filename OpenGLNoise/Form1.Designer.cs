@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      OpenGLNoise.Materials.MaterialData materialData1 = new OpenGLNoise.Materials.MaterialData();
       this.buttonRandom = new System.Windows.Forms.Button();
       this.buttonTeapot = new System.Windows.Forms.Button();
       this.buttonTerrain = new System.Windows.Forms.Button();
@@ -38,6 +39,9 @@
       this.checkBoxPaused = new System.Windows.Forms.CheckBox();
       this.checkBoxBouncing = new System.Windows.Forms.CheckBox();
       this.userControlMaterialData1 = new OpenGLNoise.Materials.UserControlMaterialData();
+      this.numericUpDownGamma = new System.Windows.Forms.NumericUpDown();
+      this.LabelGamma = new System.Windows.Forms.Label();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGamma)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonRandom
@@ -103,7 +107,7 @@
       // checkBoxPaused
       // 
       this.checkBoxPaused.AutoSize = true;
-      this.checkBoxPaused.Location = new System.Drawing.Point(43, 217);
+      this.checkBoxPaused.Location = new System.Drawing.Point(40, 200);
       this.checkBoxPaused.Name = "checkBoxPaused";
       this.checkBoxPaused.Size = new System.Drawing.Size(62, 17);
       this.checkBoxPaused.TabIndex = 4;
@@ -113,7 +117,7 @@
       // checkBoxBouncing
       // 
       this.checkBoxBouncing.AutoSize = true;
-      this.checkBoxBouncing.Location = new System.Drawing.Point(143, 217);
+      this.checkBoxBouncing.Location = new System.Drawing.Point(140, 200);
       this.checkBoxBouncing.Name = "checkBoxBouncing";
       this.checkBoxBouncing.Size = new System.Drawing.Size(71, 17);
       this.checkBoxBouncing.TabIndex = 4;
@@ -123,16 +127,61 @@
       // userControlMaterialData1
       // 
       this.userControlMaterialData1.ColorName = "noname";
+      materialData1.AmbientReflectivity = System.Drawing.Color.Bisque;
+      materialData1.DiffuseReflectivity = System.Drawing.Color.Bisque;
+      materialData1.GlobalColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(228)))), ((int)(((byte)(196)))));
+      materialData1.Shininess = 5F;
+      materialData1.SpecularReflectivity = System.Drawing.Color.Bisque;
+      this.userControlMaterialData1.Data = materialData1;
       this.userControlMaterialData1.Location = new System.Drawing.Point(339, 200);
       this.userControlMaterialData1.Name = "userControlMaterialData1";
       this.userControlMaterialData1.Size = new System.Drawing.Size(448, 66);
       this.userControlMaterialData1.TabIndex = 5;
+      // 
+      // numericUpDownGamma
+      // 
+      this.numericUpDownGamma.DecimalPlaces = 2;
+      this.numericUpDownGamma.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+      this.numericUpDownGamma.Location = new System.Drawing.Point(102, 246);
+      this.numericUpDownGamma.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+      this.numericUpDownGamma.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+      this.numericUpDownGamma.Name = "numericUpDownGamma";
+      this.numericUpDownGamma.Size = new System.Drawing.Size(120, 20);
+      this.numericUpDownGamma.TabIndex = 6;
+      this.numericUpDownGamma.Value = new decimal(new int[] {
+            22,
+            0,
+            0,
+            65536});
+      // 
+      // LabelGamma
+      // 
+      this.LabelGamma.AutoSize = true;
+      this.LabelGamma.Location = new System.Drawing.Point(52, 248);
+      this.LabelGamma.Name = "LabelGamma";
+      this.LabelGamma.Size = new System.Drawing.Size(43, 13);
+      this.LabelGamma.TabIndex = 7;
+      this.LabelGamma.Text = "Gamma";
       // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(868, 290);
+      this.Controls.Add(this.LabelGamma);
+      this.Controls.Add(this.numericUpDownGamma);
       this.Controls.Add(this.userControlMaterialData1);
       this.Controls.Add(this.checkBoxBouncing);
       this.Controls.Add(this.checkBoxPaused);
@@ -144,6 +193,7 @@
       this.Controls.Add(this.buttonRandom);
       this.Name = "Form1";
       this.Text = "Form1";
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGamma)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -161,6 +211,8 @@
     private System.Windows.Forms.CheckBox checkBoxPaused;
     private System.Windows.Forms.CheckBox checkBoxBouncing;
     private Materials.UserControlMaterialData userControlMaterialData1;
+    private System.Windows.Forms.NumericUpDown numericUpDownGamma;
+    private System.Windows.Forms.Label LabelGamma;
   }
 }
 

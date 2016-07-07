@@ -23,6 +23,7 @@ namespace OpenGLNoise
 
     public RenderWindowSettings()
     {
+      _gamma = 2.2f;
       Lights = new LightDataCollection();
       Material = new MaterialData();
       Lights.ListChanged += Lights_ListChanged; 
@@ -70,6 +71,20 @@ namespace OpenGLNoise
         {
           _paused = value;
           Notify("Paused");
+        }
+      }
+    }
+
+    float _gamma { get; set; }
+    public float Gamma
+    {
+      get { return _gamma; }
+      set
+      {
+        if (_gamma != value)
+        {
+          _gamma = value;
+          Notify("Gamma");
         }
       }
     }

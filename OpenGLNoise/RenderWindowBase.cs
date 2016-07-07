@@ -127,7 +127,7 @@ namespace OpenGLNoise
 
     protected void AddObject(float px, float py, float pz, float radius)
     {
-      var olObject = OpenGLObject.CreateObject(px, py, pz, radius);
+      var olObject = OpenGLObject.CreateObject(px, py, pz, radius, this);
       Objects.Add(olObject);
     }
 
@@ -241,7 +241,7 @@ namespace OpenGLNoise
       SwapBuffers();
     }
 
-    protected RenderWindowSettings RenderSettings { get; set; }
+    public RenderWindowSettings RenderSettings { get; set; }
 
     public RenderWindowBase(RenderWindowSettings settings)
           : base(800, 600, GraphicsMode.Default, "SharpNoise OpenGL Example",

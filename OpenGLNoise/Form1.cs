@@ -33,6 +33,8 @@ namespace OpenGLNoise
           "Bouncing", false, DataSourceUpdateMode.OnPropertyChanged);
       checkBoxPaused.DataBindings.Add("Checked", settings.DataBindingSource,
           "Paused", false, DataSourceUpdateMode.OnPropertyChanged);
+      numericUpDownGamma.DataBindings.Add("Value", settings.DataBindingSource,
+          "Gamma", false, DataSourceUpdateMode.OnPropertyChanged);
 
     }
 
@@ -82,7 +84,5 @@ namespace OpenGLNoise
       CloseRunningWindows();
 
     }
-
-
   }
 }

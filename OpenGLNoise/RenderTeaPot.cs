@@ -50,7 +50,7 @@ namespace OpenGLNoise
     override protected void CreateObjects()
     {
       base.CreateObjects();
-      var teaPot = OpenGLObject.CreateTeapot(0f, 0f, 0f, 1.0f);
+      var teaPot = OpenGLObject.CreateTeapot(0f, 0f, 0f, 1.0f, this);
       Objects.Add(teaPot);      
     }
   }

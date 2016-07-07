@@ -17,6 +17,8 @@ namespace OpenGLNoise
 {
   public abstract class OpenGLObject : IDisposable
   {
+    public RenderWindowBase Parent { get; set; }
+
     protected bool WithNoise { get; set; }
     protected bool WithLightsArray { get; set; }
     protected OpenGLObject(float size = 1.0f, Color? color1 = null, Color? color2 = null, bool withNoise = false, bool withLightsArray = true)
@@ -73,6 +75,8 @@ namespace OpenGLNoise
     protected int SizeUniformLocation { get; set; }
     protected int Color1UniformLocation { get; set; }
     protected int Color2UniformLocation { get; set; }
+    protected int GammaUniformLocation { get; set; }
+
     protected int LightsUniformBlockLocation { get; set; }
 
     void GenerateElevationNoise(double timeDelta)
@@ -177,6 +181,7 @@ namespace OpenGLNoise
       SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
       Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
       Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
+      GammaUniformLocation = GL.GetUniformLocation(ProgramHandle, "Gamma");
       if (WithLightsArray)
       {
         LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "LightInfo"); // LightInfo and LightInfo[0] are both valid and equivalent
@@ -274,6 +279,8 @@ namespace OpenGLNoise
       GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
       GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
       GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
+      if (Parent != null)
+        GL.Uniform1(GammaUniformLocation, Parent.RenderSettings.Gamma);      
       GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
       GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
@@ -350,13 +357,14 @@ namespace OpenGLNoise
     }
 
     //Random rnd = new Random();
-    public static OpenGLObject CreateObject(float px, float py, float pz, float radius)
+    public static OpenGLObject CreateObject(float px, float py, float pz, float radius, RenderWindowBase parent)
     {
       OpenGLObject openGLObject = null;
       if (rnd.Next(2) == 1)
         openGLObject = new SphereObject(new Vector3(px, py, pz), radius * 2, true);
       else
         openGLObject = new CubeObject(new Vector3(px, py, pz), radius * 2, true);
+      openGLObject.Parent = parent;
       openGLObject.Color1 = GetRandomColor();
       do
       {
@@ -366,10 +374,11 @@ namespace OpenGLNoise
       return openGLObject;
     }
 
-    public static OpenGLObject CreateTeapot(float px, float py, float pz, float radius)
+    public static OpenGLObject CreateTeapot(float px, float py, float pz, float radius, RenderWindowBase parent)
     {
       OpenGLObject openGLObject = null;
       openGLObject = new TeaPotObject();
+      openGLObject.Parent = parent;
       openGLObject.Color1 = GetRandomColor();
       do
       {
