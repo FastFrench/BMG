@@ -27,7 +27,7 @@ namespace OpenGLNoise.Lights
 
     public LightStruct[] ConvertIntoGLStruct()
     {
-      return this.Select(data => new LightStruct() { AmbientColor = Color2Vector(data.AmbientColor), DiffuseColor = Color2Vector(data.DiffuseColor), SpecularColor = Color2Vector(data.SpecularColor), Position = data.Position, Visible = data.Visible }).ToArray();      
+      return this.Select(data => new LightStruct() { AmbientColor = Color2Vector(data.AmbientColor), DiffuseColor = Color2Vector(data.DiffuseColor), SpecularColor = Color2Vector(data.SpecularColor), Position = data.Position, Visible = data.Visible ? 1 : 0 }).ToArray();      
     }   
   }
 }

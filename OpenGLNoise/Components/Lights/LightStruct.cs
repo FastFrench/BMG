@@ -9,14 +9,13 @@ using OpenTK;
 namespace OpenGLNoise.Lights
 {
   [Serializable]
-  [StructLayout(LayoutKind.Sequential)]
+  [StructLayout(LayoutKind.Sequential, Pack = sizeof(float))]
   public struct LightStruct
   {
     public Vector4 AmbientColor;
     public Vector4 DiffuseColor;
     public Vector4 SpecularColor;
     public Vector3 Position;
-    public bool Visible;
-    public bool unused1, unused2, unused3; // Padding  
+    public float Visible;        
   }
 }

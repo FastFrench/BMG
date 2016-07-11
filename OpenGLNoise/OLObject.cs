@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using OpenGLNoise.Lights;
 using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
@@ -184,6 +186,20 @@ namespace OpenGLNoise
       GammaUniformLocation = GL.GetUniformLocation(ProgramHandle, "Gamma");
       if (WithLightsArray)
       {
+        //int binding = 1;
+        //for (int i = 0; i < 3; ++i)
+        //{
+        //  GL.BindBufferRange(BufferRangeTarget.UniformBuffer, binding + i, RenderWindowBase.LIGHTS_BUFFER_INDEX, (IntPtr)0, (Marshal.SizeOf<LightStruct>()));
+        //  int uniformIndex = GL.GetProgramResourceIndex(ProgramHandle, ProgramInterface.UniformBlock, "LightInfo[" + i + "]");
+        //  if (i==0 && uniformIndex <0)
+        //  {
+        //    WithLightsArray = false;
+        //    break;
+        //  }
+        //  GL.UniformBlockBinding(ProgramHandle, uniformIndex, binding + i);
+        //}
+
+        //GL.BindBuffersRange()
         LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "Lights"); // LightInfo and LightInfo[0] are both valid and equivalent
 
         if (LightsUniformBlockLocation >= 0)

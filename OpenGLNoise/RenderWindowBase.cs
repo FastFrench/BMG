@@ -25,7 +25,7 @@ namespace OpenGLNoise
   {
     #region Array of Lights data
     int LightsBufferUBO; // Lights: Location for the UBO given by OpenGL
-    public const int LIGHTS_BUFFER_INDEX = 7; // Lights : Index to use for the buffer binding (All good things start at 0 )
+    public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
     LightStruct[] LightsUBOData = null;
     void InitLightBuffer()
     {

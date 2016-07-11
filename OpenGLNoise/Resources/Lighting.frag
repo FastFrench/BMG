@@ -2,6 +2,7 @@
 precision highp float;
 const int LIGHTCOUNT = 3;
 
+//layout (std140, binding=0) uniform  
 struct LightInfo
 {
 	//float unused1;
@@ -11,10 +12,10 @@ struct LightInfo
 	//float unused3;
 	vec4 Ls;			//Specular light intensity
 	vec3 Position;		//Light Position in eye-coords
-	bool Visible;	
-};
+	float Visible;	
+};// Light[LIGHTCOUNT];
 
-layout (std140) uniform Lights
+layout (std140, binding=0) uniform Lights
 {
 	LightInfo Light[LIGHTCOUNT];
 };
@@ -61,12 +62,13 @@ void main() {
 	vec3 diffuseSum = vec3(0);
 	vec3 specSum = vec3(0);
 	vec3 ambient, diffuse, spec;
- 
+    int nbVis = 0;
 	if ( gl_FrontFacing )
 	{
 		for( int i=0; i<LIGHTCOUNT; ++i )
-		if (Light[i].Visible)
+		if (Light[i].Visible > 0)
 		{
+			nbVis++;
 			light( i, Data.Position, Data.Normal, ambient, diffuse, spec );
 			ambientSum += ambient;
 			diffuseSum += diffuse;
@@ -76,15 +78,17 @@ void main() {
 	else
 	{
 		for( int i=0; i<LIGHTCOUNT; ++i )
-		if (Light[i].Visible)
+		if (Light[i].Visible  > 0)
 		{
+			nbVis++;
 			light( i, Data.Position, -Data.Normal, ambient, diffuse, spec );
 			ambientSum += ambient;
 			diffuseSum += diffuse;
 			specSum += spec;
 		}
 	}
-	ambientSum /= LIGHTCOUNT;
+	if (nbVis>0)
+		ambientSum /= nbVis++;
  
 	vec4 texColor = GlobalColor1;//texture(Tex, data.TexCoord);
 	vec4 colorLinear = vec4( ambientSum + diffuseSum, 1 ) * texColor + vec4( specSum, 1 );  
