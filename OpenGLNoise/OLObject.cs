@@ -184,7 +184,7 @@ namespace OpenGLNoise
       GammaUniformLocation = GL.GetUniformLocation(ProgramHandle, "Gamma");
       if (WithLightsArray)
       {
-        LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "LightInfo"); // LightInfo and LightInfo[0] are both valid and equivalent
+        LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "Lights"); // LightInfo and LightInfo[0] are both valid and equivalent
 
         if (LightsUniformBlockLocation >= 0)
           GL.UniformBlockBinding(ProgramHandle, LightsUniformBlockLocation, RenderWindowBase.LIGHTS_BUFFER_INDEX);

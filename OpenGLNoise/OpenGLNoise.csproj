@@ -75,7 +75,6 @@
       <DependentUpon>UserControlMaterialData.cs</DependentUpon>
     </Compile>
     <Compile Include="LightObject.cs" />
-    <Compile Include="OldRenderWindows.cs" />
     <Compile Include="OLObject.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

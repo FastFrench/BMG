@@ -1,18 +1,23 @@
 #version 430 core
-const float ambient = 0.2;
+precision highp float;
 const int LIGHTCOUNT = 3;
 
-uniform LightInfo
+struct LightInfo
 {
-	vec4 Position;		//Light Position in eye-coords
 	//float unused1;
 	vec4 La;			//Ambient light intensity
 	//float unused2;
 	vec4 Ld;			//Diffuse light intensity
 	//float unused3;
-	vec3 Ls;			//Specular light intensity
+	vec4 Ls;			//Specular light intensity
+	vec3 Position;		//Light Position in eye-coords
 	bool Visible;	
-} Light[LIGHTCOUNT];
+};
+
+layout (std140) uniform Lights
+{
+	LightInfo Light[LIGHTCOUNT];
+};
 
 in struct DataStruct 
 {
@@ -60,6 +65,7 @@ void main() {
 	if ( gl_FrontFacing )
 	{
 		for( int i=0; i<LIGHTCOUNT; ++i )
+		if (Light[i].Visible)
 		{
 			light( i, Data.Position, Data.Normal, ambient, diffuse, spec );
 			ambientSum += ambient;
@@ -70,6 +76,7 @@ void main() {
 	else
 	{
 		for( int i=0; i<LIGHTCOUNT; ++i )
+		if (Light[i].Visible)
 		{
 			light( i, Data.Position, -Data.Normal, ambient, diffuse, spec );
 			ambientSum += ambient;
@@ -79,7 +86,7 @@ void main() {
 	}
 	ambientSum /= LIGHTCOUNT;
  
-	vec4 texColor = vec4(1,1,1,1);//GlobalColor1;//texture(Tex, data.TexCoord);
+	vec4 texColor = GlobalColor1;//texture(Tex, data.TexCoord);
 	vec4 colorLinear = vec4( ambientSum + diffuseSum, 1 ) * texColor + vec4( specSum, 1 );  
 	vec4 colorGammaCorrected = pow(colorLinear, vec4(1.0/Gamma));
 
