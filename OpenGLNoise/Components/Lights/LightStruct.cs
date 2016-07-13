@@ -15,7 +15,7 @@ namespace OpenGLNoise.Lights
     public Vector4 AmbientColor;
     public Vector4 DiffuseColor;
     public Vector4 SpecularColor;
-    public Vector3 Position;
-    public bool Visible;    
+    public Vector4 Position;
+    //public bool Visible;    
   }
 }

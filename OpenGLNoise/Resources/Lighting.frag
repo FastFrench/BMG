@@ -2,16 +2,16 @@
 const float ambient = 0.2;
 const int LIGHTCOUNT = 3;
 
-uniform LightInfo
+layout (std140) uniform LightInfo
 {
-	vec4 Position;		//Light Position in eye-coords
 	//float unused1;
 	vec4 La;			//Ambient light intensity
 	//float unused2;
 	vec4 Ld;			//Diffuse light intensity
 	//float unused3;
-	vec3 Ls;			//Specular light intensity
-	bool Visible;	
+	vec4 Ls;			//Specular light intensity
+	vec4 Position;		//Light Position in eye-coords
+	//bool Visible;	
 } Light[LIGHTCOUNT];
 
 in struct DataStruct 

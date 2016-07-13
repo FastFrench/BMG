@@ -41,7 +41,7 @@ namespace OpenGLNoise
     {
       LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
       GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO);
-      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(sizeof(float) * 8 * LightsUBOData.Length), LightsUBOData);
+      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(Marshal.SizeOf<LightStruct>() * LightsUBOData.Length), LightsUBOData);
       GL.BindBuffer(BufferTarget.UniformBuffer, 0);
     }
     #endregion Array of Lights data
