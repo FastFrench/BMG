@@ -124,7 +124,7 @@ namespace OpenGLNoise.Materials
 
     public MaterialStruct ConvertIntoGLStruct()
     {
-      return new MaterialStruct() {   AmbientReflectivity = LightDataCollection.Color2Vector(this.AmbientReflectivity), DiffuseReflectivity = LightDataCollection.Color2Vector(this.DiffuseReflectivity), SpecularReflectivity = LightDataCollection.Color2Vector(this.SpecularReflectivity), Shininess = this.Shininess };
+      return new MaterialStruct() {   AmbientReflectivity = LightDataCollection.Color2Vector3(this.AmbientReflectivity), DiffuseReflectivity = LightDataCollection.Color2Vector3(this.DiffuseReflectivity), SpecularReflectivity = LightDataCollection.Color2Vector3(this.SpecularReflectivity), Shininess = this.Shininess };
     }
 
   }

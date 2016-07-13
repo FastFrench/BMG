@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using OpenGLNoise.Lights;
+using OpenGLNoise.Materials;
 using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics;
@@ -19,7 +20,16 @@ namespace OpenGLNoise
 {
   public abstract class OpenGLObject : IDisposable
   {
-    public RenderWindowBase Parent { get; set; }
+    RenderWindowBase _parent;
+    public RenderWindowBase Parent
+    {
+      get { return _parent; }
+      set
+      {
+        _parent = value;
+        if (value != null) Parent.RenderSettings.PropertyChanged += RenderSettings_PropertyChanged;
+      }
+    }
 
     protected bool WithNoise { get; set; }
     protected bool WithLightsArray { get; set; }
@@ -78,6 +88,8 @@ namespace OpenGLNoise
     protected int Color1UniformLocation { get; set; }
     protected int Color2UniformLocation { get; set; }
     protected int GammaUniformLocation { get; set; }
+
+    protected int ObjectDataUniform { get; set; }
 
     protected int LightsUniformBlockLocation { get; set; }
 
@@ -184,22 +196,9 @@ namespace OpenGLNoise
       Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
       Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
       GammaUniformLocation = GL.GetUniformLocation(ProgramHandle, "Gamma");
+      ObjectDataUniform = GL.GetUniformLocation(ProgramHandle, "Object.Ka");
       if (WithLightsArray)
       {
-        //int binding = 1;
-        //for (int i = 0; i < 3; ++i)
-        //{
-        //  GL.BindBufferRange(BufferRangeTarget.UniformBuffer, binding + i, RenderWindowBase.LIGHTS_BUFFER_INDEX, (IntPtr)0, (Marshal.SizeOf<LightStruct>()));
-        //  int uniformIndex = GL.GetProgramResourceIndex(ProgramHandle, ProgramInterface.UniformBlock, "LightInfo[" + i + "]");
-        //  if (i==0 && uniformIndex <0)
-        //  {
-        //    WithLightsArray = false;
-        //    break;
-        //  }
-        //  GL.UniformBlockBinding(ProgramHandle, uniformIndex, binding + i);
-        //}
-
-        //GL.BindBuffersRange()
         LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "Lights"); // LightInfo and LightInfo[0] are both valid and equivalent
 
         if (LightsUniformBlockLocation >= 0)
@@ -207,7 +206,6 @@ namespace OpenGLNoise
         else
           WithLightsArray = false; // Autoset to false
       }
-      //Debug.Assert(MvpUniformLocation != -1);
     }
 
 
@@ -271,6 +269,7 @@ namespace OpenGLNoise
         if (shader != null)
           GL.DeleteShader(shader.Value);
       this.ProgramHandle = programHandle;
+      UpdateMaterialFromSettings();
       return programHandle;
     }
     #endregion Shaders and Programs management
@@ -280,6 +279,21 @@ namespace OpenGLNoise
 
     public float Size { get; set; }
     public float AjustedDeformationSize { get; set; }
+
+    public MaterialStruct Material;
+
+    public void UpdateMaterialFromSettings()
+    {
+      if (Parent == null) return;
+      Material = Parent.RenderSettings.ConvertIntoGLMaterialStruct();
+      Material.Size = Size;
+      Material.Visible = true;
+    }
+
+    private void RenderSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      UpdateMaterialFromSettings();
+    }
 
     /// <summary>
     /// Called on OnRenderFrame
@@ -296,7 +310,12 @@ namespace OpenGLNoise
       GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
       GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
       if (Parent != null)
-        GL.Uniform1(GammaUniformLocation, Parent.RenderSettings.Gamma);      
+      {
+        GL.Uniform1(GammaUniformLocation, Parent.RenderSettings.Gamma);
+        if (ObjectDataUniform != -1)
+          Material.SetUniforms(ObjectDataUniform);
+        //Material.SetUniforms(ObjectDataUniform);
+      }
       GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
       GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);

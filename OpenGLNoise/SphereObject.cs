@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,13 @@ namespace OpenGLNoise
     public SphereObject(Vector3 center, float radius, bool noDeformation = false, bool withLight = true, bool withNoise = false)
   : base(noDeformation ? 0 : radius, null, null, withNoise, withLight)
     {
+      this.radius = radius;
       this.center = center;
+      WithLightsArray = withLight;
+      WithNoise = withNoise;
+      Size = noDeformation ? 0 : 1;
+      Color1 = Color.Red;
+      Color2 = Color.Black;
     }
     public override void BuildObject()
     {

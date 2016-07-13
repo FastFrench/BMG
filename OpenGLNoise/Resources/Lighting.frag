@@ -2,7 +2,6 @@
 precision highp float;
 const int LIGHTCOUNT = 3;
 
-//layout (std140, binding=0) uniform  
 struct LightInfo
 {
 	//float unused1;
@@ -12,13 +11,27 @@ struct LightInfo
 	//float unused3;
 	vec4 Ls;			//Specular light intensity
 	vec3 Position;		//Light Position in eye-coords
-	float Visible;	
-};// Light[LIGHTCOUNT];
+};
 
 layout (std140, binding=0) uniform Lights
 {
 	LightInfo Light[LIGHTCOUNT];
 };
+
+struct MaterialInfo
+{
+	vec3 Ka;
+	vec3 Kd;
+	vec3 Ks;
+	float Shininess;
+	float Gamma;
+	int NbLight;
+	bool Visible;
+	bool UsingNoise;
+	float Size;
+};
+
+uniform MaterialInfo Object;
 
 in struct DataStruct 
 {
@@ -33,31 +46,27 @@ const vec3 Material_Kd = vec3(1., 1., 1.);
 const float Material_Shininess = 20.0;
 void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )
 {
-	vec3 n = normalize( norm );
-	vec3 s = normalize( vec3(Light[lightIndex].Position) - position );
+	vec3 n = normalize( -norm );
+	vec3 s = normalize( position - vec3(Light[lightIndex].Position));
 	vec3 v = normalize( -position );
 	vec3 r = reflect( -s, n );
- 
-	ambient = vec3(Light[lightIndex].La) * Material_Ka;
- 
-	float sDotN = max( dot( s, n ), 0.0 );
-	diffuse = vec3(Light[lightIndex].Ld) * Material_Kd * sDotN;
- 
-	spec = vec3(Light[lightIndex].Ls) * Material_Ks * pow( max( dot(r,v) , 0.0 ), Material_Shininess ); 
-}
 
-const vec3 EyePosition = vec3(7,0,0);
-const float shininess = 20;
-const float screenGamma = 2.2; // Assume the monitor is calibrated to the sRGB color space
+	ambient = vec3(Light[lightIndex].La) * Object.Ka;
+
+	float sDotN = max( dot( s, n ), 0.0 );
+	diffuse = vec3(Light[lightIndex].Ld) * Object.Kd * sDotN;
+ 
+	spec = vec3(Light[lightIndex].Ls) * Object.Ks * pow( max( dot(r,v) , 0.0 ), Object.Shininess ); 
+}
 
 out vec4 FragColor;
 
 uniform vec4 GlobalColor1;
 uniform vec4 GlobalColor2;
-uniform float Gamma;
+
 
 void main() {
-
+	if (!Object.Visible) return;
 	vec3 ambientSum = vec3(0);
 	vec3 diffuseSum = vec3(0);
 	vec3 specSum = vec3(0);
@@ -65,10 +74,10 @@ void main() {
     int nbVis = 0;
 	if ( gl_FrontFacing )
 	{
-		for( int i=0; i<LIGHTCOUNT; ++i )
-		if (Light[i].Visible > 0)
+		for( int i=0; i<Object.NbLight; ++i )
+		//if (Light[i].Visible)
 		{
-			nbVis++;
+			//nbVis++;
 			light( i, Data.Position, Data.Normal, ambient, diffuse, spec );
 			ambientSum += ambient;
 			diffuseSum += diffuse;
@@ -77,10 +86,10 @@ void main() {
 	}
 	else
 	{
-		for( int i=0; i<LIGHTCOUNT; ++i )
-		if (Light[i].Visible  > 0)
+		for( int i=0; i<Object.NbLight; ++i )
+		//if (Light[i].Visible)
 		{
-			nbVis++;
+			//nbVis++;
 			light( i, Data.Position, -Data.Normal, ambient, diffuse, spec );
 			ambientSum += ambient;
 			diffuseSum += diffuse;
@@ -88,11 +97,11 @@ void main() {
 		}
 	}
 	if (nbVis>0)
-		ambientSum /= nbVis++;
- 
+		ambientSum /= Object.NbLight;
+
 	vec4 texColor = GlobalColor1;//texture(Tex, data.TexCoord);
 	vec4 colorLinear = vec4( ambientSum + diffuseSum, 1 ) * texColor + vec4( specSum, 1 );  
-	vec4 colorGammaCorrected = pow(colorLinear, vec4(1.0/Gamma));
+	vec4 colorGammaCorrected = pow(colorLinear, vec4(1.0/Object.Gamma));
 
 	FragColor = colorGammaCorrected;
 }

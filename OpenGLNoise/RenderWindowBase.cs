@@ -149,6 +149,10 @@ namespace OpenGLNoise
       UpdateLights(false);
     }
 
+    /// <summary>
+    /// We remove all light objects and recreate them
+    /// </summary>
+    /// <param name="buildThem"></param>
     private void UpdateLights(bool buildThem = true)
     {
       foreach (var light in Objects.OfType<LightObject>().ToArray())
@@ -159,12 +163,13 @@ namespace OpenGLNoise
 
       FillLightUniformBuffer();
       foreach (var light in RenderSettings.Lights)
-      {
-        var lightObj = new LightObject(light.Position, light.GlobalColor);
-        lightObj.LoadShaders(Resources.Simple_frag, Resources.Simple_vert, null);
-        lightObj.BuildObject();
-        Objects.Add(lightObj);
-      }
+        if (light.Visible)
+        {
+          var lightObj = new LightObject(light.Position, light.GlobalColor);
+          lightObj.LoadShaders(Resources.Simple_frag, Resources.Simple_vert, null);
+          lightObj.BuildObject();
+          Objects.Add(lightObj);
+        }
     }
 
     protected override void OnClosing(CancelEventArgs e)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenGLNoise.Lights;
 using OpenGLNoise.Materials;
+using OpenTK.Graphics.OpenGL4;
 
 namespace OpenGLNoise
 {
@@ -26,7 +27,6 @@ namespace OpenGLNoise
       _gamma = 2.2f;
       Lights = new LightDataCollection();
       Material = new MaterialData();
-      Lights.ListChanged += Lights_ListChanged; 
       DataBindingSource = new BindingSource() { DataSource = this };
     }
 
@@ -35,16 +35,40 @@ namespace OpenGLNoise
       Notify("Lights");
     }
 
+    LightDataCollection _lights = null;
+
     public LightDataCollection Lights
     {
-      get;
-      set;
+      get { return _lights; }
+      set
+      {
+        if (_lights != null)
+          _lights.ListChanged -= Lights_ListChanged;
+        _lights = value;
+        if (value != null)
+          _lights.ListChanged += Lights_ListChanged;
+        Lights_ListChanged(Lights, null);
+      }
     }
 
+    MaterialData _material = null;
     public MaterialData Material
     {
-      get;
-      set;
+      get { return _material; }
+      set
+      {
+        if (_material != null)
+          _material.PropertyChanged -= Material_PropertyChanged;
+        _material = value;
+        if (value != null)
+          Material.PropertyChanged += Material_PropertyChanged;
+        Material_PropertyChanged(Material, null);
+      }
+    }
+
+    private void Material_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      Notify("Material");      
     }
 
     bool _bouncing { get; set; }
@@ -89,6 +113,35 @@ namespace OpenGLNoise
       }
     }
 
+
+    bool _usingNoise { get; set; }
+    public bool UsingNoise
+    {
+      get { return _usingNoise; }
+      set
+      {
+        if (_usingNoise != value)
+        {
+          _usingNoise = value;
+          Notify("UsingNoise");
+        }
+      }
+    }
+
+    bool _visible { get; set; }
+    public bool Visible
+    {
+      get { return _visible; }
+      set
+      {
+        if (_visible != value)
+        {
+          _visible = value;
+          Notify("Visible");
+        }
+      }
+    }
+
     public void Dispose()
     {
       if ( DataBindingSource != null)
@@ -96,6 +149,17 @@ namespace OpenGLNoise
         DataBindingSource.Dispose();
         DataBindingSource = null;
       }
+    }
+
+    public MaterialStruct ConvertIntoGLMaterialStruct()
+    {
+      MaterialStruct material = Material.ConvertIntoGLStruct();
+      material.Gamma = Gamma;
+      material.NbLight = Lights.Count(l => l.Visible);
+      material.UsingNoise = UsingNoise;
+      material.Visible = Visible;
+      material.Size = 0;
+      return material;
     }
   }
 }
