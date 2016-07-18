@@ -152,6 +152,9 @@ namespace OpenGLNoise
       double ratio = (sw.ElapsedMilliseconds % 2000) / 1000.0;
       if (ratio > 1.0) ratio = 2 - ratio;
       AjustedDeformationSize = (float)(Size * ratio);
+      var error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error(0): " + error.ToString());
 
       // Update elevation data
       if (WithNoise)
@@ -161,6 +164,9 @@ namespace OpenGLNoise
         GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(NoiseMap.Data.Length * sizeof(float)), NoiseMap.Data);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
       }
+      error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (1): " + error.ToString());
       // Update normals
       if (Normals != null)
       {
@@ -169,9 +175,9 @@ namespace OpenGLNoise
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         Normals = null;
       }
-      var error = GL.GetError();
+      error = GL.GetError();
       if (error != ErrorCode.NoError)
-        Debug.Print("OpenGL error: " + error.ToString());
+        Debug.Print("OpenGL error (2): " + error.ToString());
 
     }
 
@@ -206,6 +212,10 @@ namespace OpenGLNoise
         else
           WithLightsArray = false; // Autoset to false
       }
+      var error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (LoadShaders): " + error.ToString());
+
     }
 
 
@@ -270,6 +280,10 @@ namespace OpenGLNoise
           GL.DeleteShader(shader.Value);
       this.ProgramHandle = programHandle;
       UpdateMaterialFromSettings();
+      var error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (CreateAndLinkProgram): " + error.ToString());
+
       return programHandle;
     }
     #endregion Shaders and Programs management
@@ -303,24 +317,46 @@ namespace OpenGLNoise
       GL.UseProgram(ProgramHandle);
       GL.BindVertexArray(VertexArrayObject);
       GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
+      var error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (OnRenderObject 1): " + error.ToString());
 
       GL.UniformMatrix4(MvpUniformLocation, false, ref mvpMatrix);
       GL.UniformMatrix4(ViewUniformLocation, false, ref viewMatrix);
       GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
       GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
       GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
+      error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (OnRenderObject 2): " + error.ToString());
       if (Parent != null)
       {
         GL.Uniform1(GammaUniformLocation, Parent.RenderSettings.Gamma);
+        error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (OnRenderObject 2-1): " + error.ToString() + " (location:"+GammaUniformLocation+")");
         if (ObjectDataUniform != -1)
           Material.SetUniforms(ObjectDataUniform);
+        error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (OnRenderObject 2-2): " + error.ToString() + " (location:" + ObjectDataUniform + ")");
         //Material.SetUniforms(ObjectDataUniform);
       }
+      error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (OnRenderObject 3): " + error.ToString());
+
       GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+      error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (OnRenderObject 4): " + error.ToString());
 
       GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
       GL.BindVertexArray(0);
       GL.UseProgram(0);
+      error = GL.GetError();
+      if (error != ErrorCode.NoError)
+        Debug.Print("OpenGL error (OnRenderObject 5): " + error.ToString());
 
       //if (DisplayNormals)
       //{

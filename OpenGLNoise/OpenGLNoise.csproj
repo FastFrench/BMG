@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColouredVertex.cs" />
+    <Compile Include="Components\Lights\LightCollectionStruct.cs" />
     <Compile Include="CubeObject.cs" />
     <Compile Include="CubeSample.cs" />
     <Compile Include="Components\Lights\LightData.cs" />

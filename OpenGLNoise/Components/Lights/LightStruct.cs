@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 
-namespace OpenGLNoise.Lights
+namespace OpenGLNoise.Components.Lights
 {
   [Serializable]
-  [StructLayout(LayoutKind.Sequential, Pack = sizeof(float))]
+  [StructLayout(LayoutKind.Sequential, Pack = sizeof(float)*4, Size = sizeof(float) * 4 * 4)]
   public struct LightStruct
   {
     public Vector4 AmbientColor;

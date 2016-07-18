@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenGLNoise.Components.Lights;
 using OpenGLNoise.Lights;
 using OpenTK;
 using OpenTK.Graphics;
@@ -30,9 +31,12 @@ namespace OpenGLNoise.Lights
       return new Vector3(b2f(color.R), b2f(color.G), b2f(color.B));
     }
 
-    public LightStruct[] ConvertIntoGLStruct()
+    public LightCollectionStruct ConvertIntoGLStruct(float gamma)
     {
-      return this.Where(dat => dat.Visible).Select(data => new LightStruct() { AmbientColor = Color2Vector4(data.AmbientColor), DiffuseColor = Color2Vector4(data.DiffuseColor), SpecularColor = Color2Vector4(data.SpecularColor), Position = data.Position, Visible = data.Visible ? true : false }).ToArray();      
+      LightCollectionStruct data = new LightCollectionStruct();
+      data.Init(this, gamma);
+      return data;
+      //return this.Where(dat => dat.Visible).Select(data => { var light = new LightStruct(); return data.FillLightStructStruct(ref light);}).ToArray();      
     }   
   }
 }

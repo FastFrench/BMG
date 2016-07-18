@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenGLNoise.Components.Lights;
 using OpenTK;
 
 namespace OpenGLNoise.Lights
@@ -133,6 +134,16 @@ namespace OpenGLNoise.Lights
             PropertyChanged(this, new PropertyChangedEventArgs("Visible"));
         }
       }
+    }
+
+    public LightStruct FillLightStructStruct(ref LightStruct light)
+    {
+      light.AmbientColor = LightDataCollection.Color2Vector4(AmbientColor);
+      light.DiffuseColor = LightDataCollection.Color2Vector4(DiffuseColor);
+      light.SpecularColor = LightDataCollection.Color2Vector4(SpecularColor);
+      light.Position = new Vector3(Position);
+      light.Visible = Visible;
+      return light;
     }
   }
 }

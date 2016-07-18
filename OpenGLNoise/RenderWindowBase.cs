@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 //using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
+using OpenGLNoise.Components.Lights;
 using OpenGLNoise.Lights;
 using OpenGLNoise.Properties;
 using OpenTK;
@@ -23,25 +27,52 @@ namespace OpenGLNoise
 {
   public abstract class RenderWindowBase : GameWindow
   {
+    private float Gamma { get { if (RenderSettings != null) return RenderSettings.Gamma; return 2.2f; } }
     #region Array of Lights data
     int LightsBufferUBO; // Lights: Location for the UBO given by OpenGL
     public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
-    LightStruct[] LightsUBOData = null;
+    //LightStruct[] LightsUBOData = null;
+    LightCollectionStruct LightsUBOData;
     void InitLightBuffer()
     {
-      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
+      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(Gamma); // Create actual data
       GL.GenBuffers(1, out LightsBufferUBO); // Generate the buffer
       GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO); // Bind the buffer for writing
-      GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(Marshal.SizeOf<LightStruct>() * LightsUBOData.Length), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
-
-      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, LIGHTS_BUFFER_INDEX, LightsBufferUBO, (IntPtr)0, (IntPtr)(Marshal.SizeOf<LightStruct>() * LightsUBOData.Length)); // Bind the created Uniform Buffer to the Buffer Index
+      GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(LightsUBOData.Size(true)), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
+      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, LIGHTS_BUFFER_INDEX, LightsBufferUBO, (IntPtr)0, (IntPtr)(LightsUBOData.Size(true))); // Bind the created Uniform Buffer to the Buffer Index
     }
- 
+
+    byte[] ObjectToByteArray(object obj)
+    {
+      byte[] arr = null;
+      IntPtr ptr = IntPtr.Zero;
+      try
+      {
+        int size = Marshal.SizeOf(obj);
+        arr = new byte[size];
+        ptr = Marshal.AllocHGlobal(size);
+        Marshal.StructureToPtr(obj, ptr, true);
+        Marshal.Copy(ptr, arr, 0, size);
+      }
+      catch (Exception e)
+      {
+        MessageBox.Show(e.Message);
+      }
+      finally
+      {
+        Marshal.FreeHGlobal(ptr);
+      }
+
+      return arr;
+    }
+
     void FillLightUniformBuffer()
     {
-      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(); // Create actual data
+      LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(Gamma); // Create actual data
       GL.BindBuffer(BufferTarget.UniformBuffer, LightsBufferUBO);
-      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(Marshal.SizeOf<LightStruct>() * LightsUBOData.Length), LightsUBOData);
+      var firstPart = ObjectToByteArray(LightsUBOData.GlobalData);
+      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, firstPart.Length, firstPart);
+      GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)Marshal.SizeOf<Vector4>(), (IntPtr)(LightsUBOData.GlobalData.NbLights * Marshal.SizeOf<LightStruct>()), LightsUBOData.Lights);
       GL.BindBuffer(BufferTarget.UniformBuffer, 0);
     }
     #endregion Array of Lights data
@@ -123,7 +154,7 @@ namespace OpenGLNoise
         obj.BuildObject();
       //CreateVertexData();
     }
-    
+
 
     protected void AddObject(float px, float py, float pz, float radius)
     {
@@ -175,9 +206,13 @@ namespace OpenGLNoise
     protected override void OnClosing(CancelEventArgs e)
     {
       base.OnClosing(e);
-    }
 
-    protected override void OnLoad(EventArgs e)
+      /// DEBUG
+      MakeCurrent();
+      GL.DebugMessageCallback(DebugCallbackInstance, IntPtr.Zero);
+  }
+
+  protected override void OnLoad(EventArgs e)
     {
       CreateObjects();
       BuildObjects();
@@ -221,7 +256,7 @@ namespace OpenGLNoise
         obj.OnUpdateObject(e);
 
       if (!RenderSettings.Paused)
-      {                
+      {
         // Rotate the plane
         var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.5));
         Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
@@ -250,11 +285,23 @@ namespace OpenGLNoise
 
     public RenderWindowBase(RenderWindowSettings settings)
           : base(800, 600, GraphicsMode.Default, "SharpNoise OpenGL Example",
-          GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
+          GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible| GraphicsContextFlags.Debug)
     {
       RenderSettings = settings;
       RenderSettings.Lights.ListChanged += Lights_ListChanged;
       VSync = VSyncMode.Off;
+    }
+
+    
+    // The callback delegate must be stored to avoid GC
+    DebugProc DebugCallbackInstance = DebugCallback;
+
+    static void DebugCallback(DebugSource source, DebugType type, int id,
+      DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
+    {
+      string msg = Marshal.PtrToStringAnsi(message);
+      Console.WriteLine("[GL] {0}; {1}; {2}; {3}; {4}",
+        source, type, id, severity, msg);
     }
 
     private void Lights_ListChanged(object sender, ListChangedEventArgs e)
