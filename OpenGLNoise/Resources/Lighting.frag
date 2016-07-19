@@ -126,7 +126,6 @@ void main() {
 	}
 	if (nbVis>0)
 		ambientSum /= nbVis;
-	ambientSum = ambientSum * mod(Global.Time, 0.1)*10;
 	vec4 texColor = GlobalColor1;//texture(Tex, data.TexCoord);
 	vec4 colorLinear = vec4( ambientSum + diffuseSum, 1 ) * texColor + vec4( specSum, 1 );  
 	vec4 colorGammaCorrected = pow(colorLinear, vec4(1.0/toto.Gamma));
