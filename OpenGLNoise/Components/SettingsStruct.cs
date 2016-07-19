@@ -14,7 +14,5 @@ namespace OpenGLNoise.Components
 	{
 		public Matrix4 MVP, View;
 		public float Time;
-		public float Gamma;
-		public int NbLights;
 	}
 }

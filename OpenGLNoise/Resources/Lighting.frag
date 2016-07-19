@@ -2,6 +2,9 @@
 precision highp float;
 const int LIGHTCOUNT = 3;
 
+//////////////////////////////////////////////
+/// Global data (common to the whole scene) //
+//////////////////////////////////////////////
 struct LightInfo
 {
 	vec3 La;			//Ambient light intensity
@@ -18,7 +21,25 @@ layout (std140) uniform Lights
 	LightInfo	Light[LIGHTCOUNT];
 } toto;
 
-struct MaterialInfo
+struct GlobalData
+{
+	mat4 MVP;
+	mat4 View;
+	float Time;	
+};
+
+layout (std140) uniform GlobalSettings 
+{
+	GlobalData Global;
+};
+
+uniform vec4 GlobalColor1;
+uniform vec4 GlobalColor2;
+
+///////////////////////////////////////////////
+/// Object data (common to current objected) //
+///////////////////////////////////////////////
+struct ObjectInfo
 {
 	vec3	Ka;
 	vec3	Kd;
@@ -26,11 +47,17 @@ struct MaterialInfo
 	float	Shininess;
 	bool	Visible;
 	bool	UsingNoise;
-	float	Size;
+	float Size;
+	vec3 Speed;
+	float StartingTime;
 };
 
-uniform MaterialInfo Object;
+uniform ObjectInfo Object;
 
+
+////////////////////////////////////////////
+// Input data, specific for each fragment //
+////////////////////////////////////////////
 in struct DataStruct 
 {
 	vec3 Normal;
@@ -38,6 +65,14 @@ in struct DataStruct
 	vec3 Eye;
 } Data;
 
+//////////////////////////////////////
+// Output data (color of the pixel) //
+//////////////////////////////////////
+out vec4 FragColor;
+
+/////////////////
+// SubRoutines //
+/////////////////
 void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )
 {
 	vec3 n = normalize( -norm );
@@ -53,12 +88,10 @@ void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3
 	spec = vec3(toto.Light[lightIndex].Ls) * Object.Ks * pow( max( dot(r,v) , 0.0 ), Object.Shininess ); 
 }
 
-out vec4 FragColor;
 
-uniform vec4 GlobalColor1;
-uniform vec4 GlobalColor2;
-
-
+//////////
+// Main //
+//////////
 void main() {
 	if (!Object.Visible) return;
 
@@ -93,7 +126,7 @@ void main() {
 	}
 	if (nbVis>0)
 		ambientSum /= nbVis;
-
+	ambientSum = ambientSum * mod(Global.Time, 0.1)*10;
 	vec4 texColor = GlobalColor1;//texture(Tex, data.TexCoord);
 	vec4 colorLinear = vec4( ambientSum + diffuseSum, 1 ) * texColor + vec4( specSum, 1 );  
 	vec4 colorGammaCorrected = pow(colorLinear, vec4(1.0/toto.Gamma));

@@ -87,6 +87,8 @@ namespace OpenGLNoise
     protected int Color1UniformLocation { get; set; }
     protected int Color2UniformLocation { get; set; }
     protected int LightsUniformBlockLocation { get; set; }
+    protected int GlobalSettingsUniformBlockLocation { get; set; }
+
 
     void GenerateElevationNoise(double timeDelta)
     {
@@ -190,7 +192,9 @@ namespace OpenGLNoise
         vertexShader = LoadShaderFromResource(ShaderType.VertexShader, vertexShaderData, "Vertex Shader");
       if (geometryShaderData != null)
         geometryShader = LoadShaderFromResource(ShaderType.GeometryShader, geometryShaderData, "Geometry Shader");
+      OpenGLHelper.CheckError("loading Shaders");
       CreateAndLinkProgram(pixelShader, vertexShader, geometryShader);
+      OpenGLHelper.CheckError("Linking program");
       MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
       ViewUniformLocation = GL.GetUniformLocation(ProgramHandle, "View");
       Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
@@ -204,10 +208,10 @@ namespace OpenGLNoise
         else
           WithLightsArray = false; // Autoset to false
       }
-      var error = GL.GetError();
-      if (error != ErrorCode.NoError)
-        Debug.Print("OpenGL error (LoadShaders): " + error.ToString());
-
+      GlobalSettingsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "GlobalSettings");
+      if (GlobalSettingsUniformBlockLocation >= 0)
+        GL.UniformBlockBinding(ProgramHandle, GlobalSettingsUniformBlockLocation, RenderWindowBase.SETTINGS_BUFFER_INDEX);
+      OpenGLHelper.CheckError("Checking uniforms locations");
     }
 
 
@@ -263,7 +267,7 @@ namespace OpenGLNoise
       {
         var infoLog = GL.GetProgramInfoLog(programHandle);
         Debug.Print("Link for shader program {0} failed: {1}", programHandle, infoLog);
-        Debug.Assert(false);
+        Debug.Assert(false, infoLog);
       }
 
       // Delete shaders

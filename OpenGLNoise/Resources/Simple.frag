@@ -1,5 +1,13 @@
-#version 330 core
+#version 440 core
+
+//////////////////////////////////////////////
+/// Global data (common to the whole scene) //
+//////////////////////////////////////////////
 uniform vec4 GlobalColor1;
+
+///////////
+/// Main //
+///////////
 void main() {	 
     gl_FragColor = GlobalColor1;
 }

@@ -44,9 +44,9 @@ namespace OpenGLNoise
       GL.GenBuffers(1, out SettingsBufferUBO); // Generate the buffer
 			GL.BindBuffer(BufferTarget.UniformBuffer, SettingsBufferUBO); // Bind the buffer for writing
 			GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(Marshal.SizeOf<SettingsStruct>()), (IntPtr)(null), BufferUsageHint.DynamicDraw); // Request the memory to be allocated
-			GL.BindBuffer(BufferTarget.UniformBuffer, SettingsBufferUBO); // Bind the created Uniform Buffer to the Buffer Index
-
-		}
+			//GL.BindBuffer(BufferTarget.UniformBuffer, SettingsBufferUBO); // Bind the created Uniform Buffer to the Buffer Index
+      GL.BindBufferRange(BufferRangeTarget.UniformBuffer, SETTINGS_BUFFER_INDEX, SettingsBufferUBO, (IntPtr)0, (IntPtr)(Marshal.SizeOf<SettingsStruct>())); // Bind the created Uniform Buffer to the Buffer Index			
+    }
 
     byte[] ObjectToByteArray(object obj)
     {
@@ -94,13 +94,13 @@ namespace OpenGLNoise
 			Matrix4 mvMatrix; // MVP: Model * View * Projection
 			Matrix4.Mult(ref ModelMatrix, ref GlobalSettingsStruct.View, out mvMatrix);
 			Matrix4.Mult(ref mvMatrix, ref ProjectionMatrix, out GlobalSettingsStruct.MVP);
-			GlobalSettingsStruct.Gamma = RenderSettings.Gamma;
 			if (!RenderSettings.Paused)
 				GlobalSettingsStruct.Time += (float)e.Time;
-			GlobalSettingsStruct.NbLights = LightsUBOData.GlobalData.NbLights;
 
-			GL.BindBuffer(BufferTarget.UniformBuffer, SettingsBufferUBO);
-			GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(Marshal.SizeOf<SettingsStruct>() ), ref GlobalSettingsStruct);
+      var data = ObjectToByteArray(GlobalSettingsStruct);
+
+      GL.BindBuffer(BufferTarget.UniformBuffer, SettingsBufferUBO);
+			GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)0, (IntPtr)(Marshal.SizeOf<SettingsStruct>() ), data);
 			GL.BindBuffer(BufferTarget.UniformBuffer, 0);
 		}
 
@@ -290,14 +290,15 @@ namespace OpenGLNoise
 			foreach (var obj in Objects)
 				obj.OnUpdateObject(e);
 
-			if (!RenderSettings.Paused)
+      UpdateAndFillGlobalSettingsUniformBuffer(e);
+
+      if (!RenderSettings.Paused)
 			{
         // New way
-				UpdateAndFillGlobalSettingsUniformBuffer(e);
-        // Old obsolete way
+				// Old obsolete way
         // Rotate the plane
-        var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.5));
-        Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
+        //var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.5));
+        //Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
 
         // Update MVP matrix
         Matrix4 mvMatrix; // MVP: Model * View * Projection
