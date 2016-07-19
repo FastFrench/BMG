@@ -20,13 +20,13 @@ layout (std140) uniform Lights
 
 struct MaterialInfo
 {
-	vec3 Ka;
-	vec3 Kd;
-	vec3 Ks;
-	float Shininess;
-	bool Visible;
-	//bool UsingNoise;
-	//float Size;
+	vec3	Ka;
+	vec3	Kd;
+	vec3	Ks;
+	float	Shininess;
+	bool	Visible;
+	bool	UsingNoise;
+	float	Size;
 };
 
 uniform MaterialInfo Object;

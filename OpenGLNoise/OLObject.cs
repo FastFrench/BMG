@@ -336,7 +336,7 @@ namespace OpenGLNoise
         if (error != ErrorCode.NoError)
           Debug.Print("OpenGL error (OnRenderObject 2-1): " + error.ToString() + " (location:"+GammaUniformLocation+")");
         if (ObjectDataUniform != -1)
-          Material.SetUniforms(ObjectDataUniform);
+          Material.SetUniforms(ProgramHandle);
         error = GL.GetError();
         if (error != ErrorCode.NoError)
           Debug.Print("OpenGL error (OnRenderObject 2-2): " + error.ToString() + " (location:" + ObjectDataUniform + ")");

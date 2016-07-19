@@ -17,9 +17,23 @@ out struct DataStruct
 	vec3 Eye;
 } Data;
 
+struct MaterialInfo
+{
+	vec3 Ka;
+	vec3 Kd;
+	vec3 Ks;
+	float Shininess;
+	bool Visible;
+	bool UsingNoise;
+	float Size;
+};
+
+uniform MaterialInfo Object;
 
 void main() {
     vec4 pos4 = vec4( position, 1.0 );
+	if (Object.UsingNoise)
+		pos4 += vec4(Object.Size * normal, 0.0);
 	Data.Normal = normal;
     gl_Position =  MVP * pos4;
 	Data.Eye = -(View * pos4).xyz;

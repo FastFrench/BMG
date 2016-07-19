@@ -19,68 +19,105 @@ namespace OpenGLNoise.Materials
     public Vector3 SpecularReflectivity { get; set; }
     public float Shininess { get; set; }
 
-    // Not really material... global
-    public float Gamma { get; set; }
-    public int NbLight { get; set; }
-
-    // Not really material... specific to this object
+    // Not really material... but still specific to this object
     public bool Visible { get; set; }
     public bool UsingNoise { get; set; }
     public float Size { get; set; }
-
-    public void SetUniforms(int baseUniformLocation)
+    const string uniformName = "Object.";
+    readonly static string[] uniformFields = {
+      "Ka",
+      "Kd",
+      "Ks",
+      "Shininess",
+      "Visible",
+      "UsingNoise",
+      "Size" };
+    enum uniformNamesEnum
     {
-      GL.Uniform3(baseUniformLocation++, AmbientReflectivity);
-      var error = GL.GetError();
-      if (error != ErrorCode.NoError)
+      Ka, Kd, Ks, Shininess, Visible, UsingNoise, Size
+    };
+    Dictionary<uniformNamesEnum, int> uniformLocation;
+    static int? baseUniformLocation = null;
+
+    private int location(int programHandle, uniformNamesEnum nameEnum)
+    {
+      if (uniformLocation == null)
+        uniformLocation = new Dictionary<uniformNamesEnum, int>();
+      if (!uniformLocation.ContainsKey(nameEnum))
       {
-        Debug.Print("OpenGL error (SetUniforms AmbientReflectivity): " + error.ToString());
-        baseUniformLocation--;
+        uniformLocation[nameEnum] = GL.GetUniformLocation(programHandle, uniformName+uniformFields[(int)nameEnum]);
+        if (uniformLocation[nameEnum] < 0)
+          Debug.Print("Uniform {0} not found", uniformName+uniformFields[(int)nameEnum]);
+      }
+      return uniformLocation[nameEnum];
+    }
+
+    public void SetUniforms(int programHandle)
+    {
+      int fieldLocation = location(programHandle, uniformNamesEnum.Ka);
+      if (fieldLocation >= 0)
+      {
+        GL.Uniform3(fieldLocation, AmbientReflectivity);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+        {
+          Debug.Print("OpenGL error (SetUniforms AmbientReflectivity): " + error.ToString());
+        }
       }
 
-      GL.Uniform3(baseUniformLocation++, DiffuseReflectivity);
-      error = GL.GetError();
-      if (error != ErrorCode.NoError)
+      fieldLocation = location(programHandle, uniformNamesEnum.Kd);
+      if (fieldLocation >= 0)
       {
-        Debug.Print("OpenGL error (SetUniforms DiffuseReflectivity): " + error.ToString());
-        baseUniformLocation--;
+        GL.Uniform3(fieldLocation, DiffuseReflectivity);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (SetUniforms DiffuseReflectivity): " + error.ToString());
       }
-      GL.Uniform3(baseUniformLocation++, SpecularReflectivity);
-      error = GL.GetError();
-      if (error != ErrorCode.NoError)
+
+      fieldLocation = location(programHandle, uniformNamesEnum.Ks);
+      if (fieldLocation >= 0)
       {
-        Debug.Print("OpenGL error (SetUniforms SpecularReflectivity): " + error.ToString());
-        baseUniformLocation--;
+        GL.Uniform3(fieldLocation, SpecularReflectivity);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (SetUniforms SpecularReflectivity): " + error.ToString());
       }
-      GL.Uniform1(baseUniformLocation++, Shininess);
-      error = GL.GetError();
-      if (error != ErrorCode.NoError)
+
+      fieldLocation = location(programHandle, uniformNamesEnum.Shininess);
+      if (fieldLocation >= 0)
       {
-        Debug.Print("OpenGL error (SetUniforms Shininess): " + error.ToString());
-        baseUniformLocation--;
-      }//GL.Uniform1(baseUniformLocation++, Gamma);
-      //GL.Uniform1(baseUniformLocation++, NbLight);
-      GL.Uniform1(baseUniformLocation++, Visible ? 1 : 0);
-      error = GL.GetError();
-      if (error != ErrorCode.NoError)
-      {
-        Debug.Print("OpenGL error (SetUniforms Visible): " + error.ToString());
-        baseUniformLocation--;
+        GL.Uniform1(fieldLocation, Shininess);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (SetUniforms Shininess): " + error.ToString());
       }
-      //GL.Uniform1(baseUniformLocation++, UsingNoise ? 1 : 0);
-      //error = GL.GetError();
-      //if (error != ErrorCode.NoError)
-      //{
-      //  Debug.Print("OpenGL error (SetUniforms UsingNoise): " + error.ToString());
-      //  baseUniformLocation--;
-      //}
-      //GL.Uniform1(baseUniformLocation++, Size);
-      //error = GL.GetError();
-      //if (error != ErrorCode.NoError)
-      //{
-      //  Debug.Print("OpenGL error (SetUniforms Size): " + error.ToString());
-      //  baseUniformLocation--;
-      //}
+
+      fieldLocation = location(programHandle, uniformNamesEnum.Visible);
+      if (fieldLocation >= 0)
+      {
+        GL.Uniform1(fieldLocation, Visible ? 1 : 0);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (SetUniforms Visible): " + error.ToString());
+      }
+
+      fieldLocation = location(programHandle, uniformNamesEnum.UsingNoise);
+      if (fieldLocation >= 0)
+      {
+        GL.Uniform1(fieldLocation, UsingNoise ? 1 : 0);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (SetUniforms UsingNoise): " + error.ToString());
+      }
+
+      fieldLocation = location(programHandle, uniformNamesEnum.Size);
+      if (fieldLocation >= 0)
+      {
+        GL.Uniform1(fieldLocation, Size);
+        var error = GL.GetError();
+        if (error != ErrorCode.NoError)
+          Debug.Print("OpenGL error (SetUniforms Size): " + error.ToString());
+      }
     }
   }
 }
