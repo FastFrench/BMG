@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenGLNoise.Properties;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
@@ -49,5 +51,50 @@ namespace OpenGLNoise
       }
       return true;
     }
+
+    static public byte[] GetRandomFragmentShader()
+    {
+      return Resources.Lighting_frag;
+      //int randomFrag = rnd.Next(3);
+      //switch (randomFrag)
+      //{
+      //	case 0: return "Explosion_Frag";
+      //	case 1: return "Explosion2_frag";
+      //	case 2: return "Explosion3_frag";
+      //}
+      //return "";
+    }
+
+    static public byte[] GetRandomVertexShader()
+    {
+      return Resources.Lighting_vert;
+      //int randomVert = rnd.Next(2);
+      //switch (randomVert)
+      //{
+      //	case 0: return "Explosion_Vert";
+      //	case 1: return "Explosion2_vert";
+      //}
+      //return "";
+    }
+
+    static public Random Rnd = new Random();
+    static public Color GetRandomColor()
+    {
+      switch (Rnd.Next(10))
+      {
+        case 0: return Color.Red;
+        case 1: return Color.Blue;
+        case 2: return Color.Black;
+        case 3: return Color.Yellow;
+        case 4: return Color.Green;
+        case 5: return Color.Cyan;
+        case 6: return Color.Indigo;
+        case 7: return Color.White;
+        case 8: return Color.Tomato;
+        case 9: return Color.LawnGreen;
+        default: return Color.Gray;
+      }
+    }
+
   }
 }

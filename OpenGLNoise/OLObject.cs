@@ -84,9 +84,8 @@ namespace OpenGLNoise
     protected int MvpUniformLocation { get; set; }
     protected int ViewUniformLocation { get; set; }
 
-    protected int SizeUniformLocation { get; set; }
     protected int Color1UniformLocation { get; set; }
-    protected int Color2UniformLocation { get; set; }    
+    protected int Color2UniformLocation { get; set; }
     protected int LightsUniformBlockLocation { get; set; }
 
     void GenerateElevationNoise(double timeDelta)
@@ -194,7 +193,6 @@ namespace OpenGLNoise
       CreateAndLinkProgram(pixelShader, vertexShader, geometryShader);
       MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
       ViewUniformLocation = GL.GetUniformLocation(ProgramHandle, "View");
-      SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
       Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
       Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
       if (WithLightsArray)
@@ -293,9 +291,8 @@ namespace OpenGLNoise
     public void UpdateMaterialFromSettings()
     {
       if (Parent == null) return;
-      Material = Parent.RenderSettings.ConvertIntoGLMaterialStruct();
-      Material.Size = Size;
-      Material.Visible = true;
+      Parent.RenderSettings.ConvertIntoGLMaterialStruct(ref Material);
+      Material.Size = AjustedDeformationSize;
     }
 
     private void RenderSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -308,6 +305,7 @@ namespace OpenGLNoise
     /// </summary>
     virtual public void OnRenderObject(Matrix4 mvpMatrix, Matrix4 viewMatrix)
     {
+      //if (!Material.Visible) return;
       GL.UseProgram(ProgramHandle);
       GL.BindVertexArray(VertexArrayObject);
       GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
@@ -319,16 +317,11 @@ namespace OpenGLNoise
       GL.UniformMatrix4(ViewUniformLocation, false, ref viewMatrix);
       GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
       GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
-      GL.Uniform1(SizeUniformLocation, AjustedDeformationSize);
       error = GL.GetError();
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error (OnRenderObject 2): " + error.ToString());
-      if (Parent != null)
-        Material.SetUniforms(ProgramHandle);        
-      
-      error = GL.GetError();
-      if (error != ErrorCode.NoError)
-        Debug.Print("OpenGL error (OnRenderObject 3): " + error.ToString());
+      if (Material.Visible)
+        Material.SetUniforms(ProgramHandle);
 
       GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
       error = GL.GetError();
@@ -342,20 +335,6 @@ namespace OpenGLNoise
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error (OnRenderObject 5): " + error.ToString());
 
-      //if (DisplayNormals)
-      //{
-      //  GL.UseProgram(NormalProgramHandle);
-      //  GL.BindVertexArray(VertexArrayObject);
-      //  GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
-
-      //  GL.Uniform1(NormalUniformLocationNormalLength, NormalLength);
-      //  GL.UniformMatrix4(NormalUniformLocationMvpMatrix, false, ref MvpMatrix);
-      //  GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
-
-      //  GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-      //  GL.BindVertexArray(0);
-      //  GL.UseProgram(0);
-      //}
     }
 
     /// <summary>
@@ -368,48 +347,7 @@ namespace OpenGLNoise
 
     int VertexArrayObject;
     int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
-    static byte[] GetRandomFragmentShader()
-    {
-      return Resources.Lighting_frag;
-      //int randomFrag = rnd.Next(3);
-      //switch (randomFrag)
-      //{
-      //	case 0: return "Explosion_Frag";
-      //	case 1: return "Explosion2_frag";
-      //	case 2: return "Explosion3_frag";
-      //}
-      //return "";
-    }
 
-    static byte[] GetRandomVertexShader()
-    {
-      return Resources.Lighting_vert;
-      //int randomVert = rnd.Next(2);
-      //switch (randomVert)
-      //{
-      //	case 0: return "Explosion_Vert";
-      //	case 1: return "Explosion2_vert";
-      //}
-      //return "";
-    }
-
-    static Color GetRandomColor()
-    {
-      switch (rnd.Next(10))
-      {
-        case 0: return Color.Red;
-        case 1: return Color.Blue;
-        case 2: return Color.Black;
-        case 3: return Color.Yellow;
-        case 4: return Color.Green;
-        case 5: return Color.Cyan;
-        case 6: return Color.Indigo;
-        case 7: return Color.White;
-        case 8: return Color.Tomato;
-        case 9: return Color.LawnGreen;
-        default: return Color.Gray;
-      }
-    }
 
     //Random rnd = new Random();
     public static OpenGLObject CreateObject(float px, float py, float pz, float radius, RenderWindowBase parent)
@@ -420,12 +358,12 @@ namespace OpenGLNoise
       else
         openGLObject = new CubeObject(new Vector3(px, py, pz), radius * 2, true);
       openGLObject.Parent = parent;
-      openGLObject.Color1 = GetRandomColor();
+      openGLObject.Color1 = OpenGLHelper.GetRandomColor();
       do
       {
-        openGLObject.Color2 = GetRandomColor();
+        openGLObject.Color2 = OpenGLHelper.GetRandomColor();
       } while (openGLObject.Color2 == openGLObject.Color1);
-      openGLObject.LoadShaders(GetRandomFragmentShader(), GetRandomVertexShader(), null);
+      openGLObject.LoadShaders(OpenGLHelper.GetRandomFragmentShader(), OpenGLHelper.GetRandomVertexShader(), null);
       return openGLObject;
     }
 
@@ -434,12 +372,12 @@ namespace OpenGLNoise
       OpenGLObject openGLObject = null;
       openGLObject = new TeaPotObject();
       openGLObject.Parent = parent;
-      openGLObject.Color1 = GetRandomColor();
+      openGLObject.Color1 = OpenGLHelper.GetRandomColor();
       do
       {
-        openGLObject.Color2 = GetRandomColor();
+        openGLObject.Color2 = OpenGLHelper.GetRandomColor();
       } while (openGLObject.Color2 == openGLObject.Color1);
-      openGLObject.LoadShaders(GetRandomFragmentShader(), GetRandomVertexShader(), null);
+      openGLObject.LoadShaders(OpenGLHelper.GetRandomFragmentShader(), OpenGLHelper.GetRandomVertexShader(), null);
       return openGLObject;
     }
 
@@ -478,25 +416,25 @@ namespace OpenGLNoise
       // Create and set up VAO
       VertexArrayObject = GL.GenVertexArray();
       GL.BindVertexArray(VertexArrayObject);
+
+      // positions, located at attribute index 0
+      GL.EnableVertexAttribArray(0);
+      GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
+      GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+      // normals, located at atteibute location 1
+      GL.EnableVertexAttribArray(1);
+      GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
+      GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+      // elevation, located at attribute index 2
+      if (WithNoise)
       {
-        // positions, located at attribute index 0
-        GL.EnableVertexAttribArray(0);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
-
-        // normals, located at atteibute location 1
-        GL.EnableVertexAttribArray(1);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
-
-        // elevation, located at attribute index 2
-        if (WithNoise)
-        {
-          GL.EnableVertexAttribArray(2);
-          GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-          GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, 0, 0);
-        }
+        GL.EnableVertexAttribArray(2);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
+        GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, 0, 0);
       }
+
       GL.BindVertexArray(0);
     }
   }

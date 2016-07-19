@@ -214,7 +214,9 @@ namespace OpenGLNoise
 		/// <param name="buildThem"></param>
 		private void UpdateLights(bool buildThem = true)
 		{
-			foreach (var light in Objects.OfType<LightObject>().ToArray())
+      if (!needToUpdateLights) return;
+      needToUpdateLights = false;
+      foreach (var light in Objects.OfType<LightObject>().ToArray())
 			{
 				Objects.Remove(light);
 				light.Dispose();
@@ -272,6 +274,7 @@ namespace OpenGLNoise
 		bool sign = true;
 		protected override void OnUpdateFrame(FrameEventArgs e)
 		{
+      UpdateLights();
 			computeFPS(e);
 			FillLightsUniformBuffer();
 			if (!RenderSettings.Paused && Bouncing)
@@ -342,10 +345,11 @@ namespace OpenGLNoise
     }
     #endregion DEBUG
 
-
+    bool needToUpdateLights = true;
     private void Lights_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			UpdateLights();
-		}
+      needToUpdateLights = true;
+
+    }
 	}
 }

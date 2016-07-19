@@ -152,13 +152,12 @@ namespace OpenGLNoise
 			}
 		}
 
-		public MaterialStruct ConvertIntoGLMaterialStruct()
+		public void ConvertIntoGLMaterialStruct(ref MaterialStruct materialStruct)
 		{
-			MaterialStruct material = Material.ConvertIntoGLStruct();
-			material.UsingNoise = UsingNoise;
-			material.Visible = Visible;
-			material.Size = 0;
-			return material;
+			Material.ConvertIntoGLStruct(ref materialStruct);
+      materialStruct.UsingNoise = UsingNoise;
+      materialStruct.Visible = Visible;
+      materialStruct.Size = 0;			
 		}
 	}
 }
