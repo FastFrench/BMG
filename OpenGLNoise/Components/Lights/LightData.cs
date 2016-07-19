@@ -143,6 +143,7 @@ namespace OpenGLNoise.Lights
       light.SpecularColor = LightDataCollection.Color2Vector4(SpecularColor);
       light.Position = new Vector3(Position);
       light.Visible = Visible;
+      light.MaxDistance = 5.0f;
       return light;
     }
   }

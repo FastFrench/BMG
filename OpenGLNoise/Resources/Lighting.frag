@@ -11,7 +11,8 @@ struct LightInfo
 	vec3 Ld;			//Diffuse light intensity
 	vec3 Ls;			//Specular light intensity
 	vec3 Position;		//Light Position in eye-coords
-	bool Visible;     
+	bool Visible;   
+	float MaxDistance;  // Max distance over which the light is not visible anymore
 };
 
 layout (std140) uniform Lights
@@ -86,6 +87,20 @@ void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3
 	diffuse = vec3(toto.Light[lightIndex].Ld) * Object.Kd * sDotN;
  
 	spec = vec3(toto.Light[lightIndex].Ls) * Object.Ks * pow( max( dot(r,v) , 0.0 ), Object.Shininess ); 
+	if (toto.Light[lightIndex].MaxDistance > 0.0)
+	{
+		float relativDistance = length(position - vec3(toto.Light[lightIndex].Position)) / toto.Light[lightIndex].MaxDistance;
+		if (relativDistance > 1.0) 
+		{
+			diffuse = vec3(0);
+			ambient = vec3(0);
+		}
+		else
+		{
+			diffuse *= (1-relativDistance);
+			ambient *= (1-relativDistance);
+		}
+	}
 }
 
 

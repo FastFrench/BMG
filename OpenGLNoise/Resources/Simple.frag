@@ -21,7 +21,6 @@ layout (std140) uniform GlobalSettings
 /// Main //
 ///////////
 void main() {	 
-    gl_FragColor = GlobalColor1;
-	gl_FragColor = GlobalColor1 * abs(mod(Global.Time, 2)-1) / 2;
-	
+    float maxC = max(max(GlobalColor1.r, GlobalColor1 .g), max(GlobalColor1.b, 0.01));
+	gl_FragColor = (GlobalColor1/maxC) * (0.6 + abs(mod(Global.Time, 2)-1) * 0.4);	
 }
