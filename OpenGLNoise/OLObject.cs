@@ -86,11 +86,7 @@ namespace OpenGLNoise
 
     protected int SizeUniformLocation { get; set; }
     protected int Color1UniformLocation { get; set; }
-    protected int Color2UniformLocation { get; set; }
-    protected int GammaUniformLocation { get; set; }
-
-    protected int ObjectDataUniform { get; set; }
-
+    protected int Color2UniformLocation { get; set; }    
     protected int LightsUniformBlockLocation { get; set; }
 
     void GenerateElevationNoise(double timeDelta)
@@ -201,8 +197,6 @@ namespace OpenGLNoise
       SizeUniformLocation = GL.GetUniformLocation(ProgramHandle, "Size");
       Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
       Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
-      GammaUniformLocation = GL.GetUniformLocation(ProgramHandle, "Gamma");
-      ObjectDataUniform = GL.GetUniformLocation(ProgramHandle, "Object.Ka");
       if (WithLightsArray)
       {
         LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "Lights"); // LightInfo and LightInfo[0] are both valid and equivalent
@@ -330,18 +324,8 @@ namespace OpenGLNoise
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error (OnRenderObject 2): " + error.ToString());
       if (Parent != null)
-      {
-        GL.Uniform1(GammaUniformLocation, Parent.RenderSettings.Gamma);
-        error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (OnRenderObject 2-1): " + error.ToString() + " (location:"+GammaUniformLocation+")");
-        if (ObjectDataUniform != -1)
-          Material.SetUniforms(ProgramHandle);
-        error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (OnRenderObject 2-2): " + error.ToString() + " (location:" + ObjectDataUniform + ")");
-        //Material.SetUniforms(ObjectDataUniform);
-      }
+        Material.SetUniforms(ProgramHandle);        
+      
       error = GL.GetError();
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error (OnRenderObject 3): " + error.ToString());

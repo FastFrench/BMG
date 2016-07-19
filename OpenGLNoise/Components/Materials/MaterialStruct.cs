@@ -23,6 +23,10 @@ namespace OpenGLNoise.Materials
     public bool Visible { get; set; }
     public bool UsingNoise { get; set; }
     public float Size { get; set; }
+
+    public Vector3 Speed { get; set; }
+    public float StartingTime { get; set; }
+
     const string uniformName = "Object.";
     readonly static string[] uniformFields = {
       "Ka",
@@ -31,10 +35,12 @@ namespace OpenGLNoise.Materials
       "Shininess",
       "Visible",
       "UsingNoise",
-      "Size" };
+      "Size",
+      "Speed",
+      "StartingTime"};
     enum uniformNamesEnum
     {
-      Ka, Kd, Ks, Shininess, Visible, UsingNoise, Size
+      Ka, Kd, Ks, Shininess, Visible, UsingNoise, Size, Speed, StartingTime
     };
     Dictionary<uniformNamesEnum, int> uniformLocation;
     static int? baseUniformLocation = null;
@@ -52,72 +58,27 @@ namespace OpenGLNoise.Materials
       return uniformLocation[nameEnum];
     }
 
+    void SetUniformValue(int programHandle, uniformNamesEnum field, object data)
+    {
+      int fieldLocation = location(programHandle, field);
+      if (fieldLocation >= 0)
+      {
+        OpenGLHelper.SetUniformValue(fieldLocation, data);
+        OpenGLHelper.CheckError("SetUniforms " + field);
+      }
+    }
+
     public void SetUniforms(int programHandle)
     {
-      int fieldLocation = location(programHandle, uniformNamesEnum.Ka);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform3(fieldLocation, AmbientReflectivity);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-        {
-          Debug.Print("OpenGL error (SetUniforms AmbientReflectivity): " + error.ToString());
-        }
-      }
-
-      fieldLocation = location(programHandle, uniformNamesEnum.Kd);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform3(fieldLocation, DiffuseReflectivity);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (SetUniforms DiffuseReflectivity): " + error.ToString());
-      }
-
-      fieldLocation = location(programHandle, uniformNamesEnum.Ks);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform3(fieldLocation, SpecularReflectivity);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (SetUniforms SpecularReflectivity): " + error.ToString());
-      }
-
-      fieldLocation = location(programHandle, uniformNamesEnum.Shininess);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform1(fieldLocation, Shininess);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (SetUniforms Shininess): " + error.ToString());
-      }
-
-      fieldLocation = location(programHandle, uniformNamesEnum.Visible);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform1(fieldLocation, Visible ? 1 : 0);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (SetUniforms Visible): " + error.ToString());
-      }
-
-      fieldLocation = location(programHandle, uniformNamesEnum.UsingNoise);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform1(fieldLocation, UsingNoise ? 1 : 0);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (SetUniforms UsingNoise): " + error.ToString());
-      }
-
-      fieldLocation = location(programHandle, uniformNamesEnum.Size);
-      if (fieldLocation >= 0)
-      {
-        GL.Uniform1(fieldLocation, Size);
-        var error = GL.GetError();
-        if (error != ErrorCode.NoError)
-          Debug.Print("OpenGL error (SetUniforms Size): " + error.ToString());
-      }
+      SetUniformValue(programHandle, uniformNamesEnum.Ka, AmbientReflectivity);
+      SetUniformValue(programHandle, uniformNamesEnum.Kd, DiffuseReflectivity);
+      SetUniformValue(programHandle, uniformNamesEnum.Ks, SpecularReflectivity);
+      SetUniformValue(programHandle, uniformNamesEnum.Shininess, Shininess);
+      SetUniformValue(programHandle, uniformNamesEnum.Visible, Visible);
+      SetUniformValue(programHandle, uniformNamesEnum.UsingNoise, UsingNoise);
+      SetUniformValue(programHandle, uniformNamesEnum.Size, Size);
+      SetUniformValue(programHandle, uniformNamesEnum.Speed, Speed);
+      SetUniformValue(programHandle, uniformNamesEnum.StartingTime, StartingTime);
     }
   }
 }
