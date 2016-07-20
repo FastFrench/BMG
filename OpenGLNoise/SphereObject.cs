@@ -14,11 +14,11 @@ namespace OpenGLNoise
     public SphereObject(Vector3 center, float radius, bool noDeformation = false, bool withLight = true, bool withNoise = false)
   : base(noDeformation ? 0 : radius, null, null, withNoise, withLight)
     {
-      this.radius = radius;
-      this.center = center;
+      this.Radius = radius;
+      this.Center = center;
       WithLightsArray = withLight;
       WithNoise = withNoise;
-      Size = noDeformation ? 0 : 1;
+      DeformationAmplitude = noDeformation ? 0 : 1;
       Color1 = Color.Red;
       Color2 = Color.Black;
     }
@@ -36,17 +36,15 @@ namespace OpenGLNoise
     protected override int upperBoundX { get { return longitudeBands; } }
     protected override int upperBoundZ { get { return latitudeBands; } }
 
-    public float radius { get; private set; }
-    public Vector3 center { get; private set; }
-
+    
     List<Vector3> positions;
     List<Vector3> normals;
     List<int> indices;
 
     void CreateSphereData(float quality = _quality)
     {
-      latitudeBands = Math.Max(4, (int)(quality * radius));
-      longitudeBands = Math.Max(8, (int)(quality * 2 * radius));
+      latitudeBands = Math.Max(4, (int)(quality * Radius));
+      longitudeBands = Math.Max(8, (int)(quality * 2 * Radius));
 
       int i_basis = indices.Count;
       for (double latitudeNum = 0; latitudeNum <= latitudeBands; latitudeNum++)
@@ -65,7 +63,7 @@ namespace OpenGLNoise
           var pz = cosTheta;
 
           var normal = new Vector3((float)px, (float)py, (float)pz);
-          var position = center + normal * radius;
+          var position = Center + normal * Radius;
           normals.Add(normal);
           positions.Add(position);
         }

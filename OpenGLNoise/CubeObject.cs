@@ -13,8 +13,8 @@ namespace OpenGLNoise
     public CubeObject(Vector3 center, float radius, bool noDeformation = false, bool withLight = true, bool withNoise = false)
     : base(noDeformation ? 0 : radius, null, null, withNoise, withLight)
     {
-      this.radius = radius;
-      this.center = center;
+      this.Radius = radius;
+      this.Center = center;
     }
     public override void BuildObject()
     {
@@ -29,67 +29,64 @@ namespace OpenGLNoise
 
     protected override int upperBoundX { get { return longitudeBands; } }
     protected override int upperBoundZ { get { return latitudeBands; } }
-
-    public float radius { get; private set; }
-    public Vector3 center { get; private set; }
-
+    
     List<Vector3> positions;
     List<Vector3> normals;
     List<int> indices;
 
     void CreateCubeData(float quality = 1/*_quality*/)
     {
-      this.latitudeBands = Math.Max(1, (int)(quality * radius));
-      this.longitudeBands = Math.Max(1, (int)(quality * radius));
+      this.latitudeBands = Math.Max(1, (int)(quality * Radius));
+      this.longitudeBands = Math.Max(1, (int)(quality * Radius));
 
       for (int face = 0; face < 6; face++)
         for (double latitudeNum = 0; latitudeNum <= latitudeBands; latitudeNum++)
           for (double longitudeNum = 0; longitudeNum <= longitudeBands; longitudeNum++)
           {
-            float v1 = (float)(-radius + (2 * radius * latitudeNum) / latitudeBands);
-            float v2 = (float)(-radius + (2 * radius * longitudeNum) / longitudeBands);
+            float v1 = (float)(-Radius + (2 * Radius * latitudeNum) / latitudeBands);
+            float v2 = (float)(-Radius + (2 * Radius * longitudeNum) / longitudeBands);
             float px = 0.0f, py = 0.0f, pz = 0.0f;
             Vector3 normal = new Vector3();
             switch (face)
             {
               case 0: // top
-                py = radius;
+                py = Radius;
                 px = v1;
                 pz = v2;
                 normal = new Vector3(0, 1, 0);
                 break;
               case 1: // bottom
-                py = -radius;
+                py = -Radius;
                 px = v1;
                 pz = v2;
                 normal = new Vector3(0, -1, 0);
                 break;
               case 2:
-                px = -radius;
+                px = -Radius;
                 py = v1;
                 pz = v2;
                 normal = new Vector3(-1, 0, 0);
                 break;
               case 3:
-                px = radius;
+                px = Radius;
                 py = v1;
                 pz = v2;
                 normal = new Vector3(1, 0, 0);
                 break;
               case 4:
-                pz = -radius;
+                pz = -Radius;
                 px = v1;
                 py = v2;
                 normal = new Vector3(0, 0, -1);
                 break;
               case 5:
-                pz = radius;
+                pz = Radius;
                 px = v1;
                 py = v2;
                 normal = new Vector3(0, 0, 1);
                 break;
             }
-            var position = new Vector3(px, py, pz) + center;
+            var position = new Vector3(px, py, pz) + Center;
             normals.Add(normal);
             positions.Add(position);
           }

@@ -81,26 +81,24 @@ void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3
 	vec3 v = normalize( -position );
 	vec3 r = reflect( -s, n );
 
-	ambient = vec3(toto.Light[lightIndex].La) * Object.Ka;
-
-	float sDotN = max( dot( s, n ), 0.0 );
-	diffuse = vec3(toto.Light[lightIndex].Ld) * Object.Kd * sDotN;
- 
-	spec = vec3(toto.Light[lightIndex].Ls) * Object.Ks * pow( max( dot(r,v) , 0.0 ), Object.Shininess ); 
+	float ratio = 1;		
 	if (toto.Light[lightIndex].MaxDistance > 0.0)
 	{
 		float relativDistance = length(position - vec3(toto.Light[lightIndex].Position)) / toto.Light[lightIndex].MaxDistance;
-		if (relativDistance > 1.0) 
-		{
-			diffuse = vec3(0);
-			ambient = vec3(0);
-		}
+		float ratio = 0;
+		if (relativDistance < 2.2) 
+		if (relativDistance < 0.2) 
+			ratio = 2;
 		else
-		{
-			diffuse *= (1-relativDistance);
-			ambient *= (1-relativDistance);
-		}
+			ratio = (2.2-relativDistance);
 	}
+
+	ambient = vec3(toto.Light[lightIndex].La) * Object.Ka * ratio;
+
+	float sDotN = max( dot( s, n ), 0.0 );
+	diffuse = vec3(toto.Light[lightIndex].Ld) * Object.Kd * sDotN * ratio;
+ 
+	spec = vec3(toto.Light[lightIndex].Ls) * Object.Ks * pow( max( dot(r,v) , 0.0 ), Object.Shininess ) * ratio; 
 }
 
 

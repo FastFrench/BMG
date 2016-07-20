@@ -21,31 +21,7 @@ namespace OpenGLNoise
     public RenderTeaPot(RenderWindowSettings settings) : base(settings)
     {
 
-    }
-    protected override void OnKeyPress(KeyPressEventArgs e)
-    {
-      //if (e.KeyChar == ' ')
-      //	DisplayNormals = !DisplayNormals;
-      //Thread.Sleep(2000);
-      switch (e.KeyChar)
-      {
-        case '+':
-          AddARandomObject();
-          BuildObjects();
-          break;
-        case '-':
-          RemoveASphere();
-          BuildObjects();
-          break;
-        case ' ':
-          RenderSettings.Bouncing = !RenderSettings.Bouncing;
-          break;
-        default:
-          CreateObjects();
-          break;
-      }
-      base.OnKeyPress(e);
-    }
+    }    
 
     override protected void CreateObjects()
     {

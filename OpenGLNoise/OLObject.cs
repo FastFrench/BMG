@@ -37,9 +37,11 @@ namespace OpenGLNoise
     {
       WithLightsArray = withLightsArray;
       WithNoise = withNoise;
-      Size = size;
+      DeformationAmplitude = size;
       Color1 = color1 ?? Color.Red;
       Color2 = color2 ?? Color.Black;
+      Center = Vector3.Zero;
+      Radius = 1;
     }
     public Vector3[] Positions { get; set; }
     public Vector3[] Normals { get; set; }
@@ -103,6 +105,9 @@ namespace OpenGLNoise
     protected virtual int upperBoundX { get; set; }
     protected virtual int lowerBoundZ { get { return 0; } set { } }
     protected virtual int upperBoundZ { get; set; }
+    public Vector3 Center { get; protected set; }
+    public float Radius { get; protected set; }
+
     void SetupNoiseMapBuilder()
     {
       // Set up noise module tree
@@ -140,6 +145,8 @@ namespace OpenGLNoise
 
     #endregion Noise
 
+
+
     Stopwatch sw = Stopwatch.StartNew();
     /// <summary>
     /// Called on OnUpdateFrame
@@ -148,7 +155,7 @@ namespace OpenGLNoise
     {
       double ratio = (sw.ElapsedMilliseconds % 2000) / 1000.0;
       if (ratio > 1.0) ratio = 2 - ratio;
-      AjustedDeformationSize = (float)(Size * ratio);
+      AjustedDeformationSize = (float)(DeformationAmplitude * ratio);
       var error = GL.GetError();
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error(0): " + error.ToString());
@@ -171,6 +178,13 @@ namespace OpenGLNoise
         GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         Normals = null;
+      }
+      if (forcePositionUpdate)
+      {
+        GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
+        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Positions.Length * Vector3.SizeInBytes), Positions, BufferUsageHint.StaticDraw);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        forcePositionUpdate = false;
       }
       error = GL.GetError();
       if (error != ErrorCode.NoError)
@@ -287,7 +301,7 @@ namespace OpenGLNoise
     public Color Color1 { get; set; }
     public Color Color2 { get; set; }
 
-    public float Size { get; set; }
+    public float DeformationAmplitude { get; set; }
     public float AjustedDeformationSize { get; set; }
 
     public MaterialStruct Material;
@@ -344,7 +358,7 @@ namespace OpenGLNoise
     /// <summary>
     /// 
     /// </summary>
-    virtual public void OnKeyPressed()
+    virtual public void OnKeyPressed(OpenTK.KeyPressEventArgs e)
     {
 
     }
@@ -440,6 +454,23 @@ namespace OpenGLNoise
       }
 
       GL.BindVertexArray(0);
+    }
+
+    bool forcePositionUpdate = false;
+    public void Move(Vector3 newCenter)
+    {
+      for (int i = 0; i < Positions.Length; i++)
+        Positions[i] += newCenter - Center;
+      Center = newCenter;
+      forcePositionUpdate = true;
+    }
+
+    public void Resize(float newRadius)
+    {
+      for (int i = 0; i < Positions.Length; i++)
+        Positions[i] = ((Positions[i] - Center) / Radius) * newRadius + Center;
+      Radius = newRadius;
+      forcePositionUpdate = true;
     }
   }
 }

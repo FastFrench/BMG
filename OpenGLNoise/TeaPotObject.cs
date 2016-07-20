@@ -19,9 +19,9 @@ namespace OpenGLNoise
     public TeaPotObject()
         : base(1.0f, null, null, false)
     {
-      Size = 0;
+      DeformationAmplitude = 0;      
     }
-    static bool ReadData()
+    bool ReadData()
     {
       string[] lines = Resources.teapot.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
       List<Vector3> vertList = new List<Vector3>();
@@ -81,25 +81,30 @@ namespace OpenGLNoise
         }
       }
 
-      // Step 1bis: normalize the eitem
+      // Step 1bis: normalize the item, then grow at the right size and move where expected
       if (vertList.Count() > 0)
       {
-        float distSumSquared = 0;
+        float distSum = 0;
         
-        // Center the item (so that the center is 0,0,0)
-        Vector3 center = verticeSumVector / vertList.Count();
+        // Center the item (so that the center is as wanted)
+        Vector3 currentCenter = verticeSumVector / vertList.Count();
         for (int i = 0; i < vertList.Count(); i++)
         {
-          vertList[i] -= center;
-          distSumSquared += vertList[i].LengthSquared;
+          vertList[i] -= currentCenter; // Move the Vertex to have a center position at 0,0,0
+          distSum += vertList[i].Length; // Check the distance from the center
         }
-        distSumSquared /= vertList.Count();
-        float dist = (float)Math.Sqrt(distSumSquared);
-
-        // Normalize the item (so that the average distance to the center is 1)
+        distSum /= vertList.Count();
+        
+        // Normalize the item (so that the average distance to the center is 1), then apply the wanted size (Radius)
         for (int i = 0; i < vertList.Count(); i++)
         {
-          vertList[i] /= distSumSquared;          
+          vertList[i] /= distSum;
+          vertList[i] *= Radius;
+        }
+
+        for (int i = 0; i < vertList.Count(); i++)
+        {
+          vertList[i] += Center; // Move the Vertex to have a center position according to the Center vector
         }
       }
 
@@ -159,7 +164,7 @@ namespace OpenGLNoise
       Positions = vertices;
       Normals = normals;
       Indices = indices;
-      Size = 0;
+      DeformationAmplitude = 0;
     }
 
     public override void BuildObject()

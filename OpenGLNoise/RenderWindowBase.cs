@@ -126,7 +126,7 @@ namespace OpenGLNoise
 
 		protected Random rnd = new Random();
 
-		protected void RemoveASphere()
+		protected void RemoveAnObject()
 		{
 			if (Objects.Count == 0) return;
 			var sphereToRemove = Objects[rnd.Next(Objects.Count)];
@@ -263,8 +263,33 @@ namespace OpenGLNoise
 			ModelMatrix = Matrix4.CreateScale(1.0f);
 
 		}
+    protected override void OnKeyPress(OpenTK.KeyPressEventArgs e)
+    {
+      //if (e.KeyChar == ' ')
+      //	DisplayNormals = !DisplayNormals;
+      //Thread.Sleep(2000);
+      switch (e.KeyChar)
+      {
+        case '+':
+          AddARandomObject();
+          BuildObjects();
+          break;
+        case '-':
+          RemoveAnObject();
+          BuildObjects();
+          break;
+        case ' ':
+          RenderSettings.Bouncing = !RenderSettings.Bouncing;
+          break;
+        default:
+          break;
+      }
+      foreach (var obj in Objects)
+        obj.OnKeyPressed(e);     
+      base.OnKeyPress(e);
+    }
 
-		protected override void OnUnload(EventArgs e)
+    protected override void OnUnload(EventArgs e)
 		{
 			//renderer.Dispose();
 			base.OnUnload(e);
