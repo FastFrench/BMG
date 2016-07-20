@@ -16,10 +16,9 @@ namespace OpenGLNoise
       this.Radius = radius;
       this.Center = center;
     }
-    public override void BuildObject()
+    protected override void InternalBuildObject()
     {
       CreateVertexData();
-      base.BuildObject();
     }
 
 

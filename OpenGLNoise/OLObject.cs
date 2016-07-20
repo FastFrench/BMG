@@ -60,15 +60,22 @@ namespace OpenGLNoise
 
     static protected Random rnd = new Random();
 
+    virtual protected void InternalBuildObject()
+    {
+
+    }
     /// <summary>
     /// Initial building of the object (usually called in OnLoad or chen the object appears)
     /// Base class method should be called last
     /// </summary>
-    virtual public void BuildObject()
+    public void BuildObject()
     {
+      Stopwatch sw = Stopwatch.StartNew();
+      InternalBuildObject();
       SetupBuffers();
       if (WithNoise)
         SetupNoiseMapBuilder();
+      Debug.Print("{0} builded in {1:N3}", this.GetType().Name, sw.Elapsed.TotalMilliseconds);
     }
 
     /// <summary>
@@ -172,15 +179,17 @@ namespace OpenGLNoise
       if (error != ErrorCode.NoError)
         Debug.Print("OpenGL error (1): " + error.ToString());
       // Update normals
-      if (Normals != null)
+      if (forceNormalUpdate)
       {
+        Debug.Assert(Normals != null);
         GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
         GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        Normals = null;
+        forceNormalUpdate = false;
       }
       if (forcePositionUpdate)
       {
+        Debug.Assert(Positions != null);
         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
         GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Positions.Length * Vector3.SizeInBytes), Positions, BufferUsageHint.StaticDraw);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -366,37 +375,40 @@ namespace OpenGLNoise
     int VertexArrayObject;
     int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
 
+    private static OpenGLObject Construct(OpenGLObject openGLObject, RenderWindowBase parent)
+    {
+      Stopwatch sw = Stopwatch.StartNew();
+
+      if (openGLObject == null) return null;
+      openGLObject.Parent = parent;
+      openGLObject.Color1 = OpenGLHelper.GetRandomColor();
+      do
+      {
+        openGLObject.Color2 = OpenGLHelper.GetRandomColor();
+      } while (openGLObject.Color2 == openGLObject.Color1);
+      openGLObject.LoadShaders(OpenGLHelper.GetRandomFragmentShader(), OpenGLHelper.GetRandomVertexShader(), null);
+      openGLObject.BuildObject();
+      Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
+      return openGLObject;
+    }
 
     //Random rnd = new Random();
     public static OpenGLObject CreateObject(float px, float py, float pz, float radius, RenderWindowBase parent)
     {
-      OpenGLObject openGLObject = null;
       if (rnd.Next(2) == 1)
-        openGLObject = new SphereObject(new Vector3(px, py, pz), radius * 2, true);
+        return Construct(new SphereObject(new Vector3(px, py, pz), radius * 2, true), parent);
       else
-        openGLObject = new CubeObject(new Vector3(px, py, pz), radius * 2, true);
-      openGLObject.Parent = parent;
-      openGLObject.Color1 = OpenGLHelper.GetRandomColor();
-      do
-      {
-        openGLObject.Color2 = OpenGLHelper.GetRandomColor();
-      } while (openGLObject.Color2 == openGLObject.Color1);
-      openGLObject.LoadShaders(OpenGLHelper.GetRandomFragmentShader(), OpenGLHelper.GetRandomVertexShader(), null);
-      return openGLObject;
+        return Construct(new CubeObject(new Vector3(px, py, pz), radius * 2, true), parent);
     }
 
     public static OpenGLObject CreateTeapot(float px, float py, float pz, float radius, RenderWindowBase parent)
     {
-      OpenGLObject openGLObject = null;
-      openGLObject = new TeaPotObject();
-      openGLObject.Parent = parent;
-      openGLObject.Color1 = OpenGLHelper.GetRandomColor();
-      do
-      {
-        openGLObject.Color2 = OpenGLHelper.GetRandomColor();
-      } while (openGLObject.Color2 == openGLObject.Color1);
-      openGLObject.LoadShaders(OpenGLHelper.GetRandomFragmentShader(), OpenGLHelper.GetRandomVertexShader(), null);
-      return openGLObject;
+      return Construct(new TeaPotObject(new Vector3(px, py, pz), radius, false, OpenGLHelper.GetRandomColor(), null), parent);      
+    }
+
+    public static OpenGLObject CreateLight(Vector3 pos, Color color)
+    {
+      return Construct(new LightObject(pos, color), null);
     }
 
     void SetupBuffers()
@@ -457,6 +469,7 @@ namespace OpenGLNoise
     }
 
     bool forcePositionUpdate = false;
+    bool forceNormalUpdate = false;
     public void Move(Vector3 newCenter)
     {
       for (int i = 0; i < Positions.Length; i++)

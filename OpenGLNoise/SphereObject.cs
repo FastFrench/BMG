@@ -22,10 +22,10 @@ namespace OpenGLNoise
       Color1 = Color.Red;
       Color2 = Color.Black;
     }
-    public override void BuildObject()
+
+    protected override void InternalBuildObject()
     {
-      CreateVertexData();
-      base.BuildObject();
+      CreateVertexData();      
     }
 
     const float _sphereRadius = 0.40f;//1.6f;

@@ -129,9 +129,10 @@ namespace OpenGLNoise
 		protected void RemoveAnObject()
 		{
 			if (Objects.Count == 0) return;
-			var sphereToRemove = Objects[rnd.Next(Objects.Count)];
-			sphereToRemove.Dispose();
-			Objects.Remove(sphereToRemove);
+      var removed = Objects.Last(obj => !(obj is LightObject));
+      if (removed == null) return;
+      removed.Dispose();
+			Objects.Remove(removed);
 
 		}
 
@@ -175,16 +176,16 @@ namespace OpenGLNoise
 			return fps;
 		}
 
-		virtual protected void BuildObjects()
-		{
-			// Create sphere data and set up buffers
-			foreach (var obj in Objects)
-				obj.BuildObject();
-			//CreateVertexData();
-		}
+		//virtual protected void BuildObjects()
+		//{
+		//	// Create sphere data and set up buffers
+		//	foreach (var obj in Objects)
+		//		obj.BuildObject();
+		//	//CreateVertexData();
+		//}
 
 
-		protected void AddObject(float px, float py, float pz, float radius)
+		protected virtual void AddObject(float px, float py, float pz, float radius)
 		{
 			var olObject = OpenGLObject.CreateObject(px, py, pz, radius, this);
 			Objects.Add(olObject);
@@ -225,12 +226,7 @@ namespace OpenGLNoise
 			FillLightsUniformBuffer();
 			foreach (var light in RenderSettings.Lights)
 				if (light.Visible)
-				{
-					var lightObj = new LightObject(light.Position, light.GlobalColor);
-					lightObj.LoadShaders(Resources.Simple_frag, Resources.Simple_vert, null);
-					lightObj.BuildObject();
-					Objects.Add(lightObj);
-				}
+					Objects.Add(OpenGLObject.CreateLight(light.Position, light.GlobalColor));
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -246,9 +242,8 @@ namespace OpenGLNoise
       GL.DebugMessageCallback(DebugCallbackInstance, IntPtr.Zero);
       #endregion DEBUG
 
-
       CreateObjects();
-			BuildObjects();
+			//BuildObjects();
 			frames = 0;
 
 			//renderer = new TextRenderer(Width, Height);
@@ -272,11 +267,11 @@ namespace OpenGLNoise
       {
         case '+':
           AddARandomObject();
-          BuildObjects();
+          //BuildObjects();
           break;
         case '-':
           RemoveAnObject();
-          BuildObjects();
+          //BuildObjects();
           break;
         case ' ':
           RenderSettings.Bouncing = !RenderSettings.Bouncing;
