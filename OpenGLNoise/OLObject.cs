@@ -375,7 +375,7 @@ namespace OpenGLNoise
     int VertexArrayObject;
     int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
 
-    private static OpenGLObject Construct(OpenGLObject openGLObject, RenderWindowBase parent)
+    private static OpenGLObject Construct(OpenGLObject openGLObject, RenderWindowBase parent, byte[] fragmentShader=null, byte[] vertexShader=null)
     {
       Stopwatch sw = Stopwatch.StartNew();
 
@@ -386,7 +386,7 @@ namespace OpenGLNoise
       {
         openGLObject.Color2 = OpenGLHelper.GetRandomColor();
       } while (openGLObject.Color2 == openGLObject.Color1);
-      openGLObject.LoadShaders(OpenGLHelper.GetRandomFragmentShader(), OpenGLHelper.GetRandomVertexShader(), null);
+      openGLObject.LoadShaders(fragmentShader??OpenGLHelper.GetRandomFragmentShader(), vertexShader??OpenGLHelper.GetRandomVertexShader(), null);
       openGLObject.BuildObject();
       Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
       return openGLObject;
@@ -408,7 +408,7 @@ namespace OpenGLNoise
 
     public static OpenGLObject CreateLight(Vector3 pos, Color color)
     {
-      return Construct(new LightObject(pos, color), null);
+      return Construct(new LightObject(pos, color), null, Resources.Simple_frag, Resources.Simple_vert);
     }
 
     void SetupBuffers()
