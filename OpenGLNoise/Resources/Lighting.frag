@@ -77,15 +77,15 @@ out vec4 FragColor;
 void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )
 {
 	vec3 n = normalize( -norm );
-	vec3 s = normalize( position - vec3(toto.Light[lightIndex].Position));
+	vec3 s = normalize( toto.Light[lightIndex].Position - position);
 	vec3 v = normalize( -position );
 	vec3 r = reflect( -s, n );
 
 	float ratio = 1;		
 	if (toto.Light[lightIndex].MaxDistance > 0.0)
 	{
-		float relativDistance = length(position - vec3(toto.Light[lightIndex].Position)) / toto.Light[lightIndex].MaxDistance;
-		float ratio = 0;
+		float relativDistance = length(position - toto.Light[lightIndex].Position) / toto.Light[lightIndex].MaxDistance;
+		ratio = 0;
 		if (relativDistance < 2.2) 
 		if (relativDistance < 0.2) 
 			ratio = 2;
