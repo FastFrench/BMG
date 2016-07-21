@@ -392,6 +392,9 @@ namespace OpenGLNoise
       openGLObject.LoadShaders(fragmentShader ?? OpenGLHelper.GetRandomFragmentShader(), vertexShader ?? OpenGLHelper.GetRandomVertexShader(), null);
       openGLObject.BuildObject();
       Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
+      openGLObject.DestructionTime = null;
+      openGLObject.Speed = Vector3.Zero;
+      openGLObject.StartingTime = parent == null ? 0 : parent.GlobalSettingsStruct.Time;
       return openGLObject;
     }
 
@@ -471,6 +474,11 @@ namespace OpenGLNoise
       GL.BindVertexArray(0);
     }
 
+    /// <summary>
+    /// This is called when DestructionTime is reached (evaluated during frame update)
+    /// </summary>
+    public event Action OnDestroyed;
+
     bool forcePositionUpdate = false;
     bool forceNormalUpdate = false;
     public void Move(Vector3 newCenter)
@@ -479,6 +487,7 @@ namespace OpenGLNoise
         Positions[i] += newCenter - Center;
       Center = newCenter;
       forcePositionUpdate = true;
+      StartingTime = Parent.GlobalSettingsStruct.Time;
     }
 
     public void Resize(float newRadius)
@@ -488,5 +497,27 @@ namespace OpenGLNoise
       Radius = newRadius;
       forcePositionUpdate = true;
     }
+
+    public Vector3 Speed { get; private set; }
+    public float StartingTime { get; private set; }
+    public float? DestructionTime { get; set; }
+    public Vector3 CurrentPosition {
+      get
+      {
+        if (Speed == Vector3.Zero || Parent == null)
+          return Center;
+        return Center + (Parent.GlobalSettingsStruct.Time - StartingTime) * Speed;
+      }
+    }
+    public void SetSpeed(Vector3 speed)
+    {
+      Move(CurrentPosition);      
+      Speed = speed;
+    }
+    public void MoveTo(Vector3 destination, float timeToReachDestination)
+    {
+
+    }
+
   }
 }

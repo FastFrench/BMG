@@ -6,13 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using OpenGLNoise.Components.Lights;
 using OpenTK;
 
 namespace OpenGLNoise.Lights
 {
+  [Serializable]
   public class LightData : INotifyPropertyChanged
   {
+    public LightData()
+    {      
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
     private void Notify(string memberName)
     {
@@ -27,9 +33,20 @@ namespace OpenGLNoise.Lights
     Vector3 _position;
     bool _visible;
 
+    const float AMBIENT_RATIO = 0.33f;
+    const float DIFFUSE_RATIO = 0.67f;
+    const float SPECULAR_RATIO = 1.00f;
+
+    private Color ApplyRatio(Color color, float ratio)
+    {
+      return Color.FromArgb(color.A, (byte)(color.R * ratio), (byte)(color.G * ratio), (byte)(color.B * ratio));
+    }
     public LightData(Color color, Vector3 position, bool visible)
     {
-      GlobalColor = color;
+
+      _ambientColor = ApplyRatio(color, AMBIENT_RATIO);
+      _diffuseColor = ApplyRatio(color, DIFFUSE_RATIO);
+      _specularColor = ApplyRatio(color, SPECULAR_RATIO);
       _position = position;
       _visible = visible;
     }
@@ -39,6 +56,7 @@ namespace OpenGLNoise.Lights
       return (byte)(((int)b1 + b2 + b3) / 3);
     }
 
+    [XmlIgnore]
     public Color GlobalColor
     {
       get
@@ -47,12 +65,17 @@ namespace OpenGLNoise.Lights
       } 
       set
       {
-        AmbientColor = value;
-        DiffuseColor = value;
-        SpecularColor = value;
+        _ambientColor = ApplyRatio(value, AMBIENT_RATIO);
+        _diffuseColor = ApplyRatio(value, DIFFUSE_RATIO);
+        _specularColor = ApplyRatio(value, SPECULAR_RATIO);
+        Notify("AmbientColor");
+        Notify("DiffuseColor");
+        Notify("SpecularColor");
+        Notify("GlobalColor");
       }     
     }
 
+    [XmlIgnore]
     public Color AmbientColor
     {
       get
@@ -70,6 +93,7 @@ namespace OpenGLNoise.Lights
       }
     }
 
+    [XmlIgnore]
     public Color DiffuseColor
     {
       get
@@ -86,6 +110,8 @@ namespace OpenGLNoise.Lights
         }
       }
     }
+
+    [XmlIgnore]
     public Color SpecularColor
     {
       get
@@ -103,6 +129,26 @@ namespace OpenGLNoise.Lights
       }
     }
 
+    #region Color serialization
+    [XmlElement("SpecularColor")]
+    public string SpecularColorStr
+    {
+      get { return ColorTranslator.ToHtml(_specularColor); }
+      set { _specularColor = ColorTranslator.FromHtml(value); }
+    }
+    [XmlElement("DiffuseColor")]
+    public string DiffuseColorStr
+    {
+      get { return ColorTranslator.ToHtml(_diffuseColor); }
+      set { _diffuseColor = ColorTranslator.FromHtml(value); }
+    }
+    [XmlElement("AmbientColor")]
+    public string AmbientColorStr
+    {
+      get { return ColorTranslator.ToHtml(_ambientColor); }
+      set { _ambientColor = ColorTranslator.FromHtml(value); }
+    }
+    #endregion
     public Vector3 Position
     {
       get

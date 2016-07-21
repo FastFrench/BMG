@@ -33,7 +33,7 @@ namespace OpenGLNoise
 		public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
 		public const int SETTINGS_BUFFER_INDEX = 1; // Global Settings : Index to use for the buffer binding (All good things start at 0 )
 		LightCollectionStruct LightsUBOData;
-		SettingsStruct GlobalSettingsStruct;
+    public SettingsStruct GlobalSettingsStruct;
 		void InitLightAndSettingsBuffer()
 		{
 			LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(Gamma); // Create actual data

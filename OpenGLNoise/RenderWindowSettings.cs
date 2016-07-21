@@ -1,28 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using OpenGLNoise.Lights;
 using OpenGLNoise.Materials;
 using OpenTK.Graphics.OpenGL4;
 
 namespace OpenGLNoise
 {
-	public class RenderWindowSettings : INotifyPropertyChanged, IDisposable
+  [Serializable]
+  public class RenderWindowSettings : INotifyPropertyChanged, IDisposable
 	{
-		public BindingSource DataBindingSource { get; private set; }
+    [XmlIgnoreAttribute]
+    public BindingSource DataBindingSource { get; private set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void Notify(string memberName)
 		{
 			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
+				PropertyChanged(this, new PropertyChangedEventArgs(memberName));      
 		}
 
-		public RenderWindowSettings()
+    public static bool Save(RenderWindowSettings settings, string fileName)
+    {
+      XmlSerializer xs = new XmlSerializer(typeof(RenderWindowSettings), new Type[] { typeof(LightDataCollection)/*, typeof(LightData)*/, typeof(MaterialData), typeof(Color) });
+      using (StreamWriter wr = new StreamWriter(fileName))
+      {
+        xs.Serialize(wr, settings);
+      }
+      return true;
+    }
+
+    public static RenderWindowSettings Load(string fileName)
+    {
+      if (!File.Exists(fileName)) return null;
+      XmlSerializer xs = new XmlSerializer(typeof(RenderWindowSettings), new Type[] { typeof(LightDataCollection), typeof(LightData), typeof(MaterialData), typeof(Color) });
+      using (StreamReader rd = new  StreamReader(fileName))
+      {
+        return xs.Deserialize(rd) as RenderWindowSettings;
+      }
+    }
+
+    public RenderWindowSettings()
 		{
 			_gamma = 2.2f;
 			Lights = new LightDataCollection();
@@ -31,7 +57,13 @@ namespace OpenGLNoise
 			Visible = true;
 		}
 
-		private void Lights_ListChanged(object sender, ListChangedEventArgs e)
+    [OnDeserialized()]
+    public void PostLoad(StreamingContext context)
+    {
+      DataBindingSource = new BindingSource() { DataSource = this };
+    }
+
+    private void Lights_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			Notify("Lights");
 		}

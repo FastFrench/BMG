@@ -6,11 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using OpenGLNoise.Lights;
 using OpenTK;
 
 namespace OpenGLNoise.Materials
 {
+  [Serializable]
   public class MaterialData : INotifyPropertyChanged
   {
     public event PropertyChangedEventHandler PropertyChanged;
@@ -42,6 +44,7 @@ namespace OpenGLNoise.Materials
       return (byte)(((int)b1 + b2 + b3) / 3);
     }
 
+    [XmlIgnore]
     public Color GlobalColor
     {
       get
@@ -56,6 +59,7 @@ namespace OpenGLNoise.Materials
       }     
     }
 
+    [XmlIgnore]
     public Color AmbientReflectivity
     {
       get
@@ -73,6 +77,7 @@ namespace OpenGLNoise.Materials
       }
     }
 
+    [XmlIgnore]
     public Color DiffuseReflectivity
     {
       get
@@ -89,6 +94,7 @@ namespace OpenGLNoise.Materials
         }
       }
     }
+    [XmlIgnore]
     public Color SpecularReflectivity
     {
       get
@@ -105,6 +111,27 @@ namespace OpenGLNoise.Materials
         }
       }
     }
+
+    #region Color serialization
+    [XmlElement("SpecularColor")]
+    public string SpecularColorStr
+    {
+      get { return ColorTranslator.ToHtml(_specularReflectivity); }
+      set { _specularReflectivity = ColorTranslator.FromHtml(value); }
+    }
+    [XmlElement("DiffuseColor")]
+    public string DiffuseColorStr
+    {
+      get { return ColorTranslator.ToHtml(_diffuseReflectivity); }
+      set { _diffuseReflectivity = ColorTranslator.FromHtml(value); }
+    }
+    [XmlElement("AmbientColor")]
+    public string AmbientColorStr
+    {
+      get { return ColorTranslator.ToHtml(_ambientReflectivity); }
+      set { _ambientReflectivity = ColorTranslator.FromHtml(value); }
+    }
+    #endregion
 
     public float Shininess
     {

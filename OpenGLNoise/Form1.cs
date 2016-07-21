@@ -11,18 +11,23 @@ namespace OpenGLNoise
 {
   public partial class Form1 : Form
   {
-
+    const string SettingsFileName = "Settings.xml";
     public SynchronizationContext context = SynchronizationContext.Current;
 
     RenderWindowSettings settings { get; set; }
     
     public Form1()
     {
-      settings = new RenderWindowSettings();
-      settings.Lights.Add(new LightData(Color.White, new Vector3(3, 0.5f, 0.0f), true));
-      settings.Lights.Add(new LightData(Color.Green, new Vector3(-3, -5.5f, -4.0f), true));
-      settings.Lights.Add(new LightData(Color.Red, new Vector3(0, 3.5f, -12.0f), true));
-      settings.Material = new MaterialData(Color.SteelBlue, 12.0f);
+
+      settings = RenderWindowSettings.Load(SettingsFileName);
+      if (settings == null)
+      {
+        settings = new RenderWindowSettings();
+        settings.Lights.Add(new LightData(Color.White, new Vector3(3, 0.5f, 0.0f), true));
+        settings.Lights.Add(new LightData(Color.Green, new Vector3(-3, -5.5f, -4.0f), true));
+        settings.Lights.Add(new LightData(Color.Red, new Vector3(0, 3.5f, -12.0f), true));
+        settings.Material = new MaterialData(Color.White, 20.0f);
+      }
       InitializeComponent();
       userControlMaterialData1.Data = settings.Material;
       userControlLightData1.Data = settings.Lights[0];
@@ -40,6 +45,8 @@ namespace OpenGLNoise
 
     protected override void OnClosed(EventArgs e)
     {
+      RenderWindowSettings.Save(settings, SettingsFileName);
+
       base.OnClosed(e);
       CloseRunningWindows();
     }

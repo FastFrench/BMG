@@ -13,6 +13,8 @@ using OpenTK.Graphics;
 
 namespace OpenGLNoise.Lights
 {
+
+  [Serializable]
   public class LightDataCollection : BindingList<LightData>
   {
     
