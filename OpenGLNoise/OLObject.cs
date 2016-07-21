@@ -375,18 +375,21 @@ namespace OpenGLNoise
     int VertexArrayObject;
     int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
 
-    private static OpenGLObject Construct(OpenGLObject openGLObject, RenderWindowBase parent, byte[] fragmentShader=null, byte[] vertexShader=null)
+    private static OpenGLObject Construct(OpenGLObject openGLObject, RenderWindowBase parent = null, Color? color1 = null, Color? color2 = null, byte[] fragmentShader = null, byte[] vertexShader = null)
     {
       Stopwatch sw = Stopwatch.StartNew();
 
       if (openGLObject == null) return null;
       openGLObject.Parent = parent;
-      openGLObject.Color1 = OpenGLHelper.GetRandomColor();
-      do
-      {
-        openGLObject.Color2 = OpenGLHelper.GetRandomColor();
-      } while (openGLObject.Color2 == openGLObject.Color1);
-      openGLObject.LoadShaders(fragmentShader??OpenGLHelper.GetRandomFragmentShader(), vertexShader??OpenGLHelper.GetRandomVertexShader(), null);
+      openGLObject.Color1 = color1 ?? OpenGLHelper.GetRandomColor();
+      if (color2 != null)
+        openGLObject.Color2 = color2.Value;
+      else
+        do
+        {
+          openGLObject.Color2 = OpenGLHelper.GetRandomColor();
+        } while (openGLObject.Color2 == openGLObject.Color1);
+      openGLObject.LoadShaders(fragmentShader ?? OpenGLHelper.GetRandomFragmentShader(), vertexShader ?? OpenGLHelper.GetRandomVertexShader(), null);
       openGLObject.BuildObject();
       Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
       return openGLObject;
@@ -403,12 +406,12 @@ namespace OpenGLNoise
 
     public static OpenGLObject CreateTeapot(float px, float py, float pz, float radius, RenderWindowBase parent)
     {
-      return Construct(new TeaPotObject(new Vector3(px, py, pz), radius, false, OpenGLHelper.GetRandomColor(), null), parent);      
+      return Construct(new TeaPotObject(new Vector3(px, py, pz), radius, false, OpenGLHelper.GetRandomColor(), null), parent);
     }
 
     public static OpenGLObject CreateLight(Vector3 pos, Color color)
     {
-      return Construct(new LightObject(pos, color), null, Resources.Simple_frag, Resources.Simple_vert);
+      return Construct(new LightObject(pos, color), null, color, color, Resources.Simple_frag, Resources.Simple_vert);
     }
 
     void SetupBuffers()
