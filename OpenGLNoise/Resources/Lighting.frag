@@ -1,5 +1,5 @@
 #version 440 core
-precision highp float;
+precision lowp float;
 const int LIGHTCOUNT = 3;
 
 //////////////////////////////////////////////
@@ -45,13 +45,13 @@ struct ObjectInfo
 	float	Shininess;
 	bool	Visible;
 	bool	UsingNoise;
-	float Deformation;
-	vec3 Speed;
-	float StartingTime;
-	float Radius;
-	vec3 Center;
-	vec4 MainColor;
-	vec4 SecondaryColor;
+	float	Deformation;
+	vec3	Speed;
+	float	StartingTime;
+	float	Radius;
+	vec3	Center;
+	vec4	MainColor;
+	vec4	SecondaryColor;
 };
 
 uniform ObjectInfo Object;
@@ -77,7 +77,7 @@ out vec4 FragColor;
 /////////////////
 void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )
 {
-	vec3 n = normalize( -norm );
+	vec3 n = normalize( norm );
 	vec3 s = normalize( toto.Light[lightIndex].Position - position);
 	vec3 v = normalize( -position );
 	vec3 r = reflect( -s, n );
@@ -88,10 +88,10 @@ void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3
 		float relativDistance = length(position - toto.Light[lightIndex].Position) / toto.Light[lightIndex].MaxDistance;
 		ratio = 0;
 		if (relativDistance < 2.2) 
-		if (relativDistance < 0.2) 
-			ratio = 2;
-		else
-			ratio = (2.2-relativDistance);
+			if (relativDistance < 0.2) 
+				ratio = 2;
+			else
+				ratio = (2.2-relativDistance);
 	}
 
 	ambient = vec3(toto.Light[lightIndex].La) * Object.Ka * ratio;

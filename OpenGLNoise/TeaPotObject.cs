@@ -14,7 +14,7 @@ namespace OpenGLNoise
   public class TeaPotObject : ObjectFromRessourceData
   {
 
-    public TeaPotObject(Vector3 center, float size, bool withDeformations, Color? color1, Color? color2)
+    public TeaPotObject(Vector3 center, float size, bool withDeformations, Color? color1 = null, Color? color2 = null)
         : base(center, size, withDeformations, color1, color2)
     {
     }

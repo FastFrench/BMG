@@ -428,8 +428,8 @@ namespace OpenGLNoise
 				{
 					_color2 = OpenGLHelper.GetRandomColor();
 				} while (_color2 == _color1);
-			openGLObject.MainColor = OpenGLHelper.TransformColor(_color1);
-			openGLObject.SecondaryColor = OpenGLHelper.TransformColor(_color2);
+			openGLObject.MainColor = _color1;
+			openGLObject.SecondaryColor = _color2;
 
 			openGLObject.LoadShaders(fragmentShader ?? OpenGLHelper.GetRandomFragmentShader(), vertexShader ?? OpenGLHelper.GetRandomVertexShader(), null);
 			openGLObject.BuildObject();
@@ -440,23 +440,63 @@ namespace OpenGLNoise
 			return openGLObject;
 		}
 
+		[Flags]
+		public enum ObjectType { Sphere = 1, Cube = 2, Teapot = 4, Light = 8 };
 		//Random rnd = new Random();
-		public static OpenGLObject CreateObject(float px, float py, float pz, float radius, RenderWindowBase parent)
+
+		public static OpenGLObject CreateObject(ObjectType types, Vector3 center, float radius, Color? color, RenderWindowBase parent)
 		{
-			if (rnd.Next(2) == 1)
-				return Construct(new SphereObject(new Vector3(px, py, pz), radius * 2, true), parent);
-			else
-				return Construct(new CubeObject(new Vector3(px, py, pz), radius * 2, true), parent);
+			ObjectType type = types;
+			var flags = Enum.GetValues(typeof(ObjectType));
+			int typeCount = 0;
+			foreach (ObjectType ot in flags)
+				if (types.HasFlag(ot))
+					typeCount++;
+			if (typeCount == 0)
+			{
+				Debug.Assert(false);
+				return null;
+			}
+			if (typeCount>1)
+			{
+				int select = rnd.Next(typeCount);
+				foreach (ObjectType ot in flags)
+					if (types.HasFlag(ot))
+						if (select-- == 0)
+						{
+							type = ot;
+							break;
+						}										
+			}
+			switch(type)
+			{
+				case ObjectType.Light:
+					return Construct(new LightObject(center, color), null, color, color, Resources.Simple_frag, Resources.Simple_vert);
+				case ObjectType.Sphere:
+					return Construct(new SphereObject(center, radius * 2, true), parent);
+				case ObjectType.Cube:
+					return Construct(new CubeObject(center, radius * 2, true), parent);
+				case ObjectType.Teapot:
+					return Construct(new TeaPotObject(center, radius, false), parent);
+				default:
+					Debug.Assert(false, types.ToString());
+					return null;
+			}
 		}
 
-		public static OpenGLObject CreateTeapot(float px, float py, float pz, float radius, RenderWindowBase parent)
+		public static OpenGLObject CreateObject(Vector3 center, float radius, RenderWindowBase parent)
 		{
-			return Construct(new TeaPotObject(new Vector3(px, py, pz), radius, false, OpenGLHelper.GetRandomColor(), null), parent);
+			return CreateObject(ObjectType.Cube | ObjectType.Sphere, center, radius, null, parent);
 		}
 
-		public static OpenGLObject CreateLight(Vector3 pos, Color color)
+		public static OpenGLObject CreateTeapot(Vector3 center, float radius, RenderWindowBase parent)
 		{
-			return Construct(new LightObject(pos, color), null, color, color, Resources.Simple_frag, Resources.Simple_vert);
+			return CreateObject(ObjectType.Teapot, center, radius, null, parent);
+		}
+
+		public static OpenGLObject CreateLight(Vector3 center, Color color)
+		{
+			return CreateObject(ObjectType.Light, center, 0.1f, color, null);
 		}
 
 		void SetupBuffers()

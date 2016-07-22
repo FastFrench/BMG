@@ -183,16 +183,16 @@ namespace OpenGLNoise
 			return fps;
 		}
 
-		protected virtual OpenGLObject AddObject(float px, float py, float pz, float radius)
+		protected virtual OpenGLObject AddObject(Vector3 center, float radius)
 		{
-			var olObject = OpenGLObject.CreateObject(px, py, pz, radius, this);
+			var olObject = OpenGLObject.CreateObject(center, radius, this);
 			Objects.Add(olObject);
 			return olObject;
 		}
 
 		virtual protected OpenGLObject AddARandomObject()
 		{
-			return AddObject((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
+			return AddObject(new Vector3((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0)), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
 		}
 
 		protected virtual void CreateObjects()
