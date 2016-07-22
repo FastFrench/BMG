@@ -104,6 +104,13 @@ namespace OpenGLNoise
 			GL.BindBuffer(BufferTarget.UniformBuffer, 0);
 		}
 
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			base.OnMouseDown(e);
+			var newObj = AddARandomObject();
+			newObj.MoveTo(Vector3.Zero, 1.0f, true);
+		}
+
 		#region Zooming
 		float zoom = 1.0f;
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -185,15 +192,16 @@ namespace OpenGLNoise
 		//}
 
 
-		protected virtual void AddObject(float px, float py, float pz, float radius)
+		protected virtual OpenGLObject AddObject(float px, float py, float pz, float radius)
 		{
 			var olObject = OpenGLObject.CreateObject(px, py, pz, radius, this);
 			Objects.Add(olObject);
+			return olObject;
 		}
 
-		virtual protected void AddARandomObject()
+		virtual protected OpenGLObject AddARandomObject()
 		{
-			AddObject((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
+			return AddObject((float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(rnd.NextDouble() * 12.0 - 6.0), (float)(SphereRadius * (0.1 + 0.9 * rnd.NextDouble())));
 		}
 
 		protected virtual void CreateObjects()

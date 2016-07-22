@@ -23,11 +23,13 @@ namespace OpenGLNoise
 
     }
 
-    protected override void AddObject(float px, float py, float pz, float radius)
+    protected override OpenGLObject AddObject(float px, float py, float pz, float radius)
     {
       var olObject = OpenGLObject.CreateTeapot(px, py, pz, radius, this);
       Objects.Add(olObject);
-    }
+	  return olObject;
+
+	}
 
     override protected void CreateObjects()
     {

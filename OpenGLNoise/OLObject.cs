@@ -394,7 +394,7 @@ namespace OpenGLNoise
 			openGLObject.BuildObject();
 			Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
 			openGLObject.DestructionTime = null;
-			openGLObject.Speed = Vector3.Zero;
+			openGLObject.Speed = Vector3.Zero;			
 			openGLObject.StartingTime = parent == null ? 0 : parent.GlobalSettingsStruct.Time;
 			return openGLObject;
 		}
