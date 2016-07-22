@@ -31,17 +31,18 @@ namespace OpenGLNoise
 			}
 		}
 
-		protected bool WithNoise { get; set; }
+
 		protected bool WithLightsArray { get; set; }
-		protected OpenGLObject(float size = 1.0f, Color? color1 = null, Color? color2 = null, bool withNoise = false, bool withLightsArray = true)
+		protected OpenGLObject(Vector3 center, float deformationAmplitudeRatio = 0.0f, Color? color1 = null, Color? color2 = null, bool withNoise = false, bool withLightsArray = true, float radius = 1.0f)
 		{
 			WithLightsArray = withLightsArray;
 			WithNoise = withNoise;
-			DeformationAmplitude = size;
-			Color1 = color1 ?? Color.Red;
-			Color2 = color2 ?? Color.Black;
+			BaseDeformationAmplitude = deformationAmplitudeRatio * radius;
+			MainColor = color1 ?? Color.Red;
+			SecondaryColor = color2 ?? Color.Black;
 			Center = Vector3.Zero;
-			Radius = 1;
+			Radius = radius;
+			Center = center;
 		}
 		public Vector3[] Positions { get; set; }
 		public Vector3[] Normals { get; set; }
@@ -107,13 +108,73 @@ namespace OpenGLNoise
 			TimeTranslator.YTranslation += timeDelta;
 			NoiseMapBuilder.Build();
 		}
-
 		protected virtual int lowerBoundX { get { return 0; } set { } }
 		protected virtual int upperBoundX { get; set; }
 		protected virtual int lowerBoundZ { get { return 0; } set { } }
 		protected virtual int upperBoundZ { get; set; }
-		public Vector3 Center { get; protected set; }
-		public float Radius { get; protected set; }
+
+		#region Material data (Object data send to the shader)
+		public Vector3 Center {
+			get { return Material.Center; }
+			set { Material.Center = value; }
+		}
+		public float Radius {
+			get { return Material.Radius; }
+			set { Material.Radius = value; }
+		}
+		protected bool WithNoise
+		{
+			get { return Material.UsingNoise; }
+			set { Material.UsingNoise = value; }
+		}
+
+		public Color4 MainColor
+		{
+			get { return Material.MainColor; }
+			set { Material.MainColor = value; }
+		}
+
+		public Color4 SecondaryColor
+		{
+			get { return Material.SecondaryColor; }
+			set { Material.SecondaryColor = value; }
+		}
+
+		public float DeformationAmplitude {
+			get { return Material.Deformation; }
+			set { Material.Deformation = value; }
+		}
+
+		public float BaseDeformationAmplitude
+		{
+			get; set;
+		}
+
+		public float Time
+		{
+			get
+			{
+				return Parent == null ? 0 : Parent.GlobalSettingsStruct.Time;
+			}
+		}
+
+		public float AjustedDeformationSize { get; set; }
+
+		public MaterialStruct Material;
+
+		public void UpdateMaterialFromSettings()
+		{
+			if (Parent == null) return;
+			Parent.RenderSettings.ConvertIntoGLMaterialStruct(ref Material);
+			Material.Deformation = AjustedDeformationSize;
+		}
+
+		private void RenderSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			UpdateMaterialFromSettings();
+		}
+		#endregion Material data (Object data send to the shader)
+
 
 		void SetupNoiseMapBuilder()
 		{
@@ -161,9 +222,9 @@ namespace OpenGLNoise
 		virtual public void OnUpdateObject(FrameEventArgs e)
 		{
 			if (!Material.Visible) return;
-			double ratio = (sw.ElapsedMilliseconds % 2000) / 1000.0;
+			double ratio =   (((long)(Time * 1000L)) % 2000) / 1000.0;
 			if (ratio > 1.0) ratio = 2 - ratio;
-			AjustedDeformationSize = (float)(DeformationAmplitude * ratio);
+			DeformationAmplitude = (float)(BaseDeformationAmplitude * ratio);
 			var error = GL.GetError();
 			if (error != ErrorCode.NoError)
 				Debug.Print("OpenGL error(0): " + error.ToString());
@@ -221,8 +282,6 @@ namespace OpenGLNoise
 			OpenGLHelper.CheckError("Linking program");
 			MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
 			ViewUniformLocation = GL.GetUniformLocation(ProgramHandle, "View");
-			Color1UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor1");
-			Color2UniformLocation = GL.GetUniformLocation(ProgramHandle, "GlobalColor2");
 			if (WithLightsArray)
 			{
 				LightsUniformBlockLocation = GL.GetUniformBlockIndex(ProgramHandle, "Lights"); // LightInfo and LightInfo[0] are both valid and equivalent
@@ -308,26 +367,6 @@ namespace OpenGLNoise
 		}
 		#endregion Shaders and Programs management
 
-		public Color Color1 { get; set; }
-		public Color Color2 { get; set; }
-
-		public float DeformationAmplitude { get; set; }
-		public float AjustedDeformationSize { get; set; }
-
-		public MaterialStruct Material;
-
-		public void UpdateMaterialFromSettings()
-		{
-			if (Parent == null) return;
-			Parent.RenderSettings.ConvertIntoGLMaterialStruct(ref Material);
-			Material.Size = AjustedDeformationSize;
-		}
-
-		private void RenderSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			UpdateMaterialFromSettings();
-		}
-
 		/// <summary>
 		/// Called on OnRenderFrame
 		/// </summary>
@@ -343,8 +382,6 @@ namespace OpenGLNoise
 
 			GL.UniformMatrix4(MvpUniformLocation, false, ref mvpMatrix);
 			GL.UniformMatrix4(ViewUniformLocation, false, ref viewMatrix);
-			GL.Uniform4(Color1UniformLocation, new Color4(Color1.R, Color1.G, Color1.B, Color1.A));
-			GL.Uniform4(Color2UniformLocation, new Color4(Color2.R, Color2.G, Color2.B, Color2.A));
 			error = GL.GetError();
 			if (error != ErrorCode.NoError)
 				Debug.Print("OpenGL error (OnRenderObject 2): " + error.ToString());
@@ -382,20 +419,24 @@ namespace OpenGLNoise
 
 			if (openGLObject == null) return null;
 			openGLObject.Parent = parent;
-			openGLObject.Color1 = color1 ?? OpenGLHelper.GetRandomColor();
+			Color _color1 = color1 ?? OpenGLHelper.GetRandomColor();
+			Color _color2;
 			if (color2 != null)
-				openGLObject.Color2 = color2.Value;
+				_color2 = color2.Value;
 			else
 				do
 				{
-					openGLObject.Color2 = OpenGLHelper.GetRandomColor();
-				} while (openGLObject.Color2 == openGLObject.Color1);
+					_color2 = OpenGLHelper.GetRandomColor();
+				} while (_color2 == _color1);
+			openGLObject.MainColor = OpenGLHelper.TransformColor(_color1);
+			openGLObject.SecondaryColor = OpenGLHelper.TransformColor(_color2);
+
 			openGLObject.LoadShaders(fragmentShader ?? OpenGLHelper.GetRandomFragmentShader(), vertexShader ?? OpenGLHelper.GetRandomVertexShader(), null);
 			openGLObject.BuildObject();
 			Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
 			openGLObject.DestructionTime = null;
-			openGLObject.Speed = Vector3.Zero;			
-			openGLObject.StartingTime = parent == null ? 0 : parent.GlobalSettingsStruct.Time;
+			openGLObject.Speed = Vector3.Zero;
+			openGLObject.StartingTime = openGLObject.Time;
 			return openGLObject;
 		}
 
@@ -507,6 +548,11 @@ namespace OpenGLNoise
 			{
 				return DestructionTime != null && DestructionTime.Value >= Parent.GlobalSettingsStruct.Time;
 			}
+		}
+		public bool Visible
+		{
+			get { return Material.Visible; }
+			set { Material.Visible = value; }
 		}
 		public Vector3 Speed
 		{

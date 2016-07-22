@@ -11,10 +11,8 @@ namespace OpenGLNoise
   public class CubeObject : OpenGLObject
   {
     public CubeObject(Vector3 center, float radius, bool noDeformation = false, bool withLight = true, bool withNoise = false)
-    : base(noDeformation ? 0 : radius, null, null, withNoise, withLight)
+    : base(center, noDeformation ? 0 : 1, null, null, withNoise, withLight, radius)
     {
-      this.Radius = radius;
-      this.Center = center;
     }
     protected override void InternalBuildObject()
     {

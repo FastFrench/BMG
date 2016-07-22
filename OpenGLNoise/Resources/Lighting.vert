@@ -26,9 +26,13 @@ struct ObjectInfo
 	float	Shininess;
 	bool	Visible;
 	bool	UsingNoise;
-	float	Size;
-	vec3	Speed;
-	float	StartingTime;
+	float Deformation;
+	vec3 Speed;
+	float StartingTime;
+	float Radius;
+	vec3 Center;
+	vec4 MainColor;
+	vec4 SecondaryColor;
 };
 
 uniform ObjectInfo Object;
@@ -56,7 +60,7 @@ void main() {
 	vec3 currentPosition = position + Object.Speed * (Global.Time - Object.StartingTime);
     vec4 pos4 = vec4( currentPosition, 1.0 );
 	if (Object.UsingNoise)
-		pos4 += vec4(Object.Size * normal, 0.0);
+		pos4 += vec4(Object.Deformation * normal, 0.0);
 	Data.Normal = normal;
     gl_Position =  Global.MVP * pos4;
 	Data.Eye = -(Global.View * pos4).xyz;

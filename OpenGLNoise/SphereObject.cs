@@ -11,16 +11,9 @@ namespace OpenGLNoise
 {
   public class SphereObject : OpenGLObject
   {
-    public SphereObject(Vector3 center, float radius, bool noDeformation = false, bool withLight = true, bool withNoise = false)
-  : base(noDeformation ? 0 : radius, null, null, withNoise, withLight)
-    {
-      this.Radius = radius;
-      this.Center = center;
-      WithLightsArray = withLight;
-      WithNoise = withNoise;
-      DeformationAmplitude = noDeformation ? 0 : 1;
-      Color1 = Color.Red;
-      Color2 = Color.Black;
+    public SphereObject(Vector3 center, float radius, bool noDeformation = false, bool withLight = true, bool withNoise = false, Color? color1=null, Color? color2=null)
+  : base(center, noDeformation ? 0 : 1, color1, color2, withNoise, withLight, radius)
+    {      
     }
 
     protected override void InternalBuildObject()

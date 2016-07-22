@@ -34,9 +34,6 @@ layout (std140) uniform GlobalSettings
 	GlobalData Global;
 };
 
-uniform vec4 GlobalColor1;
-uniform vec4 GlobalColor2;
-
 ///////////////////////////////////////////////
 /// Object data (common to current objected) //
 ///////////////////////////////////////////////
@@ -48,9 +45,13 @@ struct ObjectInfo
 	float	Shininess;
 	bool	Visible;
 	bool	UsingNoise;
-	float Size;
+	float Deformation;
 	vec3 Speed;
 	float StartingTime;
+	float Radius;
+	vec3 Center;
+	vec4 MainColor;
+	vec4 SecondaryColor;
 };
 
 uniform ObjectInfo Object;
@@ -139,7 +140,7 @@ void main() {
 	}
 	//if (nbVis>0)
 	//	ambientSum /= nbVis;
-	vec4 texColor = GlobalColor1;//texture(Tex, data.TexCoord);
+	vec4 texColor = Object.MainColor;//texture(Tex, data.TexCoord);
 	vec4 colorLinear = vec4( ambientSum + diffuseSum, 1 ) * texColor + vec4( specSum, 1 );  
 	vec4 colorGammaCorrected = pow(colorLinear, vec4(1.0/toto.Gamma));
 

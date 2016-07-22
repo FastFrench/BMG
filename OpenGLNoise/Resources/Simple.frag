@@ -3,8 +3,6 @@
 //////////////////////////////////////////////
 /// Global data (common to the whole scene) //
 //////////////////////////////////////////////
-uniform vec4 GlobalColor1;
-
 struct GlobalData
 {
 	mat4 MVP;
@@ -17,10 +15,32 @@ layout (std140) uniform GlobalSettings
 	GlobalData Global;
 };
 
+///////////////////////////////////////////////
+/// Object data (common to current objected) //
+///////////////////////////////////////////////
+struct ObjectInfo
+{
+	vec3	Ka;
+	vec3	Kd;
+	vec3	Ks;
+	float	Shininess;
+	bool	Visible;
+	bool	UsingNoise;
+	float Deformation;
+	vec3 Speed;
+	float StartingTime;
+	float Radius;
+	vec3 Center;
+	vec4 MainColor;
+	vec4 SecondaryColor;
+};
+
+uniform ObjectInfo Object;
+
 ///////////
 /// Main //
 ///////////
 void main() {	 
-    float maxC = max(max(GlobalColor1.r, GlobalColor1 .g), max(GlobalColor1.b, 0.01));
-	gl_FragColor = (GlobalColor1/maxC) * (0.6 + abs(mod(Global.Time, 2)-1) * 0.4);	
+    float maxC = max(max(Object.MainColor.r, Object.MainColor .g), max(Object.MainColor.b, 0.01));
+	gl_FragColor = (Object.MainColor/maxC) * (0.6 + abs(mod(Global.Time, 2)-1) * 0.4);	
 }

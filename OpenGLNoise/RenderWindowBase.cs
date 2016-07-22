@@ -183,15 +183,6 @@ namespace OpenGLNoise
 			return fps;
 		}
 
-		//virtual protected void BuildObjects()
-		//{
-		//	// Create sphere data and set up buffers
-		//	foreach (var obj in Objects)
-		//		obj.BuildObject();
-		//	//CreateVertexData();
-		//}
-
-
 		protected virtual OpenGLObject AddObject(float px, float py, float pz, float radius)
 		{
 			var olObject = OpenGLObject.CreateObject(px, py, pz, radius, this);

@@ -15,11 +15,8 @@ namespace OpenGLNoise
   {
     
     public ObjectFromRessourceData(Vector3 center, float size, bool withDeformations, Color? color1, Color? color2)
-        : base(withDeformations ? size : 0, color1, color2, withDeformations, true)
+        : base(center, withDeformations ? 1 : 0, color1, color2, withDeformations, true, size)
     {
-      Center = center;
-      Radius = size;
-      DeformationAmplitude = 0;
     }
     protected Vector3[] MoveAndResizeData(Vector3[] normalizedVertices)
     {
