@@ -484,6 +484,7 @@ namespace OpenGLNoise
 		bool forceNormalUpdate = false;
 		public void Move(Vector3 newCenter)
 		{
+			if (Center == newCenter) return;
 			for (int i = 0; i < Positions.Length; i++)
 				Positions[i] += newCenter - Center;
 			Center = newCenter;
@@ -507,8 +508,16 @@ namespace OpenGLNoise
 				return DestructionTime != null && DestructionTime.Value >= Parent.GlobalSettingsStruct.Time;
 			}
 		}
-		public Vector3 Speed { get; private set; }
-		public float StartingTime { get; private set; }
+		public Vector3 Speed
+		{
+			get { return Material.Speed; }
+			set { SetSpeed(value); }
+		}
+		public float StartingTime
+		{
+			get { return Material.StartingTime; }
+			set { Material.StartingTime = value; }
+		}
 		public Vector3 CurrentPosition
 		{
 			get
@@ -518,10 +527,11 @@ namespace OpenGLNoise
 				return Center + (Parent.GlobalSettingsStruct.Time - StartingTime) * Speed;
 			}
 		}
-		public void SetSpeed(Vector3 speed)
+		public void SetSpeed(Vector3 speed, bool updateTimeAndPosition = true)
 		{
-			Move(CurrentPosition);
-			Speed = speed;
+			if (updateTimeAndPosition)
+				Move(CurrentPosition);
+			Material.Speed = speed;
 		}
 		public void MoveTo(Vector3 destination, float timeToReachDestination, bool destroyAtDestination = false)
 		{
@@ -529,8 +539,8 @@ namespace OpenGLNoise
 				Move(destination);
 			else
 			{
-				Move(CurrentPosition);
-				Speed = (destination - Center) / timeToReachDestination;
+				Move(CurrentPosition); // Need to to this explicitely
+				SetSpeed((destination - Center) / timeToReachDestination, false);
 			}
 			if (destroyAtDestination)
 				DestructionTime = StartingTime + timeToReachDestination; // StartingTime is updated by Move();
