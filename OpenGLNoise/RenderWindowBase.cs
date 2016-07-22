@@ -33,7 +33,7 @@ namespace OpenGLNoise
 		public const int LIGHTS_BUFFER_INDEX = 0; // Lights : Index to use for the buffer binding (All good things start at 0 )
 		public const int SETTINGS_BUFFER_INDEX = 1; // Global Settings : Index to use for the buffer binding (All good things start at 0 )
 		LightCollectionStruct LightsUBOData;
-    public SettingsStruct GlobalSettingsStruct;
+		public SettingsStruct GlobalSettingsStruct;
 		void InitLightAndSettingsBuffer()
 		{
 			LightsUBOData = RenderSettings.Lights.ConvertIntoGLStruct(Gamma); // Create actual data
@@ -307,8 +307,19 @@ namespace OpenGLNoise
 			}
 			ViewMatrix = GlobalSettingsStruct.View = Matrix4.LookAt(new Vector3(0, alt, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
+			List<OpenGLObject> destroyed = new List<OpenGLObject>();
 			foreach (var obj in Objects)
-				obj.OnUpdateObject(e);
+				if (obj.ShouldBeDestroyed)
+				{
+					obj.DestroyMe();
+					obj.Dispose();
+					destroyed.Add(obj);
+				}
+				else
+					obj.OnUpdateObject(e);
+
+			foreach (var obj in destroyed)
+				Objects.Remove(obj);
 
 			UpdateAndFillGlobalSettingsUniformBuffer(e);
 
