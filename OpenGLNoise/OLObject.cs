@@ -554,6 +554,7 @@ namespace OpenGLNoise
 			}
 
 			GL.BindVertexArray(0);
+			forceNormalUpdate = true;
 		}
 
 		/// <summary>

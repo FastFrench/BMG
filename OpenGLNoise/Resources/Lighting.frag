@@ -62,7 +62,7 @@ uniform ObjectInfo Object;
 ////////////////////////////////////////////
 in struct DataStruct 
 {
-	vec3 Normal;
+	vec3 Normal; // Normals are wrong !! (void?)
 	vec3 Position;
 	vec3 Eye;
 } Data;
@@ -78,7 +78,7 @@ out vec4 FragColor;
 void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3 diffuse, out vec3 spec )
 {
 	vec3 n = normalize( norm );
-	vec3 s = normalize( toto.Light[lightIndex].Position - position);
+	vec3 s = normalize( position - toto.Light[lightIndex].Position);
 	vec3 v = normalize( -position );
 	vec3 r = reflect( -s, n );
 
@@ -96,7 +96,7 @@ void light( int lightIndex, vec3 position, vec3 norm, out vec3 ambient, out vec3
 
 	ambient = vec3(toto.Light[lightIndex].La) * Object.Ka * ratio;
 
-	float sDotN = max( dot( s, n ), 0.0 );
+	float sDotN = max( dot( -s, n ), 0.0 );
 	diffuse = vec3(toto.Light[lightIndex].Ld) * Object.Kd * sDotN * ratio;
  
 	spec = vec3(toto.Light[lightIndex].Ls) * Object.Ks * pow( max( dot(r,v) , 0.0 ), Object.Shininess ) * ratio; 
@@ -126,18 +126,18 @@ void main() {
 			specSum += spec;
 		}
 	}
-	else
-	{
-		for( int i=0; i<toto.NbLights; ++i )
-		if (toto.Light[i].Visible)
-		{
-			nbVis++;
-			light( i, Data.Position, -Data.Normal, ambient, diffuse, spec );
-			ambientSum += ambient;
-			diffuseSum += diffuse;
-			specSum += spec;
-		}
-	}
+	//else
+//	{
+	//	for( int i=0; i<toto.NbLights; ++i )
+		//if (toto.Light[i].Visible)
+	//	{
+			//nbVis++;
+		//	light( i, Data.Position, -Data.Normal, ambient, diffuse, spec );
+			//ambientSum += ambient;
+			//diffuseSum += diffuse;
+			//specSum += spec;
+	//	}
+	//}
 	//if (nbVis>0)
 	//	ambientSum /= nbVis;
 	vec4 texColor = Object.MainColor;//texture(Tex, data.TexCoord);
