@@ -135,8 +135,7 @@ namespace OpenGLNoise
 
 		protected void RemoveAnObject()
 		{
-			if (Objects.Count == 0) return;
-			var removed = Objects.Last(obj => !(obj is LightObject));
+			var removed = Objects.LastOrDefault(obj => !(obj is LightObject));
 			if (removed == null) return;
 			removed.Dispose();
 			Objects.Remove(removed);

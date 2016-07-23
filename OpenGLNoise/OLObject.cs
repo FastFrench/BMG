@@ -587,7 +587,7 @@ namespace OpenGLNoise
 		{
 			get
 			{
-				return DestructionTime != null && DestructionTime.Value >= Parent.GlobalSettingsStruct.Time;
+				return DestructionTime != null && DestructionTime.Value <= Parent.GlobalSettingsStruct.Time;
 			}
 		}
 		public bool Visible
