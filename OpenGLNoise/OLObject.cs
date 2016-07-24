@@ -65,6 +65,7 @@ namespace OpenGLNoise
 		{
 
 		}
+
 		/// <summary>
 		/// Initial building of the object (usually called in OnLoad or chen the object appears)
 		/// Base class method should be called last
@@ -76,7 +77,7 @@ namespace OpenGLNoise
 			SetupBuffers();
 			if (WithNoise)
 				SetupNoiseMapBuilder();
-			Debug.Print("{0} builded in {1:N3}", this.GetType().Name, sw.Elapsed.TotalMilliseconds);
+			Debug.Print("{0} builded in {1:N3} ms", this.GetType().Name, sw.Elapsed.TotalMilliseconds);
 		}
 
 		/// <summary>
@@ -158,7 +159,7 @@ namespace OpenGLNoise
 			}
 		}
 
-		public float AjustedDeformationSize { get; set; }
+		//public float AjustedDeformationSize { get; set; }
 
 		public MaterialStruct Material;
 
@@ -166,7 +167,7 @@ namespace OpenGLNoise
 		{
 			if (Parent == null) return;
 			Parent.RenderSettings.ConvertIntoGLMaterialStruct(ref Material);
-			Material.Deformation = AjustedDeformationSize;
+			//DeformationAmplitude = AjustedDeformationSize;
 		}
 
 		private void RenderSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -433,7 +434,7 @@ namespace OpenGLNoise
 
 			openGLObject.LoadShaders(fragmentShader ?? OpenGLHelper.GetRandomFragmentShader(), vertexShader ?? OpenGLHelper.GetRandomVertexShader(), null);
 			openGLObject.BuildObject();
-			Debug.Print("{0} fully initialized in {1:N3}", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
+			Debug.Print("{0} fully initialized in {1:N3} ms", openGLObject.GetType().Name, sw.Elapsed.TotalMilliseconds);
 			openGLObject.DestructionTime = null;
 			openGLObject.Speed = Vector3.Zero;
 			openGLObject.StartingTime = openGLObject.Time;
@@ -471,7 +472,7 @@ namespace OpenGLNoise
 			switch(type)
 			{
 				case ObjectType.Light:
-					return Construct(new LightObject(center, color), null, color, color, Resources.Simple_frag, Resources.Simple_vert);
+					return Construct(new LightObject(center, color), parent, color, color, Resources.Simple_frag, Resources.Simple_vert);
 				case ObjectType.Sphere:
 					return Construct(new SphereObject(center, radius * 2, true), parent);
 				case ObjectType.Cube:
@@ -494,9 +495,9 @@ namespace OpenGLNoise
 			return CreateObject(ObjectType.Teapot, center, radius, null, parent);
 		}
 
-		public static OpenGLObject CreateLight(Vector3 center, Color color)
+		public static OpenGLObject CreateLight(Vector3 center, Color color, RenderWindowBase parent)
 		{
-			return CreateObject(ObjectType.Light, center, 0.1f, color, null);
+			return CreateObject(ObjectType.Light, center, 0.1f, color, parent);
 		}
 
 		void SetupBuffers()

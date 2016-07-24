@@ -117,7 +117,7 @@ void main() {
 	if ( gl_FrontFacing )
 	{
 		for( int i=0; i<toto.NbLights; ++i )
-		if (toto.Light[i].Visible)
+		//if (toto.Light[i].Visible)
 		{
 			nbVis++;
 			light( i, Data.Position, Data.Normal, ambient, diffuse, spec );

@@ -10,7 +10,7 @@ namespace OpenGLNoise
 {
   public class LightObject : SphereObject
   {
-    public LightObject(Vector3 center, Color? color) : base(center, 0.1f, true, false, false, color, color)
+    public LightObject(Vector3 center, Color? color) : base(center, 0.1f, false, false, true, color, color)
     {
       Material.Visible = true;      
     }    

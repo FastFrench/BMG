@@ -224,7 +224,7 @@ namespace OpenGLNoise
 			FillLightsUniformBuffer();
 			foreach (var light in RenderSettings.Lights)
 				if (light.Visible)
-					Objects.Add(OpenGLObject.CreateLight(light.Position, light.GlobalColor));
+					Objects.Add(OpenGLObject.CreateLight(light.Position, light.GlobalColor, this));
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
